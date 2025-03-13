@@ -7,16 +7,13 @@ use Illuminate\Http\Request;
 
 class VisitorController extends Controller
 {
-    // Mostrar todos los visitantes (índice) con búsqueda por cédula
+    // Mostrar todos los visitantes (índice)
     public function index(Request $request)
     {
-        $search = $request->input('search');  // Recibir el parámetro de búsqueda
-
-        if ($search) {
-            // Si hay búsqueda, obtener los visitantes que coincidan con la cédula
-            $visitors = NewVisitor::where('visitor_identity_card', 'like', '%' . $search . '%')->get();
+        // Si hay una búsqueda por cédula
+        if ($request->has('search') && $request->search != '') {
+            $visitors = NewVisitor::where('visitor_identity_card', 'like', '%' . $request->search . '%')->get();
         } else {
-            // Si no hay búsqueda, obtener todos los visitantes
             $visitors = NewVisitor::all();
         }
 
@@ -30,9 +27,9 @@ class VisitorController extends Controller
     }
 
     // Validar y guardar visitante
-    public function add_validation(Request $request)
+    public function store(Request $request)
     {
-        // Validación
+        // Validación de datos
         $request->validate([
             'visitor_name' => 'required',
             'visitor_company' => 'required',
@@ -42,14 +39,12 @@ class VisitorController extends Controller
             'visitor_photo' => 'required',
         ]);
 
-        // Convertir la imagen base64 en una imagen real
+        // Guardar la foto
         $imageData = $request->input('visitor_photo');
         $image = str_replace('data:image/jpeg;base64,', '', $imageData);
         $image = str_replace(' ', '+', $image);
-        $imageName = time() . '.jpg'; // Nombre único para la imagen
-        $imagePath = public_path('visitor_photos/' . $imageName); // Ruta de almacenamiento
-
-        // Guardar la imagen en el servidor
+        $imageName = time() . '.jpg';
+        $imagePath = public_path('visitor_photos/' . $imageName);
         file_put_contents($imagePath, base64_decode($image));
 
         // Crear el visitante
@@ -60,7 +55,7 @@ class VisitorController extends Controller
             'visitor_enter_time' => $request->visitor_enter_time,
             'visitor_out_time' => $request->visitor_out_time,  // Puede ser nulo
             'visitor_reason_to_meet' => $request->visitor_reason_to_meet,
-            'visitor_photo' => 'visitor_photos/' . $imageName, // Guardamos la ruta de la foto
+            'visitor_photo' => 'visitor_photos/' . $imageName,
         ]);
 
         return redirect()->route('visitor.index')->with('success', 'Visitante agregado exitosamente');
@@ -73,46 +68,40 @@ class VisitorController extends Controller
         return view('edit_visitor', compact('visitor'));
     }
 
-    // Validar y actualizar visitante
+    // Actualizar visitante
     public function update(Request $request, $id)
     {
-        // Validación
+        // Validación de datos
         $request->validate([
             'visitor_name' => 'required',
             'visitor_company' => 'required',
             'visitor_identity_card' => 'required',
             'visitor_enter_time' => 'required|date',
             'visitor_reason_to_meet' => 'required',
-            'visitor_photo' => 'nullable',  // Foto es opcional en la edición
+            'visitor_photo' => 'required',
         ]);
 
-        // Buscar el visitante
         $visitor = NewVisitor::findOrFail($id);
 
-        // Si se capturó una nueva foto
+        // Si la foto fue cambiada
         if ($request->has('visitor_photo')) {
-            // Convertir la imagen base64 en una imagen real
             $imageData = $request->input('visitor_photo');
             $image = str_replace('data:image/jpeg;base64,', '', $imageData);
             $image = str_replace(' ', '+', $image);
-            $imageName = time() . '.jpg'; // Nombre único para la imagen
-            $imagePath = public_path('visitor_photos/' . $imageName); // Ruta de almacenamiento
-
-            // Guardar la imagen en el servidor
+            $imageName = time() . '.jpg';
+            $imagePath = public_path('visitor_photos/' . $imageName);
             file_put_contents($imagePath, base64_decode($image));
-
-            // Actualizar la ruta de la foto
             $visitor->visitor_photo = 'visitor_photos/' . $imageName;
         }
 
-        // Actualizar los datos del visitante
+        // Actualizar datos
         $visitor->visitor_name = $request->visitor_name;
         $visitor->visitor_company = $request->visitor_company;
         $visitor->visitor_identity_card = $request->visitor_identity_card;
         $visitor->visitor_enter_time = $request->visitor_enter_time;
         $visitor->visitor_reason_to_meet = $request->visitor_reason_to_meet;
+        $visitor->visitor_out_time = $request->visitor_out_time;
 
-        // Guardar los cambios
         $visitor->save();
 
         return redirect()->route('visitor.index')->with('success', 'Visitante actualizado exitosamente');
@@ -121,17 +110,16 @@ class VisitorController extends Controller
     // Eliminar visitante
     public function delete($id)
     {
-        $visitor = NewVisitor::find($id);
-        if ($visitor) {
-            // Eliminar la imagen también si es necesario
-            $imagePath = public_path($visitor->visitor_photo);
-            if (file_exists($imagePath)) {
-                unlink($imagePath);
-            }
-            $visitor->delete();
-            return redirect()->route('visitor.index')->with('success', 'Visitante eliminado exitosamente');
+        $visitor = NewVisitor::findOrFail($id);
+
+        // Eliminar la foto del visitante
+        $imagePath = public_path($visitor->visitor_photo);
+        if (file_exists($imagePath)) {
+            unlink($imagePath);
         }
 
-        return redirect()->route('visitor.index')->with('error', 'Visitante no encontrado');
+        $visitor->delete();
+
+        return redirect()->route('visitor.index')->with('success', 'Visitante eliminado exitosamente');
     }
 }
