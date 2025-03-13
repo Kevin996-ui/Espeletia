@@ -5,7 +5,6 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 class CreateVisitorsTable extends Migration
-
 {
     public function up()
     {
@@ -19,20 +18,15 @@ class CreateVisitorsTable extends Migration
             $table->string('visitor_department');
             $table->string('visitor_reason_to_meet');
             $table->dateTime('visitor_enter_time');
-            $table->string('visitor_outing_remark');
-            $table->dateTime('visitor_out_time');
-            $table->enum('visitor_status', ['ln', 'Out']);
+            $table->string('visitor_outing_remark')->nullable();
+            $table->dateTime('visitor_out_time')->nullable();
+            $table->enum('visitor_status', ['In', 'Out']);
             $table->unsignedBigInteger('visitor_enter_by');
+            $table->string('visitor_photo')->nullable();
             $table->timestamps();
-
         });
     }
 
-    /**
-     * Reverse the migrations
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('visitors');

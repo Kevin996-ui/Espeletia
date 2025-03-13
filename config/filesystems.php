@@ -30,16 +30,23 @@ return [
 
     'disks' => [
 
+        'foto' => [
+        'driver' => 'local',
+        'root' => 'C:/xampp/htdocs/visitas/visitor_management/visitor_management/storage/foto',
+        'url' => env('APP_URL').'/storage/foto',
+        'visibility' => 'public',
+        ],
+
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),
         ],
 
         'public' => [
-            'driver' => 'local',
-            'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
-            'visibility' => 'public',
+        'driver' => 'local',
+        'root' => storage_path('app/public'),
+        'url' => env('APP_URL') . '/storage',
+        'visibility' => 'public',
         ],
 
         's3' => [

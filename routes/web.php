@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SubUserController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\VisitorController;
+use App\Models\NewVisitor;
 
 /*
 |--------------------------------------------------------------------------
@@ -77,19 +78,18 @@ Route::post('department/edit_validation', [DepartmentController::class, 'edit_va
 
 Route::get('department/delete/{id}', [DepartmentController::class, 'delete'])->name('delete');
 
-
 // Rutas de visitantes
 
-Route::get('visitor', [VisitorController::class, 'index'])->name('visitor.index');
+Route::get('/visitor', [VisitorController::class, 'index'])->name('visitor.index');
 
-Route::get('visitor/create', [VisitorController::class, 'create'])->name('visitor.create');
+Route::get('/visitor/add', [VisitorController::class, 'add'])->name('visitor.add');
 
-Route::post('visitor/store', [VisitorController::class, 'store'])->name('visitor.store');
+Route::post('/visitor/store', [VisitorController::class, 'store'])->name('visitor.store');
 
-Route::get('visitor/delete/{id}', [VisitorController::class, 'delete'])->name('visitor.delete');
+Route::get('/visitor/edit/{id}', [VisitorController::class, 'edit'])->name('visitor.edit');
 
-Route::get('visitor/fetch_all', [VisitorController::class, 'fetch_all'])->name('visitor.fetchall');
+Route::put('/visitor/update/{id}', [VisitorController::class, 'update'])->name('visitor.update');
 
-Route::get('visitor/add', [VisitorController::class, 'create'])->name('visitor.add');
+Route::get('/visitor/delete/{id}', [VisitorController::class, 'delete'])->name('visitor.delete');
 
-Route::get('visitor/fetch_all', [VisitorController::class, 'fetch_all'])->name('visitor.fetch_all');
+Route::put('/visitor/update/{id}', [VisitorController::class, 'update'])->name('visitor.update');
