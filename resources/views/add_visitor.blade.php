@@ -12,9 +12,9 @@
 </nav>
 
 <div class="row mt-4">
-    <div class="col-md-6">
+    <div class="col-md-8 offset-md-2">
         <div class="card">
-            <div class="card-header">{{ isset($visitor) ? 'Editar Visitante' : 'Agregar Nuevo Visitante' }}</div>
+            <div class="card-header text-center">{{ isset($visitor) ? 'Editar Visitante' : 'Agregar Nuevo Visitante' }}</div>
             <div class="card-body">
                 <form id="visitorForm" method="POST" action="{{ isset($visitor) ? route('visitor.update', $visitor->id) : route('visitor.store') }}" enctype="multipart/form-data">
                     @csrf
@@ -23,49 +23,75 @@
                     @endif
                     <div class="form-group mb-3">
                         <label><b>Nombre del Visitante</b></label>
-                        <input type="text" name="visitor_name" class="form-control" value="{{ isset($visitor) ? $visitor->visitor_name : '' }}" required />
+                        <input type="text" name="visitor_name" class="form-control form-control-lg" value="{{ isset($visitor) ? $visitor->visitor_name : '' }}" required />
                     </div>
 
                     <div class="form-group mb-3">
                         <label><b>Empresa</b></label>
-                        <input type="text" name="visitor_company" class="form-control" value="{{ isset($visitor) ? $visitor->visitor_company : '' }}" required />
+                        <input type="text" name="visitor_company" class="form-control form-control-lg" value="{{ isset($visitor) ? $visitor->visitor_company : '' }}" required />
                     </div>
 
                     <div class="form-group mb-3">
                         <label><b>Cédula de Identidad</b></label>
-                        <input type="text" name="visitor_identity_card" class="form-control" value="{{ isset($visitor) ? $visitor->visitor_identity_card : '' }}" required />
+                        <input type="text" name="visitor_identity_card" class="form-control form-control-lg" value="{{ isset($visitor) ? $visitor->visitor_identity_card : '' }}" required
+                               maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '');" />
                     </div>
 
-                    <div class="form-group mb-3">
+                    <!-- Campo oculto de Hora de Entrada -->
+                    <div class="form-group mb-3" style="display:none;">
                         <label><b>Hora de Entrada</b></label>
-                        <input type="datetime-local" name="visitor_enter_time" class="form-control" value="{{ isset($visitor) ? $visitor->visitor_enter_time : '' }}" required />
+                        <input type="datetime-local" name="visitor_enter_time" class="form-control form-control-lg"
+                               value="{{ isset($visitor) ? \Carbon\Carbon::parse($visitor->visitor_enter_time)->format('Y-m-d\TH:i') : '' }}" required />
                     </div>
 
                     <div class="form-group mb-3">
                         <label><b>Motivo de la Visita</b></label>
-                        <textarea name="visitor_reason_to_meet" class="form-control" required>{{ isset($visitor) ? $visitor->visitor_reason_to_meet : '' }}</textarea>
+                        <textarea name="visitor_reason_to_meet" class="form-control form-control-lg" required>{{ isset($visitor) ? $visitor->visitor_reason_to_meet : '' }}</textarea>
                     </div>
 
                     <!-- Sección de captura de foto -->
                     <div class="form-group mb-3">
                         <label><b>Foto del Visitante</b></label>
-                        <video id="video" width="100%" height="auto" autoplay></video>
-                        <canvas id="canvas" style="display:none;"></canvas>
-                        <br>
-                        <button type="button" id="captureButton" class="btn btn-primary">Capturar Foto</button>
+                        <div style="display: flex; justify-content: space-between; align-items: center; height: 350px;">
+                            <!-- Video de la cámara con tamaño fijo -->
+                            <video id="video" width="48%" height="100%" autoplay></video>
+                            <!-- Contenedor de la foto con tamaño fijo -->
+                            <div style="width: 48%; text-align: center;">
+                                <canvas id="canvas" style="display:none;"></canvas>
+                                <br>
+                                <!-- Imagen capturada con tamaño fijo -->
+                                <img id="photo" src="{{ isset($visitor) ? asset('storage/' . $visitor->visitor_photo) : '' }}" alt="Tu foto aparecerá aquí" style="width:100%; height: 100%; object-fit: cover;" />
+                            </div>
+                        </div>
+
+                        <!-- Botón para capturar la foto centrado -->
+                        <div style="text-align: center; margin-top: 15px;">
+                            <button type="button" id="captureButton" class="btn btn-lg">Capturar Foto</button>
+                        </div>
+
                         <input type="hidden" name="visitor_photo" id="visitor_photo" />
-                        <br>
-                        <img id="photo" src="{{ isset($visitor) ? asset('storage/' . $visitor->visitor_photo) : '' }}" alt="Tu foto aparecerá aquí" style="width:100%; max-width: 300px; display:block;" />
                     </div>
 
-                    <div class="form-group mb-3">
-                        <input type="submit" class="btn btn-primary" value="{{ isset($visitor) ? 'Actualizar Visitante' : 'Agregar Visitante' }}" />
+                    <div class="form-group mb-3 text-center">
+                        <input type="submit" class="btn btn-primary btn-lg" value="{{ isset($visitor) ? 'Actualizar Visitante' : 'Agregar Visitante' }}" />
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    #captureButton {
+        background-color: #4CAF50; /* Color verde */
+        color: white; /* Texto blanco */
+        border: none;
+    }
+
+    #captureButton:hover {
+        background-color: #45a049; /* Verde más oscuro al pasar el ratón */
+    }
+</style>
 
 <script>
     // Obtener acceso a la cámara
@@ -109,6 +135,21 @@
             event.preventDefault(); // Evita el envío del formulario
         }
     });
+
+    // Actualizar la hora de entrada con la hora del sistema cuando el formulario se carga
+    window.onload = function() {
+        const enterTimeInput = document.querySelector('input[name="visitor_enter_time"]');
+        if (!enterTimeInput.value) {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const formattedTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+            enterTimeInput.value = formattedTime;
+        }
+    };
 </script>
 
 @endsection

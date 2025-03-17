@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SubUserController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\VisitorController;
+use App\Http\Controllers\RatingController;
 use App\Models\NewVisitor;
 
 /*
@@ -93,3 +94,12 @@ Route::put('/visitor/update/{id}', [VisitorController::class, 'update'])->name('
 Route::get('/visitor/delete/{id}', [VisitorController::class, 'delete'])->name('visitor.delete');
 
 Route::put('/visitor/update/{id}', [VisitorController::class, 'update'])->name('visitor.update');
+
+Route::post('/visitor/{id}/exit', [VisitorController::class, 'registerExit'])->name('visitor.exit');
+
+Route::post('/ratings', [RatingController::class, 'store'])->name('ratings.store');
+
+Route::post('/ratings/store', [RatingController::class, 'store'])->name('ratings.store');
+
+Route::post('/ratings', [RatingController::class, 'store']);
+

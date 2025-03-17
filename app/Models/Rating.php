@@ -53,12 +53,7 @@
                         <tr>
                             <td>
                                 <!-- Mostrar la imagen en miniatura -->
-                                <div style="text-align: center;">
-                                    <img src="{{ asset('storage/' . $visitor->visitor_photo) }}"
-                                    alt="Foto de {{ $visitor->visitor_name }}"
-                                    style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 1px solid #ccc;">
-
-                                </div>
+                                <img src="{{ asset('storage/visitor_photos/' . $visitor->visitor_photo) }}" alt="Foto" width="50" height="50">
                             </td>
                             <td>{{ $visitor->visitor_name }}</td>
                             <td>{{ $visitor->visitor_company }}</td>
@@ -71,7 +66,7 @@
                                 @if($visitor->visitor_out_time)
                                     {{ $visitor->visitor_out_time }}
                                 @else
-                                    <form action="{{ route('visitor.exit', $visitor->id) }}" method="POST" class="exit-form">
+                                    <form action="{{ route('visitor.exit', $visitor->id) }}" method="POST">
                                         @csrf
                                         <button type="submit" class="btn btn-soft-danger btn-sm" @if($visitor->visitor_out_time) disabled @endif>
                                             Registrar Salida
@@ -125,21 +120,6 @@
     .btn-sm {
         margin-right: 10px;
     }
-
-    .rating {
-        display: flex;
-        gap: 10px;
-        font-size: 30px;
-    }
-
-    .star {
-        cursor: pointer;
-    }
-
-    .star.selected {
-        color: gold;
-    }
 </style>
-
 
 @endsection

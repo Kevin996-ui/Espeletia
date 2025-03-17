@@ -16,7 +16,7 @@
         <div class="card">
             <div class="card-header">Editar Visitante</div>
             <div class="card-body">
-                <form method="POST" action="{{ route('visitor.update', $visitor->id) }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ route('visitor.update', $visitor->id) }}" enctype="multipart/form-data" id="visitorForm">
                     @csrf
                     @method('PUT')
 
@@ -32,13 +32,14 @@
 
                     <div class="form-group mb-3">
                         <label><b>Cédula de Identidad</b></label>
-                        <input type="text" name="visitor_identity_card" class="form-control" value="{{ old('visitor_identity_card', $visitor->visitor_identity_card) }}" required />
+                        <input type="text" name="visitor_identity_card" class="form-control"
+                               value="{{ old('visitor_identity_card', $visitor->visitor_identity_card) }}"
+                               maxlength="13"
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '');" required />
                     </div>
 
-                    <div class="form-group mb-3">
-                        <label><b>Hora de Entrada</b></label>
-                        <input type="datetime-local" name="visitor_enter_time" class="form-control" value="{{ old('visitor_enter_time', $visitor->visitor_enter_time) }}" required />
-                    </div>
+                    <!-- El campo de Hora de Entrada ya no se muestra -->
+                    <input type="hidden" name="visitor_enter_time" id="visitor_enter_time" />
 
                     <div class="form-group mb-3">
                         <label><b>Motivo de la Visita</b></label>
@@ -47,16 +48,35 @@
 
                     <div class="form-group mb-3">
                         <label><b>Foto del Visitante</b></label>
-                        <video id="video" width="100%" height="auto" autoplay></video>
-                        <canvas id="canvas" style="display:none;"></canvas>
-                        <br>
-                        <button type="button" id="captureButton" class="btn btn-primary">Capturar Foto</button>
-                        <input type="hidden" name="visitor_photo" id="visitor_photo" />
-                        <br>
-                        <img id="photo" src="{{ asset('storage/' . $visitor->visitor_photo) }}" alt="Tu foto aparecerá aquí" style="width:100%; max-width: 300px; display:{{ $visitor->visitor_photo ? 'block' : 'none' }}" />
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                            <!-- Imagen capturada -->
+                            <div style="width: 50%; text-align: center;">
+                                <canvas id="canvas" style="display:none;"></canvas>
+                                <img id="photo" src="{{ isset($visitor->visitor_photo) ? asset('storage/' . $visitor->visitor_photo) : '' }}"
+                                     alt="Si deseas cambiar tu foto, puedes capturar una nueva."
+                                     style="width: 100%; height: 250px; object-fit: cover; display:{{ $visitor->visitor_photo ? 'block' : 'none' }};" />
+                            </div>
+
+                            <!-- Video en vivo -->
+                            <div style="width: 50%; text-align: center;">
+                                <video id="video" style="width: 100%; height: 250px; object-fit: cover;" autoplay></video>
+                            </div>
+                        </div>
+
+                        <!-- Botón para capturar la foto debajo de ambos recuadros -->
+                        <div style="text-align: center; margin-top: 15px;">
+                            <!-- Botón con color verde (Bootstrap `btn-success`) -->
+                            <button type="button" id="captureButton" class="btn btn-success">Capturar Foto</button>
+                        </div>
+
+                        <!-- Campo oculto para la imagen capturada -->
+                        <input type="hidden" name="visitor_photo" id="visitor_photo" value="{{ old('visitor_photo', isset($visitor->visitor_photo) ? asset('storage/' . $visitor->visitor_photo) : '') }}" />
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Actualizar Visitante</button>
+                    <!-- Botón de actualizar visitante centrado -->
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button type="submit" class="btn btn-primary">Actualizar Visitante</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -70,6 +90,7 @@
     const photo = document.getElementById('photo');
     const captureButton = document.getElementById('captureButton');
     const visitorPhoto = document.getElementById('visitor_photo');
+    const visitorEnterTime = document.getElementById('visitor_enter_time');
 
     // Obtener el flujo de video de la cámara
     navigator.mediaDevices.getUserMedia({ video: true })
@@ -82,20 +103,37 @@
 
     // Capturar la foto cuando el usuario hace clic en el botón
     captureButton.addEventListener('click', function() {
-        // Dibujar la imagen del video en el canvas
+        // Establecer dimensiones del canvas igual al video
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
+
+        // Dibujar la imagen del video en el canvas
         canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        // Convertir la imagen del canvas a un data URL
+        // Convertir la imagen a formato base64
         const dataURL = canvas.toDataURL('image/jpeg');
 
-        // Mostrar la foto en la vista previa
+        // Mostrar la foto capturada con las mismas dimensiones del video
         photo.src = dataURL;
         photo.style.display = 'block';
+        photo.style.width = '100%';
+        photo.style.height = '250px';
+        photo.style.objectFit = 'cover';
 
-        // Asignar la foto capturada al campo hidden (para enviarlo en el formulario)
+        // Asignar el valor al campo oculto para enviarlo al backend
         visitorPhoto.value = dataURL;
+    });
+
+    // Cuando el formulario se va a enviar, actualizar la hora de entrada con la hora del sistema
+    document.getElementById('visitorForm').addEventListener('submit', function(event) {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const formattedTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+        visitorEnterTime.value = formattedTime; // Asignamos la hora actual al campo oculto
     });
 </script>
 

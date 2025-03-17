@@ -18,4 +18,8 @@ class NewVisitor extends Model
         'visitor_reason_to_meet',
         'visitor_photo'
     ];
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class, 'visitor_id');
+    }
 }
