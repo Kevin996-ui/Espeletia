@@ -10,13 +10,24 @@ class VisitorController extends Controller
     // Mostrar todos los visitantes (índice)
     public function index(Request $request)
     {
-        // Si hay una búsqueda por cédula
+        // Crear la consulta base
+        $query = NewVisitor::query();
+
+        // Filtrar por cédula si se proporciona
         if ($request->has('search') && $request->search != '') {
-            $visitors = NewVisitor::where('visitor_identity_card', 'like', '%' . $request->search . '%')->get();
-        } else {
-            $visitors = NewVisitor::all();
+            $query->where('visitor_identity_card', 'like', '%' . $request->search . '%');
         }
 
+        // Filtrar por fechas si están presentes
+        if ($request->has('start_date') && $request->has('end_date') && $request->start_date && $request->end_date) {
+            $query->whereBetween('visitor_enter_time', [$request->start_date, $request->end_date]);
+        }
+
+        // Obtener los visitantes filtrados y paginados
+        $visitors = $query->orderBy('visitor_enter_time', 'desc') // Orden descendente por la hora de entrada
+                          ->paginate(5); // Paginación con 5 visitantes por página
+
+        // Pasar los datos a la vista
         return view('visitor', compact('visitors'));
     }
 
@@ -140,13 +151,41 @@ class VisitorController extends Controller
     // Registrar la salida del visitante
     public function registerExit($id)
     {
-        $visitor = NewVisitor::findOrFail($id);
-        // Registrar la hora actual como hora de salida
-        $visitor->visitor_out_time = now();
+            $visitor = NewVisitor::findOrFail($id);
+            // Registrar la hora actual como hora de salida
+            $visitor->visitor_out_time = now();
 
-        $visitor->save();
+            $visitor->save();
 
-        return redirect()->route('visitor.index')->with('success', 'Hora de salida registrada.');
+            return redirect()->route('visitor.index')->with('success', 'Hora de salida registrada.');
     }
+
+    public function report(Request $request)
+    {
+        // Crear la consulta base
+        $query = NewVisitor::query();
+
+        // Filtrar por cédula si se proporciona
+        if ($request->has('search') && $request->search != '') {
+            $query->where('visitor_identity_card', 'like', '%' . $request->search . '%');
+        }
+
+        // Filtrar por fechas si están presentes
+        if ($request->has('start_date') && $request->has('end_date') && $request->start_date && $request->end_date) {
+            $query->whereBetween('visitor_enter_time', [
+                $request->start_date . ' 00:00:00', // Comienza desde el inicio del día
+                $request->end_date . ' 23:59:59'    // Termina hasta el final del día
+            ]);
+        }
+
+        // Obtener todos los visitantes sin paginación
+        $visitors = $query->orderBy('visitor_enter_time', 'desc') // Orden descendente por la hora de entrada
+                        ->get(); // Obtener todos los visitantes
+
+        // Pasar los datos a la vista
+        return view('visitor_report', compact('visitors'));
+    }
+
+
 
 }

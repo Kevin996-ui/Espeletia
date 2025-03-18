@@ -2,11 +2,11 @@
 
 @section('content')
 
-<h2 class="mt-3">Administración de Visitantes</h2>
+<h2 class="mt-3">Listado de Visitas</h2>
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
-        <li class="breadcrumb-item active">Administración de Visitantes</li>
+        <li class="breadcrumb-item active">Listado de Visitas</li>
     </ol>
 </nav>
 
@@ -22,15 +22,22 @@
             <div class="row">
                 <div class="col col-md-6">Administración de Visitantes</div>
                 <div class="col col-md-6">
-                    <a href="{{ route('visitor.add') }}" class="btn btn-success btn-sm float-end">Agregar Visitante</a>
+                    <!-- Primero el botón de "Agregar Visitante" -->
+                    <a href="{{ route('visitor.add') }}" class="btn btn-success btn-sm float-end">Registrar Visita</a>
+                    <!-- Verifica el rol antes de mostrar el botón de "Ver Reporte" -->
+                    @if(auth()->user()->type === 'Admin')
+                        <a href="{{ route('visitor.report') }}" class="btn btn-secondary btn-sm float-end ms-2">Reporte</a>
+                    @endif
                 </div>
             </div>
         </div>
         <div class="card-body">
-            <!-- Formulario de búsqueda -->
+            <!-- Formulario de búsqueda con solo filtro por cédula -->
             <form method="GET" action="{{ route('visitor.index') }}">
-                <div class="mb-3">
-                    <input type="text" name="search" class="form-control" placeholder="Buscar por Cédula" value="{{ request('search') }}">
+                <div class="row mb-3">
+                    <div class="col">
+                        <input type="text" name="search" class="form-control" placeholder="Buscar por cédula y presione enter" value="{{ request('search') }}">
+                    </div>
                 </div>
             </form>
 
@@ -52,12 +59,10 @@
                         @foreach($visitors as $visitor)
                         <tr>
                             <td>
-                                <!-- Mostrar la imagen en miniatura -->
                                 <div style="text-align: center;">
                                     <img src="{{ asset('storage/' . $visitor->visitor_photo) }}"
-                                    alt="Foto de {{ $visitor->visitor_name }}"
-                                    style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 1px solid #ccc;">
-
+                                         alt="Foto de {{ $visitor->visitor_name }}"
+                                         style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 1px solid #ccc;">
                                 </div>
                             </td>
                             <td>{{ $visitor->visitor_name }}</td>
@@ -66,7 +71,6 @@
                             <td>{{ $visitor->visitor_enter_time }}</td>
                             <td>{{ $visitor->visitor_reason_to_meet }}</td>
 
-                            <!-- Columna Hora de Salida -->
                             <td>
                                 @if($visitor->visitor_out_time)
                                     {{ $visitor->visitor_out_time }}
@@ -80,7 +84,6 @@
                                 @endif
                             </td>
 
-                            <!-- Columna Acción con salto de línea entre botones -->
                             <td>
                                 <div>
                                     <a href="{{ $visitor->visitor_out_time ? 'javascript:void(0);' : route('visitor.edit', $visitor->id) }}"
@@ -99,6 +102,16 @@
                         @endforeach
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Paginación personalizada -->
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <div>
+                    Mostrando {{ $visitors->firstItem() }} a {{ $visitors->lastItem() }} de {{ $visitors->total() }} resultados
+                </div>
+                <div>
+                    {{ $visitors->links('vendor.pagination.bootstrap-4') }}
+                </div>
             </div>
         </div>
     </div>
@@ -140,6 +153,5 @@
         color: gold;
     }
 </style>
-
 
 @endsection

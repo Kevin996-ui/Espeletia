@@ -82,6 +82,8 @@ Route::get('department/delete/{id}', [DepartmentController::class, 'delete'])->n
 // Rutas de visitantes
 
 Route::get('/visitor', [VisitorController::class, 'index'])->name('visitor.index');
+Route::get('/visitors', [VisitorController::class, 'index'])->name('visitor.index');
+
 
 Route::get('/visitor/add', [VisitorController::class, 'add'])->name('visitor.add');
 
@@ -97,9 +99,6 @@ Route::put('/visitor/update/{id}', [VisitorController::class, 'update'])->name('
 
 Route::post('/visitor/{id}/exit', [VisitorController::class, 'registerExit'])->name('visitor.exit');
 
-Route::post('/ratings', [RatingController::class, 'store'])->name('ratings.store');
-
-Route::post('/ratings/store', [RatingController::class, 'store'])->name('ratings.store');
-
 Route::post('/ratings', [RatingController::class, 'store']);
 
+Route::get('/visitor-report', [VisitorController::class, 'report'])->name('visitor.report');
