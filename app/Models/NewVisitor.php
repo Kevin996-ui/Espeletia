@@ -16,10 +16,15 @@ class NewVisitor extends Model
         'visitor_enter_time',
         'visitor_out_time',
         'visitor_reason_to_meet',
-        'visitor_photo'
+        'visitor_photo',
+        'department_id',
     ];
     public function ratings()
     {
         return $this->hasMany(Rating::class, 'visitor_id');
+    }
+    public function department()
+    {
+        return $this->belongsTo(Department::class);  // Relación con el modelo Department
     }
 }

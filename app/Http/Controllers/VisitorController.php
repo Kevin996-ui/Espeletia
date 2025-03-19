@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\NewVisitor;
+use App\Models\Department;
 use Illuminate\Http\Request;
 
 class VisitorController extends Controller
@@ -31,11 +32,14 @@ class VisitorController extends Controller
         return view('visitor', compact('visitors'));
     }
 
+    // Mostrar formulario para agregar un visitante
     public function add()
     {
-        return view('add_visitor');
+        $departments = Department::all();
+        return view('add_visitor', compact('departments'));
     }
 
+    // Almacenar un nuevo visitante
     public function store(Request $request)
     {
         $request->validate([
@@ -45,6 +49,7 @@ class VisitorController extends Controller
             'visitor_enter_time' => 'required|date',
             'visitor_reason_to_meet' => 'required',
             'visitor_photo' => 'required',
+            'department_id' => 'nullable|exists:departments,id',  // Validación para departamento
         ]);
 
         // Obtener la cédula del visitante para usarla como nombre de archivo
@@ -73,17 +78,21 @@ class VisitorController extends Controller
             'visitor_out_time' => null, // No tiene hora de salida al inicio
             'visitor_reason_to_meet' => $request->visitor_reason_to_meet,
             'visitor_photo' => 'visitor_photos/' . $imageName, // Guardar la ruta en la BD
+            'department_id' => $request->department_id,  // Guardar el ID del departamento
         ]);
 
         return redirect()->route('visitor.index')->with('success', 'Visitante agregado exitosamente');
     }
 
+    // Mostrar formulario para editar un visitante
     public function edit($id)
     {
         $visitor = NewVisitor::findOrFail($id);
-        return view('edit_visitor', compact('visitor'));
+        $departments = Department::all();  // Obtener todos los departamentos
+        return view('edit_visitor', compact('visitor', 'departments'));  // Pasar los departamentos a la vista
     }
 
+    // Actualizar un visitante existente
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -93,6 +102,7 @@ class VisitorController extends Controller
             'visitor_enter_time' => 'required|date',
             'visitor_reason_to_meet' => 'required',
             'visitor_photo' => 'nullable',
+            'department_id' => 'nullable|exists:departments,id',  // Validación para el departamento
         ]);
 
         $visitor = NewVisitor::findOrFail($id);
@@ -125,6 +135,7 @@ class VisitorController extends Controller
         $visitor->visitor_identity_card = $identityCard;
         $visitor->visitor_enter_time = $request->visitor_enter_time;
         $visitor->visitor_reason_to_meet = $request->visitor_reason_to_meet;
+        $visitor->department_id = $request->department_id;  // Actualizar el campo department_id
 
         // Guardar los cambios
         $visitor->save();
@@ -132,6 +143,7 @@ class VisitorController extends Controller
         return redirect()->route('visitor.index')->with('success', 'Visitante actualizado exitosamente');
     }
 
+    // Eliminar un visitante
     public function delete($id)
     {
         $visitor = NewVisitor::findOrFail($id);
@@ -151,15 +163,16 @@ class VisitorController extends Controller
     // Registrar la salida del visitante
     public function registerExit($id)
     {
-            $visitor = NewVisitor::findOrFail($id);
-            // Registrar la hora actual como hora de salida
-            $visitor->visitor_out_time = now();
+        $visitor = NewVisitor::findOrFail($id);
+        // Registrar la hora actual como hora de salida
+        $visitor->visitor_out_time = now();
 
-            $visitor->save();
+        $visitor->save();
 
-            return redirect()->route('visitor.index')->with('success', 'Hora de salida registrada.');
+        return redirect()->route('visitor.index')->with('success', 'Hora de salida registrada.');
     }
 
+    // Reporte de visitantes
     public function report(Request $request)
     {
         // Crear la consulta base
@@ -178,14 +191,24 @@ class VisitorController extends Controller
             ]);
         }
 
+        // Filtro por departamento si está presente
+        if ($request->has('department_id') && $request->department_id != '') {
+            $query->where('department_id', $request->department_id);
+        }
+
+        // Filtro por visitantes sin salida registrada
+        if ($request->has('no_exit') && $request->no_exit == '1') {
+            $query->whereNull('visitor_out_time');
+        }
+
         // Obtener todos los visitantes sin paginación
         $visitors = $query->orderBy('visitor_enter_time', 'desc') // Orden descendente por la hora de entrada
-                        ->get(); // Obtener todos los visitantes
+                          ->get(); // Obtener todos los visitantes
+
+        // Obtener todos los departamentos
+        $departments = Department::all();
 
         // Pasar los datos a la vista
-        return view('visitor_report', compact('visitors'));
+        return view('visitor_report', compact('visitors', 'departments'));
     }
-
-
-
 }

@@ -51,6 +51,7 @@
                             <th>Cédula de Identidad</th>
                             <th>Hora de Entrada</th>
                             <th>Motivo de Visita</th>
+                            <th>Departamento</th> <!-- Nueva columna -->
                             <th>Hora de Salida</th>
                             <th>Acción</th>
                         </tr>
@@ -70,6 +71,15 @@
                             <td>{{ $visitor->visitor_identity_card }}</td>
                             <td>{{ $visitor->visitor_enter_time }}</td>
                             <td>{{ $visitor->visitor_reason_to_meet }}</td>
+
+                            <!-- Mostrar el departamento -->
+                            <td>
+                                @if($visitor->department)
+                                    {{ $visitor->department->department_name }}
+                                @else
+                                    N/A
+                                @endif
+                            </td>
 
                             <td>
                                 @if($visitor->visitor_out_time)

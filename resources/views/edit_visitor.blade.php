@@ -46,6 +46,20 @@
                         <input type="text" name="visitor_reason_to_meet" class="form-control" value="{{ old('visitor_reason_to_meet', $visitor->visitor_reason_to_meet) }}" required />
                     </div>
 
+                    <!-- Campo para seleccionar el Departamento -->
+                    <div class="form-group mb-3">
+                        <label><b>Departamento</b></label>
+                        <select name="department_id" class="form-control" required>
+                            <option value="">Seleccione un Departamento</option>
+                            @foreach($departments as $department)
+                                <option value="{{ $department->id }}"
+                                        {{ old('department_id', $visitor->department_id) == $department->id ? 'selected' : '' }}>
+                                    {{ $department->department_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     <div class="form-group mb-3">
                         <label><b>Foto del Visitante</b></label>
                         <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
@@ -65,7 +79,6 @@
 
                         <!-- Botón para capturar la foto debajo de ambos recuadros -->
                         <div style="text-align: center; margin-top: 15px;">
-                            <!-- Botón con color verde (Bootstrap `btn-success`) -->
                             <button type="button" id="captureButton" class="btn btn-success">Capturar Foto</button>
                         </div>
 

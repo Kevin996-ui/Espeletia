@@ -21,13 +21,15 @@ class DepartmentController extends Controller
 
     function fetch_all(Request $request)
     {
-        if($request->ajax())
-        {
+        if ($request->ajax()) {
             $data = Department::latest()->get();
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->addColumn('action', function($row){
+                ->addColumn('action', function ($row) {
                     return '<a href="/department/edit/'.$row->id.'" class="btn btn-primary btn-sm">Editar</a>&nbsp;<button type="button" class="btn btn-danger btn-sm delete" data-id="'.$row->id.'">Eliminar</button>';
+                })
+                ->addColumn('email', function ($row) {
+                    return $row->email; // Agregar el campo email a la tabla
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -42,15 +44,17 @@ class DepartmentController extends Controller
     function add_validation(Request $request)
     {
         $request->validate([
-            'department_name'       =>  'required',
-            'contact_person'        =>  'required'
+            'department_name' => 'required',
+            'contact_person' => 'required',
+            'email' => 'required|email', // Validación de correo
         ]);
 
         $data = $request->all();
 
         Department::create([
-            'department_name'       =>  $data['department_name'],
-            'contact_person'        =>  implode(", ", $data['contact_person'])
+            'department_name' => $data['department_name'],
+            'contact_person' => implode(", ", $data['contact_person']),
+            'email' => $data['email'], // Guardar el correo
         ]);
 
         return redirect('department')->with('success', 'Nuevo departamento agregado');
@@ -66,15 +70,17 @@ class DepartmentController extends Controller
     function edit_validation(Request $request)
     {
         $request->validate([
-            'department_name'       =>  'required',
-            'contact_person'        =>  'required'
+            'department_name' => 'required',
+            'contact_person' => 'required',
+            'email' => 'required|email', // Validación de correo
         ]);
 
         $data = $request->all();
 
         $form_data = array(
-            'department_name'       =>  $data['department_name'],
-            'contact_person'        =>  implode(", ", $data['contact_person'])
+            'department_name' => $data['department_name'],
+            'contact_person' => implode(", ", $data['contact_person']),
+            'email' => $data['email'], // Actualizar el correo
         );
 
         Department::whereId($data['hidden_id'])->update($form_data);

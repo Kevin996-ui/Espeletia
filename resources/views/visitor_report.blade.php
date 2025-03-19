@@ -41,46 +41,91 @@
                         <input type="date" name="end_date" class="form-control" value="{{ request('end_date') }}">
                     </div>
                     <div class="col">
+                        <select name="department_id" class="form-control">
+                            <option value="">Seleccione un Departamento</option>
+                            @foreach($departments as $department)
+                                <option value="{{ $department->id }}"
+                                        {{ request('department_id') == $department->id ? 'selected' : '' }}>
+                                    {{ $department->department_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <!-- Filtro para no registrar salida -->
+                    <div class="col">
+                        <select name="no_exit" class="form-control">
+                            <option value="">Registros de salida</option>
+                            <option value="1" {{ request('no_exit') == '1' ? 'selected' : '' }}>No han registrado salida</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col text-end">
                         <button type="submit" class="btn btn-primary">Filtrar</button>
-                        <!-- Botón para limpiar filtros -->
-                        <a href="{{ route('visitor.report') }}" class="btn btn-secondary">Limpiar Filtros</a>
+                        <a href="{{ route('visitor.report') }}" class="btn btn-secondary ms-2">Limpiar Filtros</a>
                     </div>
                 </div>
             </form>
 
-            <!-- Tabla de resultados -->
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Foto</th>
-                            <th>Nombre del Visitante</th>
-                            <th>Empresa</th>
-                            <th>Cédula de Identidad</th>
-                            <th>Hora de Entrada</th>
-                            <th>Motivo de Visita</th>
-                            <th>Hora de Salida</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($visitors as $visitor)
-                            <tr>
-                                <td>
-                                    <div style="text-align: center;">
-                                        <img src="{{ asset('storage/' . $visitor->visitor_photo) }}" alt="Foto de {{ $visitor->visitor_name }}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 1px solid #ccc;">
-                                    </div>
-                                </td>
-                                <td>{{ $visitor->visitor_name }}</td>
-                                <td>{{ $visitor->visitor_company }}</td>
-                                <td>{{ $visitor->visitor_identity_card }}</td>
-                                <td>{{ $visitor->visitor_enter_time }}</td>
-                                <td>{{ $visitor->visitor_reason_to_meet }}</td>
-                                <td>{{ $visitor->visitor_out_time ?? 'No registrado' }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+            <!-- Botón de exportar -->
+            <div class="row mb-3">
+                <div class="col">
+                    <a href="{{ route('visitor.report.export', ['format' => 'csv']) }}" class="btn btn-success">Exportar CSV</a>
+                    <a href="{{ route('visitor.report.export', ['format' => 'pdf']) }}" class="btn btn-danger">Exportar PDF</a>
+                </div>
             </div>
+
+            <!-- Verificar si no hay resultados -->
+            @if($visitors->isEmpty())
+                <div class="alert alert-warning">
+                    No se encontraron visitantes que coincidan con los filtros aplicados.
+                </div>
+            @else
+                <!-- Tabla de resultados -->
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Foto</th>
+                                <th>Nombre del Visitante</th>
+                                <th>Empresa</th>
+                                <th>Cédula de Identidad</th>
+                                <th>Hora de Entrada</th>
+                                <th>Motivo de Visita</th>
+                                <th>Departamento</th> <!-- Columna para Departamento -->
+                                <th>Hora de Salida</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($visitors as $visitor)
+                                <tr>
+                                    <td>
+                                        <div style="text-align: center;">
+                                            <img src="{{ asset('storage/' . $visitor->visitor_photo) }}" alt="Foto de {{ $visitor->visitor_name }}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 1px solid #ccc;">
+                                        </div>
+                                    </td>
+                                    <td>{{ $visitor->visitor_name }}</td>
+                                    <td>{{ $visitor->visitor_company }}</td>
+                                    <td>{{ $visitor->visitor_identity_card }}</td>
+                                    <td>{{ $visitor->visitor_enter_time }}</td>
+                                    <td>{{ $visitor->visitor_reason_to_meet }}</td>
+
+                                    <!-- Mostrar Departamento -->
+                                    <td>
+                                        @if($visitor->department)
+                                            {{ $visitor->department->department_name }}
+                                        @else
+                                            N/A
+                                        @endif
+                                    </td>
+
+                                    <td>{{ $visitor->visitor_out_time ?? 'No registrado' }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
         </div>
     </div>
 </div>

@@ -37,6 +37,13 @@
 		        		<div id="append_person"></div>
 		        	</div>
 		        	<div class="form-group mb-3">
+		        		<label><b>Correo Electrónico</b></label>
+		        		<input type="email" name="email" class="form-control" />
+		        		@if($errors->has('email'))
+		        			<span class="text-danger">{{ $errors->first('email') }}</span>
+		        		@endif
+		        	</div>
+		        	<div class="form-group mb-3">
 		        		<input type="submit" class="btn btn-primary" value="Agregar" />
 		        	</div>
 				</form>
@@ -46,12 +53,10 @@
 </div>
 
 <script>
-
 $(document).ready(function(){
 	var count_person = 0;
 
 	$(document).on('click', '#add_person', function(){
-
 		count_person++;
 
 		var html = `
@@ -66,17 +71,12 @@ $(document).ready(function(){
 		`;
 
 		$('#append_person').append(html);
-
 	});
 
 	$(document).on('click', '.remove_person', function(){
-
 		var button_id = $(this).data('id');
-
 		$('#person_'+button_id).remove();
-
 	});
 });
-
 </script>
 @endsection
