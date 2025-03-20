@@ -18,13 +18,11 @@ class NewVisitor extends Model
         'visitor_reason_to_meet',
         'visitor_photo',
         'department_id',
+        'visitor_card', // Nuevo campo
     ];
-    public function ratings()
-    {
-        return $this->hasMany(Rating::class, 'visitor_id');
-    }
+
     public function department()
     {
-        return $this->belongsTo(Department::class);  // Relación con el modelo Department
+        return $this->belongsTo(Department::class);
     }
 }

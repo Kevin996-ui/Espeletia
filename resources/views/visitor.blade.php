@@ -22,9 +22,7 @@
             <div class="row">
                 <div class="col col-md-6">Administración de Visitantes</div>
                 <div class="col col-md-6">
-                    <!-- Primero el botón de "Agregar Visitante" -->
                     <a href="{{ route('visitor.add') }}" class="btn btn-success btn-sm float-end">Registrar Visita</a>
-                    <!-- Verifica el rol antes de mostrar el botón de "Ver Reporte" -->
                     @if(auth()->user()->type === 'Admin')
                         <a href="{{ route('visitor.report') }}" class="btn btn-secondary btn-sm float-end ms-2">Reporte</a>
                     @endif
@@ -32,7 +30,6 @@
             </div>
         </div>
         <div class="card-body">
-            <!-- Formulario de búsqueda con solo filtro por cédula -->
             <form method="GET" action="{{ route('visitor.index') }}">
                 <div class="row mb-3">
                     <div class="col">
@@ -51,7 +48,8 @@
                             <th>Cédula de Identidad</th>
                             <th>Hora de Entrada</th>
                             <th>Motivo de Visita</th>
-                            <th>Departamento</th> <!-- Nueva columna -->
+                            <th>Departamento</th>
+                            <th>Tarjeta de Visitante</th>
                             <th>Hora de Salida</th>
                             <th>Acción</th>
                         </tr>
@@ -71,16 +69,8 @@
                             <td>{{ $visitor->visitor_identity_card }}</td>
                             <td>{{ $visitor->visitor_enter_time }}</td>
                             <td>{{ $visitor->visitor_reason_to_meet }}</td>
-
-                            <!-- Mostrar el departamento -->
-                            <td>
-                                @if($visitor->department)
-                                    {{ $visitor->department->department_name }}
-                                @else
-                                    N/A
-                                @endif
-                            </td>
-
+                            <td>{{ $visitor->department ? $visitor->department->department_name : 'N/A' }}</td>
+                            <td>{{ $visitor->visitor_card ? $visitor->visitor_card : 'N/A' }}</td>
                             <td>
                                 @if($visitor->visitor_out_time)
                                     {{ $visitor->visitor_out_time }}
@@ -93,7 +83,6 @@
                                     </form>
                                 @endif
                             </td>
-
                             <td>
                                 <div>
                                     <a href="{{ $visitor->visitor_out_time ? 'javascript:void(0);' : route('visitor.edit', $visitor->id) }}"
@@ -114,7 +103,6 @@
                 </table>
             </div>
 
-            <!-- Paginación personalizada -->
             <div class="d-flex justify-content-between align-items-center mt-4">
                 <div>
                     Mostrando {{ $visitors->firstItem() }} a {{ $visitors->lastItem() }} de {{ $visitors->total() }} resultados
@@ -147,20 +135,6 @@
 
     .btn-sm {
         margin-right: 10px;
-    }
-
-    .rating {
-        display: flex;
-        gap: 10px;
-        font-size: 30px;
-    }
-
-    .star {
-        cursor: pointer;
-    }
-
-    .star.selected {
-        color: gold;
     }
 </style>
 

@@ -50,6 +50,11 @@
                         </select>
                     </div>
 
+                    <div class="form-group">
+                        <label for="visitor_card">Visitor Card</label>
+                        <input type="text" name="visitor_card" class="form-control" value="{{ old('visitor_card', $visitor->visitor_card ?? '') }}">
+                    </div>
+
                     <div class="form-group mb-3" style="display:none;">
                         <label><b>Hora de Entrada</b></label>
                         <input type="datetime-local" name="visitor_enter_time" class="form-control form-control-lg" value="{{ isset($visitor) ? \Carbon\Carbon::parse($visitor->visitor_enter_time)->format('Y-m-d\TH:i') : '' }}" required />

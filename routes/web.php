@@ -82,8 +82,8 @@ Route::get('department/delete/{id}', [DepartmentController::class, 'delete'])->n
 // Rutas de visitantes
 
 Route::get('/visitor', [VisitorController::class, 'index'])->name('visitor.index');
-Route::get('/visitors', [VisitorController::class, 'index'])->name('visitor.index');
 
+Route::get('/visitors', [VisitorController::class, 'index'])->name('visitor.index');
 
 Route::get('/visitor/add', [VisitorController::class, 'add'])->name('visitor.add');
 

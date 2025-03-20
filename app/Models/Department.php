@@ -21,6 +21,6 @@ class Department extends Model
      */
     public function getContactEmailsAttribute()
     {
-        return explode(',', $this->email); // Suponemos que los correos están separados por coma
+        return explode(',', $this->email);
     }
 }
