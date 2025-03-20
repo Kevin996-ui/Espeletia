@@ -38,6 +38,12 @@
                                oninput="this.value = this.value.replace(/[^0-9]/g, '');" required />
                     </div>
 
+                    <!-- Campo Visitor Card -->
+                    <div class="form-group mb-3">
+                        <label for="visitor_card"><b>Tarjeta de visitante</b></label>
+                        <input type="text" name="visitor_card" class="form-control" value="{{ old('visitor_card', $visitor->visitor_card) }}">
+                    </div>
+
                     <!-- El campo de Hora de Entrada ya no se muestra -->
                     <input type="hidden" name="visitor_enter_time" id="visitor_enter_time" />
 

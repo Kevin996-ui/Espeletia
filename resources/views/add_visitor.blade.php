@@ -36,7 +36,6 @@
                         <input type="text" name="visitor_identity_card" class="form-control form-control-lg" value="{{ isset($visitor) ? $visitor->visitor_identity_card : '' }}" required maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '');" />
                     </div>
 
-                    <!-- Campo de selección del departamento -->
                     <div class="form-group mb-3">
                         <label><b>Departamento</b></label>
                         <select name="department_id" class="form-control form-control-lg" required>
@@ -51,7 +50,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="visitor_card">Visitor Card</label>
+                        <label for="visitor_card">Tarjeta de visitante</label>
                         <input type="text" name="visitor_card" class="form-control" value="{{ old('visitor_card', $visitor->visitor_card ?? '') }}">
                     </div>
 

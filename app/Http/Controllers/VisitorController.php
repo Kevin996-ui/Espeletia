@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 
 class VisitorController extends Controller
 {
+    // Agregar validación para usuario autenticado
     public function index(Request $request)
     {
         $query = NewVisitor::query();
@@ -20,7 +21,8 @@ class VisitorController extends Controller
             $query->whereBetween('visitor_enter_time', [$request->start_date, $request->end_date]);
         }
 
-        $visitors = $query->orderBy('visitor_enter_time', 'desc')
+        $visitors = $query->with('department') // Cargar relación de department
+                          ->orderBy('visitor_enter_time', 'desc')
                           ->paginate(5);
 
         return view('visitor', compact('visitors'));
@@ -41,19 +43,16 @@ class VisitorController extends Controller
             'visitor_enter_time' => 'required|date',
             'visitor_reason_to_meet' => 'required',
             'visitor_photo' => 'required',
-            'department_id' => 'nullable|exists:departments,id'
+            'department_id' => 'nullable|exists:departments,id',
+            'visitor_card' => 'required', // Validar visitor_card
         ]);
 
+        // Manejar foto del visitante
         $identityCard = $request->visitor_identity_card;
+        $visitor_card = $request->visitor_card;
+        $photoPath = $this->handleVisitorPhoto($request->input('visitor_photo'), $identityCard);
 
-        // Guardar foto del visitante
-        $imageData = $request->input('visitor_photo');
-        $image = str_replace('data:image/jpeg;base64,', '', $imageData);
-        $image = str_replace(' ', '+', $image);
-        $imageName = $identityCard . '.jpg';
-        $imagePath = public_path('storage/visitor_photos/' . $imageName);
-        file_put_contents($imagePath, base64_decode($image));
-
+        // Crear el visitante
         NewVisitor::create([
             'visitor_name' => $request->visitor_name,
             'visitor_company' => $request->visitor_company,
@@ -61,12 +60,24 @@ class VisitorController extends Controller
             'visitor_enter_time' => $request->visitor_enter_time,
             'visitor_out_time' => null,
             'visitor_reason_to_meet' => $request->visitor_reason_to_meet,
-            'visitor_photo' => 'visitor_photos/' . $imageName,
+            'visitor_photo' => $photoPath,
             'department_id' => $request->department_id,
-            'visitor_card' => $identityCard,
+            'visitor_card' => $visitor_card,
         ]);
 
         return redirect()->route('visitor.index')->with('success', 'Visitante agregado exitosamente');
+    }
+
+    // Manejo de foto del visitante
+    private function handleVisitorPhoto($imageData, $identityCard)
+    {
+        $image = str_replace('data:image/jpeg;base64,', '', $imageData);
+        $image = str_replace(' ', '+', $image);
+        $imageName = $identityCard . '.jpg'; // Nombre de la foto basado en identity_card
+        $imagePath = public_path('storage/visitor_photos/' . $imageName);
+        file_put_contents($imagePath, base64_decode($image));
+
+        return 'visitor_photos/' . $imageName;
     }
 
     public function edit($id)
@@ -85,30 +96,28 @@ class VisitorController extends Controller
             'visitor_enter_time' => 'required|date',
             'visitor_reason_to_meet' => 'required',
             'visitor_photo' => 'nullable',
-            'department_id' => 'nullable|exists:departments,id'
+            'department_id' => 'nullable|exists:departments,id',
+            'visitor_card' => 'required',
         ]);
 
         $visitor = NewVisitor::findOrFail($id);
         $identityCard = $request->visitor_identity_card;
+        $visitor_card = $request->visitor_card;
 
-        // Actualizar foto del visitante si hay una nueva
+        // Actualizar foto si es necesario
         if ($request->has('visitor_photo')) {
-            $imageData = $request->input('visitor_photo');
-            $image = str_replace('data:image/jpeg;base64,', '', $imageData);
-            $image = str_replace(' ', '+', $image);
-            $imageName = $identityCard . '.jpg';
-            $imagePath = public_path('storage/visitor_photos/' . $imageName);
-            file_put_contents($imagePath, base64_decode($image));
-            $visitor->visitor_photo = 'visitor_photos/' . $imageName;
+            $photoPath = $this->handleVisitorPhoto($request->input('visitor_photo'), $identityCard);
+            $visitor->visitor_photo = $photoPath;
         }
 
+        // Actualizar otros campos
         $visitor->visitor_name = $request->visitor_name;
         $visitor->visitor_company = $request->visitor_company;
         $visitor->visitor_identity_card = $identityCard;
         $visitor->visitor_enter_time = $request->visitor_enter_time;
         $visitor->visitor_reason_to_meet = $request->visitor_reason_to_meet;
         $visitor->department_id = $request->department_id;
-        $visitor->visitor_card = $identityCard;
+        $visitor->visitor_card = $visitor_card;
 
         $visitor->save();
 
@@ -137,26 +146,5 @@ class VisitorController extends Controller
         $visitor->save();
 
         return redirect()->route('visitor.index')->with('success', 'Hora de salida registrada.');
-    }
-
-    public function report(Request $request)
-    {
-        $query = NewVisitor::query();
-
-        if ($request->has('search') && $request->search != '') {
-            $query->where('visitor_identity_card', 'like', '%' . $request->search . '%');
-        }
-
-        if ($request->has('start_date') && $request->has('end_date') && $request->start_date && $request->end_date) {
-            $query->whereBetween('visitor_enter_time', [
-                $request->start_date . ' 00:00:00',
-                $request->end_date . ' 23:59:59'
-            ]);
-        }
-
-        $visitors = $query->orderBy('visitor_enter_time', 'desc')->get();
-        $departments = Department::all();
-
-        return view('visitor_report', compact('visitors', 'departments'));
     }
 }

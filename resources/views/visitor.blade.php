@@ -23,7 +23,7 @@
                 <div class="col col-md-6">Administración de Visitantes</div>
                 <div class="col col-md-6">
                     <a href="{{ route('visitor.add') }}" class="btn btn-success btn-sm float-end">Registrar Visita</a>
-                    @if(auth()->user()->type === 'Admin')
+                    @if(auth()->check() && auth()->user()->type === 'Admin')
                         <a href="{{ route('visitor.report') }}" class="btn btn-secondary btn-sm float-end ms-2">Reporte</a>
                     @endif
                 </div>
