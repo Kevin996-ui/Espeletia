@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\NewVisitor;
 use App\Models\Department;
 use Illuminate\Http\Request;
+use Dompdf\Dompdf;
+use Dompdf\Options;
+use Barryvdh\DomPDF\Facade as PDF;
 
 class VisitorController extends Controller
 {
@@ -36,7 +39,8 @@ class VisitorController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        // Validación
+        $rules = [
             'visitor_name' => 'required',
             'visitor_company' => 'required',
             'visitor_identity_card' => 'required',
@@ -44,8 +48,10 @@ class VisitorController extends Controller
             'visitor_reason_to_meet' => 'required',
             'visitor_photo' => 'required',
             'department_id' => 'nullable|exists:departments,id',
-            'visitor_card' => 'required', // Validar visitor_card
-        ]);
+            'visitor_card' => 'nullable', // Campo no es obligatorio en este caso
+        ];
+
+        $request->validate($rules);
 
         // Manejar foto del visitante
         $identityCard = $request->visitor_identity_card;
@@ -62,7 +68,7 @@ class VisitorController extends Controller
             'visitor_reason_to_meet' => $request->visitor_reason_to_meet,
             'visitor_photo' => $photoPath,
             'department_id' => $request->department_id,
-            'visitor_card' => $visitor_card,
+            'visitor_card' => $visitor_card,  // Solo si es proveedor
         ]);
 
         return redirect()->route('visitor.index')->with('success', 'Visitante agregado exitosamente');
@@ -89,7 +95,8 @@ class VisitorController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
+        // Validación de los campos
+        $rules = [
             'visitor_name' => 'required',
             'visitor_company' => 'required',
             'visitor_identity_card' => 'required',
@@ -97,8 +104,10 @@ class VisitorController extends Controller
             'visitor_reason_to_meet' => 'required',
             'visitor_photo' => 'nullable',
             'department_id' => 'nullable|exists:departments,id',
-            'visitor_card' => 'required',
-        ]);
+            'visitor_card' => 'nullable', // Campo no es obligatorio en este caso
+        ];
+
+        $request->validate($rules);
 
         $visitor = NewVisitor::findOrFail($id);
         $identityCard = $request->visitor_identity_card;
@@ -117,8 +126,9 @@ class VisitorController extends Controller
         $visitor->visitor_enter_time = $request->visitor_enter_time;
         $visitor->visitor_reason_to_meet = $request->visitor_reason_to_meet;
         $visitor->department_id = $request->department_id;
-        $visitor->visitor_card = $visitor_card;
+        $visitor->visitor_card = $visitor_card; // Solo si es proveedor
 
+        // Guardar los cambios en la base de datos
         $visitor->save();
 
         return redirect()->route('visitor.index')->with('success', 'Visitante actualizado exitosamente');
@@ -147,4 +157,51 @@ class VisitorController extends Controller
 
         return redirect()->route('visitor.index')->with('success', 'Hora de salida registrada.');
     }
+
+    public function showReportForm(Request $request)
+    {
+        // Obtener todos los departamentos para mostrarlos en el formulario
+        $departments = Department::all();
+
+        // Realizar la consulta de los visitantes con los filtros aplicados
+        $query = NewVisitor::query();
+
+        // Filtro por número de cédula
+        if ($request->has('search') && $request->search != '') {
+            $query->where('visitor_identity_card', 'like', '%' . $request->search . '%');
+        }
+
+        // Filtro por fechas (mismo día o rango de fechas)
+        if ($request->has('start_date') && $request->has('end_date') && $request->start_date && $request->end_date) {
+            // Si las fechas son iguales, consideramos que se busca por un solo día
+            if ($request->start_date == $request->end_date) {
+                $query->whereDate('visitor_enter_time', $request->start_date);  // Solo ese día
+            } else {
+                // Rango de fechas
+                $query->whereBetween('visitor_enter_time', [$request->start_date, $request->end_date]);
+            }
+        }
+
+        // Filtro por departamento
+        if ($request->has('department_id') && $request->department_id != '') {
+            $query->where('department_id', $request->department_id);
+        }
+
+        // Filtro por visitantes sin salida registrada
+        if ($request->has('no_exit') && $request->no_exit == '1') {
+            $query->whereNull('visitor_out_time');
+        }
+
+        // Filtro por Tarjeta de Visitante
+        if ($request->has('visitor_card') && $request->visitor_card != '') {
+            $query->where('visitor_card', 'like', '%' . $request->visitor_card . '%');
+        }
+
+        // Obtener los visitantes filtrados
+        $visitors = $query->with('department')->get(); // Puedes cambiar get() por paginate() si prefieres paginación
+
+        // Pasar los departamentos y los visitantes a la vista
+        return view('visitor_report', compact('departments', 'visitors'));
+    }
+
 }

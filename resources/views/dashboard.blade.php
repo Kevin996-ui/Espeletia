@@ -1,4 +1,4 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <title>TCC Tababela CargoCenter S.A.</title>
@@ -35,6 +35,7 @@
 
     <div class="container-fluid">
         <div class="row">
+            @if(Auth::user()->type == 'Admin')
             <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
                 <div class="position-sticky pt-3">
                     <ul class="nav flex-column">
@@ -44,33 +45,24 @@
                         <li class="nav-item">
                             <a class="nav-link {{ Request::segment(1) == 'profile' ? 'active' : '' }}" aria-current="page" href="/profile">Perfil</a>
                         </li>
-                        @if(Auth::user()->type == 'Admin')
                         <li class="nav-item">
                             <a class="nav-link {{ Request::segment(1) == 'sub_user' ? 'active' : '' }}" aria-current="page" href="/sub_user">Sub Usuario</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {{ Request::segment(1) == 'department' ? 'active' : '' }}" aria-current="page" href="/department">Departamento</a>
                         </li>
-                        @endif
-
                         <li class="nav-item">
                             <a class="nav-link {{ Request::segment(1) == 'visitor' ? 'active' : '' }}" href="/visitor">Visitante</a>
                         </li>
-
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('logout') }}">Cerrar sesión</a>
                         </li>
-
                     </ul>
-
                 </div>
             </nav>
+            @endif
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <!--<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">!-->
-
                 @yield('content')
-
-                <!--</div>!-->
             </main>
         </div>
     </div>

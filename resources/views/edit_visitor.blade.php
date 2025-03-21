@@ -38,8 +38,14 @@
                                oninput="this.value = this.value.replace(/[^0-9]/g, '');" required />
                     </div>
 
-                    <!-- Campo Visitor Card -->
+                    <!-- Campo para marcar si es proveedor -->
                     <div class="form-group mb-3">
+                        <label for="isProvider"><b>¿Es proveedor?</b></label>
+                        <input type="checkbox" name="isProvider" id="isProvider" value="1" {{ old('isProvider', $visitor->isProvider) ? 'checked' : '' }}>
+                    </div>
+
+                    <!-- Campo Visitor Card (Solo si es proveedor) -->
+                    <div class="form-group mb-3" id="visitor_card_group" style="display: none;">
                         <label for="visitor_card"><b>Tarjeta de visitante</b></label>
                         <input type="text" name="visitor_card" class="form-control" value="{{ old('visitor_card', $visitor->visitor_card) }}">
                     </div>
@@ -72,7 +78,7 @@
                             <!-- Imagen capturada -->
                             <div style="width: 50%; text-align: center;">
                                 <canvas id="canvas" style="display:none;"></canvas>
-                                <img id="photo" src="{{ isset($visitor->visitor_photo) ? asset('storage/' . $visitor->visitor_photo) : '' }}"
+                                <img id="photo" src="{{ isset($visitor->visitor_photo) && $visitor->visitor_photo ? asset('storage/' . $visitor->visitor_photo) : '' }}"
                                      alt="Si deseas cambiar tu foto, puedes capturar una nueva."
                                      style="width: 100%; height: 250px; object-fit: cover; display:{{ $visitor->visitor_photo ? 'block' : 'none' }};" />
                             </div>
@@ -89,7 +95,7 @@
                         </div>
 
                         <!-- Campo oculto para la imagen capturada -->
-                        <input type="hidden" name="visitor_photo" id="visitor_photo" value="{{ old('visitor_photo', isset($visitor->visitor_photo) ? asset('storage/' . $visitor->visitor_photo) : '') }}" />
+                        <input type="hidden" name="visitor_photo" id="visitor_photo" value="{{ old('visitor_photo', isset($visitor->visitor_photo) && $visitor->visitor_photo ? asset('storage/' . $visitor->visitor_photo) : '') }}" />
                     </div>
 
                     <!-- Botón de actualizar visitante centrado -->
@@ -103,6 +109,28 @@
 </div>
 
 <script>
+    // Función para mostrar u ocultar el campo de tarjeta de visitante al marcar o desmarcar el checkbox
+    function toggleVisitorCardField() {
+        const visitorCardGroup = document.getElementById('visitor_card_group');
+        const isProviderChecked = document.getElementById('isProvider').checked;
+        // Si está marcado, mostrar el campo
+        if (isProviderChecked) {
+            visitorCardGroup.style.display = 'block';
+        } else {
+            visitorCardGroup.style.display = 'none';
+        }
+    }
+
+    // Inicializar la visibilidad del campo de tarjeta de visitante al cargar la página
+    window.onload = function() {
+        toggleVisitorCardField();
+    }
+
+    // Evento para cuando cambia el estado del checkbox
+    document.getElementById('isProvider').addEventListener('change', function() {
+        toggleVisitorCardField();
+    });
+
     // Obtener acceso a la cámara
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');

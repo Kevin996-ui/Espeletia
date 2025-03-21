@@ -58,6 +58,10 @@
                             <option value="1" {{ request('no_exit') == '1' ? 'selected' : '' }}>No han registrado salida</option>
                         </select>
                     </div>
+                    <!-- Filtro para Tarjeta de Visitante -->
+                    <div class="col">
+                        <input type="text" name="visitor_card" class="form-control" placeholder="Buscar por Tarjeta de Visitante" value="{{ request('visitor_card') }}">
+                    </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col text-end">
@@ -67,7 +71,7 @@
                 </div>
             </form>
 
-            <!-- Botón de exportar -->
+            <!-- Botones para exportar -->
             <div class="row mb-3">
                 <div class="col">
                     <a href="{{ route('visitor.report.export', ['format' => 'csv']) }}" class="btn btn-success">Exportar CSV</a>
@@ -92,7 +96,8 @@
                                 <th>Cédula de Identidad</th>
                                 <th>Hora de Entrada</th>
                                 <th>Motivo de Visita</th>
-                                <th>Departamento</th> <!-- Columna para Departamento -->
+                                <th>Departamento</th>
+                                <th>Tarjeta de Visitante</th> <!-- Nueva columna -->
                                 <th>Hora de Salida</th>
                             </tr>
                         </thead>
@@ -109,8 +114,6 @@
                                     <td>{{ $visitor->visitor_identity_card }}</td>
                                     <td>{{ $visitor->visitor_enter_time }}</td>
                                     <td>{{ $visitor->visitor_reason_to_meet }}</td>
-
-                                    <!-- Mostrar Departamento -->
                                     <td>
                                         @if($visitor->department)
                                             {{ $visitor->department->department_name }}
@@ -118,7 +121,7 @@
                                             N/A
                                         @endif
                                     </td>
-
+                                    <td>{{ $visitor->visitor_card ?? 'N/A' }}</td> <!-- Mostrar tarjeta de visitante -->
                                     <td>{{ $visitor->visitor_out_time ?? 'No registrado' }}</td>
                                 </tr>
                             @endforeach

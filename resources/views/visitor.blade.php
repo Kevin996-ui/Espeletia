@@ -30,6 +30,7 @@
             </div>
         </div>
         <div class="card-body">
+            <!-- Formulario de búsqueda de visitantes -->
             <form method="GET" action="{{ route('visitor.index') }}">
                 <div class="row mb-3">
                     <div class="col">

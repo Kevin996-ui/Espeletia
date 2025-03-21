@@ -42,16 +42,29 @@
                             <option value="">Seleccionar Departamento</option>
                             @foreach ($departments as $department)
                                 <option value="{{ $department->id }}"
+
                                     {{ isset($visitor) && $visitor->department_id == $department->id ? 'selected' : '' }}>
+
                                     {{ $department->department_name }}
+
                                 </option>
                             @endforeach
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label for="visitor_card">Tarjeta de visitante</label>
-                        <input type="text" name="visitor_card" class="form-control" value="{{ old('visitor_card', $visitor->visitor_card ?? '') }}">
+                    <!-- Checkbox para "Es proveedor" -->
+                    <div class="form-group mb-3">
+                        <label><b>¿Es proveedor?</b></label>
+                        <input type="checkbox" id="isProvider" name="isProvider" class="form-check-input" value="1" {{ isset($visitor) && $visitor->isProvider ? 'checked' : '' }} />
+                    </div>
+
+                    <!-- Cuadro de tarjeta de visitante, inicialmente oculto -->
+                    <div id="visitorCardContainer" style="display: none;">
+                        <p><b>Si es proveedor, por favor registrar su tarjeta de visita</b></p>
+                        <div class="form-group mb-3">
+                            <label for="visitor_card">Tarjeta de visitante</label>
+                            <input type="text" name="visitor_card" class="form-control" id="visitor_card" value="{{ old('visitor_card', $visitor->visitor_card ?? '') }}">
+                        </div>
                     </div>
 
                     <div class="form-group mb-3" style="display:none;">
@@ -64,6 +77,7 @@
                         <textarea name="visitor_reason_to_meet" class="form-control form-control-lg" required>{{ isset($visitor) ? $visitor->visitor_reason_to_meet : '' }}</textarea>
                     </div>
 
+                    <!-- Foto del visitante -->
                     <div class="form-group mb-3">
                         <label><b>Foto del Visitante</b></label>
                         <div class="visitor-photo-container">
@@ -110,6 +124,40 @@
 </style>
 
 <script>
+    // Mostrar/ocultar el cuadro de tarjeta de visitante cuando se marca/desmarca el checkbox
+    const isProviderCheckbox = document.getElementById('isProvider');
+    const visitorCardContainer = document.getElementById('visitorCardContainer');
+    const visitorCardInput = document.getElementById('visitor_card');
+
+    isProviderCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            visitorCardContainer.style.display = 'block'; // Mostrar el cuadro de tarjeta
+            visitorCardInput.setAttribute('required', 'required'); // Hacer el campo obligatorio
+        } else {
+            visitorCardContainer.style.display = 'none'; // Ocultar el cuadro de tarjeta
+            visitorCardInput.removeAttribute('required'); // Quitar la obligatoriedad
+        }
+    });
+
+    // Inicializar el estado del checkbox cuando se carga la página
+    window.onload = function() {
+        if (isProviderCheckbox.checked) {
+            visitorCardContainer.style.display = 'block'; // Mostrar el cuadro si está marcado
+            visitorCardInput.setAttribute('required', 'required'); // Hacer obligatorio el campo
+        } else {
+            visitorCardContainer.style.display = 'none'; // Ocultar el cuadro si no está marcado
+            visitorCardInput.removeAttribute('required'); // No obligatorio
+        }
+
+        const enterTimeInput = document.querySelector('input[name="visitor_enter_time"]');
+        if (!enterTimeInput.value) {
+            const now = new Date();
+            const formattedTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            enterTimeInput.value = formattedTime;
+        }
+    };
+
+    // Script para la cámara (Captura de la foto)
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
     const photo = document.getElementById('photo');
@@ -140,14 +188,5 @@
             event.preventDefault();
         }
     });
-
-    window.onload = function() {
-        const enterTimeInput = document.querySelector('input[name="visitor_enter_time"]');
-        if (!enterTimeInput.value) {
-            const now = new Date();
-            const formattedTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-            enterTimeInput.value = formattedTime;
-        }
-    };
 </script>
 @endsection
