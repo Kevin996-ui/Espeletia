@@ -3,101 +3,101 @@
 @section('content')
 <h2 class="mt-3">{{ isset($visitor) ? 'Editar Visitante' : 'Agregar Nuevo Visitante' }}</h2>
 <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('visitor.index') }}">Administración de Visitantes</a></li>
-        <li class="breadcrumb-item active">{{ isset($visitor) ? 'Editar Visitante' : 'Agregar Visitante' }}</li>
-    </ol>
+<ol class="breadcrumb">
+<li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+<li class="breadcrumb-item"><a href="{{ route('visitor.index') }}">Administración de Visitantes</a></li>
+<li class="breadcrumb-item active">{{ isset($visitor) ? 'Editar Visitante' : 'Agregar Visitante' }}</li>
+</ol>
 </nav>
 
 <div class="row mt-4">
-    <div class="col-md-8 offset-md-2">
-        <div class="card">
-            <div class="card-header text-center">{{ isset($visitor) ? 'Editar Visitante' : 'Agregar Nuevo Visitante' }}</div>
-            <div class="card-body">
-                <form id="visitorForm" method="POST" action="{{ isset($visitor) ? route('visitor.update', $visitor->id) : route('visitor.store') }}" enctype="multipart/form-data">
+<div class="col-md-8 offset-md-2">
+<div class="card">
+<div class="card-header text-center">{{ isset($visitor) ? 'Editar Visitante' : 'Agregar Nuevo Visitante' }}</div>
+<div class="card-body">
+<form id="visitorForm" method="POST" action="{{ isset($visitor) ? route('visitor.update', $visitor->id) : route('visitor.store') }}" enctype="multipart/form-data">
                     @csrf
                     @if(isset($visitor))
                         @method('PUT')
                     @endif
 
                     <div class="form-group mb-3">
-                        <label><b>Nombre del Visitante</b></label>
-                        <input type="text" name="visitor_name" class="form-control form-control-lg" value="{{ isset($visitor) ? $visitor->visitor_name : '' }}" required />
-                    </div>
+<label><b>Nombre del Visitante</b></label>
+<input type="text" name="visitor_name" class="form-control form-control-lg" value="{{ isset($visitor) ? $visitor->visitor_name : '' }}" required />
+</div>
 
                     <div class="form-group mb-3">
-                        <label><b>Empresa</b></label>
-                        <input type="text" name="visitor_company" class="form-control form-control-lg" value="{{ isset($visitor) ? $visitor->visitor_company : '' }}" required />
-                    </div>
+<label><b>Empresa</b></label>
+<input type="text" name="visitor_company" class="form-control form-control-lg" value="{{ isset($visitor) ? $visitor->visitor_company : '' }}" required />
+</div>
 
                     <div class="form-group mb-3">
-                        <label><b>Cédula de Identidad</b></label>
-                        <input type="text" name="visitor_identity_card" class="form-control form-control-lg" value="{{ isset($visitor) ? $visitor->visitor_identity_card : '' }}" required maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '');" />
-                    </div>
+<label><b>Cédula de Identidad</b></label>
+<input type="text" name="visitor_identity_card" class="form-control form-control-lg" value="{{ isset($visitor) ? $visitor->visitor_identity_card : '' }}" required maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '');" />
+</div>
 
                     <div class="form-group mb-3">
-                        <label><b>Departamento</b></label>
-                        <select name="department_id" class="form-control form-control-lg" required>
-                            <option value="">Seleccionar Departamento</option>
+<label><b>Seleccionar Departamento</b></label>
+<select name="department_id" class="form-control form-control-lg" required>
+<option value="">Seleccionar Departamento</option>
                             @foreach ($departments as $department)
-                                <option value="{{ $department->id }}"
-
-                                    {{ isset($visitor) && $visitor->department_id == $department->id ? 'selected' : '' }}>
-
+<option value="{{ $department->id }}" {{ isset($visitor) && $visitor->department_id == $department->id ? 'selected' : '' }}>
                                     {{ $department->department_name }}
-
-                                </option>
+</option>
                             @endforeach
-                        </select>
-                    </div>
+</select>
+                        @if($errors->has('department_id'))
+<span class="text-danger">{{ $errors->first('department_id') }}</span>
+                        @endif
+</div>
 
                     <!-- Checkbox para "Es proveedor" -->
+<div class="form-group mb-3">
+<label><b>¿Es proveedor?</b></label>
+<input type="checkbox" id="isProvider" name="isProvider" class="form-check-input" value="1" {{ old('isProvider', isset($visitor) && $visitor->isProvider ? 'checked' : '') }} />
+</div>
+
+                    <!-- Campo de tarjeta de visitante -->
+<div id="visitorCardContainer" style="display: none;">
+<p><b>Si es proveedor, por favor registrar su tarjeta de visita</b></p>
+<div class="form-group mb-3">
+<label for="visitor_card">Tarjeta de visitante</label>
+<input type="text" name="visitor_card" class="form-control" id="visitor_card" value="{{ old('visitor_card', $visitor->visitor_card ?? '') }}">
+</div>
+</div>
+
+                    <!-- Hora de Entrada (oculta en este caso) -->
+<div class="form-group mb-3" style="display:none;">
+<label><b>Hora de Entrada</b></label>
+<input type="datetime-local" name="visitor_enter_time" class="form-control form-control-lg" value="{{ isset($visitor) ? \Carbon\Carbon::parse($visitor->visitor_enter_time)->format('Y-m-d\TH:i') : '' }}" required />
+</div>
+
                     <div class="form-group mb-3">
-                        <label><b>¿Es proveedor?</b></label>
-                        <input type="checkbox" id="isProvider" name="isProvider" class="form-check-input" value="1" {{ isset($visitor) && $visitor->isProvider ? 'checked' : '' }} />
-                    </div>
-
-                    <!-- Cuadro de tarjeta de visitante, inicialmente oculto -->
-                    <div id="visitorCardContainer" style="display: none;">
-                        <p><b>Si es proveedor, por favor registrar su tarjeta de visita</b></p>
-                        <div class="form-group mb-3">
-                            <label for="visitor_card">Tarjeta de visitante</label>
-                            <input type="text" name="visitor_card" class="form-control" id="visitor_card" value="{{ old('visitor_card', $visitor->visitor_card ?? '') }}">
-                        </div>
-                    </div>
-
-                    <div class="form-group mb-3" style="display:none;">
-                        <label><b>Hora de Entrada</b></label>
-                        <input type="datetime-local" name="visitor_enter_time" class="form-control form-control-lg" value="{{ isset($visitor) ? \Carbon\Carbon::parse($visitor->visitor_enter_time)->format('Y-m-d\TH:i') : '' }}" required />
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label><b>Motivo de la Visita</b></label>
-                        <textarea name="visitor_reason_to_meet" class="form-control form-control-lg" required>{{ isset($visitor) ? $visitor->visitor_reason_to_meet : '' }}</textarea>
-                    </div>
+<label><b>Motivo de la Visita</b></label>
+<textarea name="visitor_reason_to_meet" class="form-control form-control-lg" required>{{ isset($visitor) ? $visitor->visitor_reason_to_meet : '' }}</textarea>
+</div>
 
                     <!-- Foto del visitante -->
-                    <div class="form-group mb-3">
-                        <label><b>Foto del Visitante</b></label>
-                        <div class="visitor-photo-container">
-                            <video id="video" autoplay></video>
-                            <canvas id="canvas" style="display:none;"></canvas>
-                            <img id="photo" src="{{ isset($visitor) ? asset('storage/' . $visitor->visitor_photo) : '' }}" alt="Tu foto aparecerá aquí" />
-                        </div>
-                        <div style="text-align: center; margin-top: 15px;">
-                            <button type="button" id="captureButton" class="btn btn-lg">Capturar Foto</button>
-                        </div>
-                        <input type="hidden" name="visitor_photo" id="visitor_photo" />
-                    </div>
+<div class="form-group mb-3">
+<label><b>Foto del Visitante</b></label>
+<div class="visitor-photo-container">
+<video id="video" autoplay></video>
+<canvas id="canvas" style="display:none;"></canvas>
+<img id="photo" src="{{ isset($visitor) ? asset('storage/' . $visitor->visitor_photo) : '' }}" alt="Tu foto aparecerá aquí" />
+</div>
+<div style="text-align: center; margin-top: 15px;">
+<button type="button" id="captureButton" class="btn btn-lg">Capturar Foto</button>
+</div>
+<input type="hidden" name="visitor_photo" id="visitor_photo" />
+</div>
 
                     <div class="form-group mb-3 text-center">
-                        <input type="submit" class="btn btn-primary btn-lg" value="{{ isset($visitor) ? 'Actualizar Visitante' : 'Guardar' }}" />
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+<input type="submit" class="btn btn-primary btn-lg" value="{{ isset($visitor) ? 'Actualizar Visitante' : 'Guardar' }}" />
+</div>
+</form>
+</div>
+</div>
+</div>
 </div>
 
 <style>
@@ -124,30 +124,23 @@
 </style>
 
 <script>
-    // Mostrar/ocultar el cuadro de tarjeta de visitante cuando se marca/desmarca el checkbox
     const isProviderCheckbox = document.getElementById('isProvider');
     const visitorCardContainer = document.getElementById('visitorCardContainer');
     const visitorCardInput = document.getElementById('visitor_card');
 
-    isProviderCheckbox.addEventListener('change', function() {
-        if (this.checked) {
-            visitorCardContainer.style.display = 'block'; // Mostrar el cuadro de tarjeta
-            visitorCardInput.setAttribute('required', 'required'); // Hacer el campo obligatorio
-        } else {
-            visitorCardContainer.style.display = 'none'; // Ocultar el cuadro de tarjeta
-            visitorCardInput.removeAttribute('required'); // Quitar la obligatoriedad
-        }
-    });
-
-    // Inicializar el estado del checkbox cuando se carga la página
-    window.onload = function() {
+    function toggleVisitorCard() {
         if (isProviderCheckbox.checked) {
-            visitorCardContainer.style.display = 'block'; // Mostrar el cuadro si está marcado
-            visitorCardInput.setAttribute('required', 'required'); // Hacer obligatorio el campo
+            visitorCardContainer.style.display = 'block';
+            visitorCardInput.setAttribute('required', 'required');
         } else {
-            visitorCardContainer.style.display = 'none'; // Ocultar el cuadro si no está marcado
-            visitorCardInput.removeAttribute('required'); // No obligatorio
+            visitorCardContainer.style.display = 'none';
+            visitorCardInput.removeAttribute('required');
         }
+    }
+
+    isProviderCheckbox.addEventListener('change', toggleVisitorCard);
+    window.onload = function () {
+        toggleVisitorCard();
 
         const enterTimeInput = document.querySelector('input[name="visitor_enter_time"]');
         if (!enterTimeInput.value) {
@@ -157,7 +150,6 @@
         }
     };
 
-    // Script para la cámara (Captura de la foto)
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
     const photo = document.getElementById('photo');
@@ -172,7 +164,7 @@
             console.error('Error al acceder a la cámara:', err);
         });
 
-    captureButton.addEventListener('click', function() {
+    captureButton.addEventListener('click', function () {
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -182,7 +174,7 @@
         visitorPhoto.value = dataURL;
     });
 
-    document.getElementById('visitorForm').addEventListener('submit', function(event) {
+    document.getElementById('visitorForm').addEventListener('submit', function (event) {
         if (!visitorPhoto.value) {
             alert('Por favor, capture la foto antes de enviar el formulario.');
             event.preventDefault();

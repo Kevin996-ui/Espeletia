@@ -8,6 +8,7 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\VisitorController;
 use App\Http\Controllers\RatingController;
 use App\Models\NewVisitor;
+use App\Http\Controllers\TestEmailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -103,3 +104,7 @@ Route::post('/ratings', [RatingController::class, 'store']);
 
 Route::get('/visitor/report', [VisitorController::class, 'showReportForm'])->name('visitor.report');
 Route::get('/visitor/report/export/{format}', [VisitorController::class, 'exportReport'])->name('visitor.report.export');
+
+//Test envío email
+
+Route::get('/test-email', [TestEmailController::class, 'testEmail']);
