@@ -103,6 +103,7 @@ Route::post('/visitor/{id}/exit', [VisitorController::class, 'registerExit'])->n
 Route::post('/ratings', [RatingController::class, 'store']);
 
 Route::get('/visitor/report', [VisitorController::class, 'showReportForm'])->name('visitor.report');
+
 Route::get('/visitor/report/export/{format}', [VisitorController::class, 'exportReport'])->name('visitor.report.export');
 
 //Test envío email

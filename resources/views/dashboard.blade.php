@@ -131,11 +131,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     @endif
 
-    // Limitar tiempo de espera para peticiones AJAX
-
     $.ajaxSetup({
 
-        timeout: 40000 // 40 segundos
+        timeout: 40000
 
     });
 
