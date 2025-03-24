@@ -7,20 +7,19 @@
 </head>
 <body>
 
-    @guest
-
-    <h1 class="mt-4 mb-5 text-center">TCC Tababela CargoCenter S.A.</h1>
+@guest
+<h1 class="mt-4 mb-5 text-center">TCC Tababela CargoCenter S.A.</h1>
 
     @yield('content')
 
-    @else
+@else
 
-    <link rel="stylesheet" href="{{asset('css/dashboard.css')}}">
-<link rel="stylesheet" href="{{asset('css/dataTables.bootstrap5.min.css')}}">
+    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ asset('css/dataTables.bootstrap5.min.css') }}">
 
-    <script src="{{asset('js/jquery.js')}}"></script>
-<script src="{{asset('js/jquery.dataTables.min.js')}}"></script>
-<script src="{{asset('js/dataTables.bootstrap5.min.js')}}"></script>
+    <script src="{{ asset('js/jquery.js') }}"></script>
+<script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('js/dataTables.bootstrap5.min.js') }}"></script>
 
     <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
 <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">TCC Tababela CargoCenter S.A.</a>
@@ -38,24 +37,12 @@
 <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
 <div class="position-sticky pt-3">
 <ul class="nav flex-column">
-<li class="nav-item">
-<a class="nav-link {{ Request::segment(1) == 'dashboard' ? 'active' : '' }}" href="/dashboard">Dashboard</a>
-</li>
-<li class="nav-item">
-<a class="nav-link {{ Request::segment(1) == 'profile' ? 'active' : '' }}" href="/profile">Perfil</a>
-</li>
-<li class="nav-item">
-<a class="nav-link {{ Request::segment(1) == 'sub_user' ? 'active' : '' }}" href="/sub_user">Sub Usuario</a>
-</li>
-<li class="nav-item">
-<a class="nav-link {{ Request::segment(1) == 'department' ? 'active' : '' }}" href="/department">Departamento</a>
-</li>
-<li class="nav-item">
-<a class="nav-link {{ Request::segment(1) == 'visitor' ? 'active' : '' }}" href="/visitor">Visitante</a>
-</li>
-<li class="nav-item">
-<a class="nav-link" href="{{ route('logout') }}">Cerrar sesión</a>
-</li>
+<li class="nav-item"><a class="nav-link {{ Request::segment(1) == 'dashboard' ? 'active' : '' }}" href="/dashboard">Dashboard</a></li>
+<li class="nav-item"><a class="nav-link {{ Request::segment(1) == 'profile' ? 'active' : '' }}" href="/profile">Perfil</a></li>
+<li class="nav-item"><a class="nav-link {{ Request::segment(1) == 'sub_user' ? 'active' : '' }}" href="/sub_user">Sub Usuario</a></li>
+<li class="nav-item"><a class="nav-link {{ Request::segment(1) == 'department' ? 'active' : '' }}" href="/department">Departamento</a></li>
+<li class="nav-item"><a class="nav-link {{ Request::segment(1) == 'visitor' ? 'active' : '' }}" href="/visitor">Visitante</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ route('logout') }}">Cerrar sesión</a></li>
 </ul>
 </div>
 </nav>
@@ -66,14 +53,15 @@
 
                 @yield('content')
 </main>
+
+        </div>
 </div>
-</div>
 
-    @endguest
+@endguest
 
-    <script src="{{ asset('js/bootstrap.js') }}"></script>
+<script src="{{ asset('js/bootstrap.js') }}"></script>
 
-    @php
+@php
 
     $userIsAdmin = Auth::check() && Auth::user()->type === 'Admin';
 
@@ -85,57 +73,105 @@ document.addEventListener("DOMContentLoaded", function () {
 
     @if(Auth::check() && !$userIsAdmin)
 
-    const now = Date.now();
+    function checkAndShowPopup() {
 
-    const lastRegister = localStorage.getItem('lastVisitorRegister');
+        const now = Date.now();
 
-    const mustShowPopup = !lastRegister || (now - parseInt(lastRegister)) >= 120000;
+        const lastRegister = localStorage.getItem('lastVisitorRegister');
 
-    if (mustShowPopup) {
+        const mustShowPopup = !lastRegister || (now - parseInt(lastRegister)) >= 40000; // 40 segundos
 
-        Swal.fire({
+        if (mustShowPopup && !window.popupAlreadyShown) {
 
-            title: '¡Bienvenido!',
+            window.popupAlreadyShown = true;
 
-            html: `
+            Swal.fire({
+
+
+                html: `
 <div style="font-size: 20px; line-height: 1.5; text-align: center;">
 <strong>Bienvenido</strong><br>
 
-                    a<br>
-<strong>Tababela CargoCenter S.A.</strong>
+                        a<br>
+<strong>TCC Tababela CargoCenter S.A.</strong>
 </div>
 
-            `,
+                `,
 
-            icon: 'info',
+                icon: 'info',
 
-            confirmButtonText: 'Sí, registrar visitante',
+                confirmButtonText: 'Sí, registrar visitante',
 
-            cancelButtonText: 'Más tarde',
+                cancelButtonText: 'Más tarde',
 
-            showCancelButton: true
+                showCancelButton: true
 
-        }).then((result) => {
+            }).then((result) => {
 
-            if (result.isConfirmed) {
+                const timestamp = Date.now();
 
-                localStorage.setItem('lastVisitorRegister', Date.now());
+                if (result.isConfirmed) {
 
-                window.location.href = '{{ route("visitor.add") }}';
+                    Swal.fire({
 
-            }
+                        title: 'Uso de Datos Personales',
 
-        });
+                        html: `
+<p style="font-size: 16px; text-align: justify;">
+
+                                Al continuar, aceptas que tus datos personales sean utilizados por
+<strong>TCC Tababela CargoCenter S.A.</strong> únicamente con fines de control y registro de visitas,
+
+                                de acuerdo con nuestra política de privacidad.
+</p>
+
+                        `,
+
+                        icon: 'warning',
+
+                        showCancelButton: true,
+
+                        confirmButtonText: 'Acepto',
+
+                        cancelButtonText: 'Cancelar'
+
+                    }).then((consent) => {
+
+                        if (consent.isConfirmed) {
+
+                            localStorage.setItem('lastVisitorRegister', timestamp);
+
+                            window.location.href = '{{ route("visitor.add") }}';
+
+                        } else {
+
+                            window.popupAlreadyShown = false;
+
+                        }
+
+                    });
+
+                } else {
+
+                    localStorage.setItem('lastVisitorRegister', timestamp);
+
+                    window.popupAlreadyShown = false;
+
+                }
+
+            });
+
+        }
 
     }
 
+    setInterval(checkAndShowPopup, 5000); // Chequea cada 5 segundos
+
+    checkAndShowPopup();
+
     @endif
 
-    $.ajaxSetup({
-
-        timeout: 40000
-
-    });
+    $.ajaxSetup({ timeout: 40000 });
 
 });
 </script>
@@ -161,41 +197,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }).then(() => {
 
-        @if(Auth::check() && !$userIsAdmin)
-
-        Swal.fire({
-
-            html: `
-<div style="font-size: 20px; line-height: 1.5; text-align: center;">
-<strong>Bienvenido</strong><br>
-
-                    a<br>
-<strong>TCC Tababela CargoCenter S.A.</strong>
-</div>
-
-            `,
-
-            icon: 'info',
-
-            confirmButtonText: 'Sí, registrar visitante',
-
-            cancelButtonText: 'Más tarde',
-
-            showCancelButton: true
-
-        }).then((result) => {
-
-            if (result.isConfirmed) {
-
-                localStorage.setItem('lastVisitorRegister', Date.now());
-
-                window.location.href = '{{ route("visitor.add") }}';
-
-            }
-
-        });
-
-        @endif
+        // Nada adicional aquí
 
     });
 
@@ -203,6 +205,7 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 
 @endif
+
 </body>
 </html>
 
