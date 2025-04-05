@@ -16,9 +16,8 @@ class NewVisitor extends Model
         'visitor_enter_time',
         'visitor_out_time',
         'visitor_reason_to_meet',
-        'visitor_photo',
         'department_id',
-        'visitor_card', // Nuevo campo
+        'visitor_card',
     ];
 
     public function department()

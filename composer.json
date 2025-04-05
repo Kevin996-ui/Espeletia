@@ -6,14 +6,18 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
+        "adldap2/adldap2-laravel": "^6.1",
         "barryvdh/laravel-dompdf": "^2.2",
+        "doctrine/dbal": "3.3",
         "dompdf/dompdf": "^2.0",
         "fruitcake/laravel-cors": "^2.0",
-        "guzzlehttp/guzzle": "^7.0.1",
+        "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^8.75",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
         "maatwebsite/excel": "3.1.47",
+        "microsoft/microsoft-graph": "2.0",
+        "nesbot/carbon": "2.66.0",
         "yajra/laravel-datatables-oracle": "^9.0"
     },
     "require-dev": {
@@ -60,7 +64,11 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": true,
+            "tbachert/spi": true
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true

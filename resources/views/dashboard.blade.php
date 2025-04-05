@@ -1,211 +1,191 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<title>TCC Tababela CargoCenter S.A.</title>
-<link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}" />
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>TCC Tababela CargoCenter S.A.</title>
+    <link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/dataTables.bootstrap5.min.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
+
 <body>
 
-@guest
-<h1 class="mt-4 mb-5 text-center">TCC Tababela CargoCenter S.A.</h1>
-
-    @yield('content')
-
-@else
-
-    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
-<link rel="stylesheet" href="{{ asset('css/dataTables.bootstrap5.min.css') }}">
-
-    <script src="{{ asset('js/jquery.js') }}"></script>
-<script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('js/dataTables.bootstrap5.min.js') }}"></script>
-
-    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-<a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">TCC Tababela CargoCenter S.A.</a>
-<div class="navbar-nav">
-<div class="nav-item text-nowrap">
-<a class="nav-link px-3" href="#">Bienvenido, {{ Auth::user()->email }}</a>
-</div>
-</div>
-</header>
-
-    <div class="container-fluid">
-<div class="row">
-
-            @if(Auth::user()->type == 'Admin')
-<nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-<div class="position-sticky pt-3">
-<ul class="nav flex-column">
-<li class="nav-item"><a class="nav-link {{ Request::segment(1) == 'dashboard' ? 'active' : '' }}" href="/dashboard">Dashboard</a></li>
-<li class="nav-item"><a class="nav-link {{ Request::segment(1) == 'profile' ? 'active' : '' }}" href="/profile">Perfil</a></li>
-<li class="nav-item"><a class="nav-link {{ Request::segment(1) == 'sub_user' ? 'active' : '' }}" href="/sub_user">Sub Usuario</a></li>
-<li class="nav-item"><a class="nav-link {{ Request::segment(1) == 'department' ? 'active' : '' }}" href="/department">Departamento</a></li>
-<li class="nav-item"><a class="nav-link {{ Request::segment(1) == 'visitor' ? 'active' : '' }}" href="/visitor">Visitante</a></li>
-<li class="nav-item"><a class="nav-link" href="{{ route('logout') }}">Cerrar sesión</a></li>
-</ul>
-</div>
-</nav>
-
-            @endif
-
-            <main class="{{ Auth::user()->type == 'Admin' ? 'col-md-9 ms-sm-auto col-lg-10 px-md-4' : 'col-12 px-4' }}">
-
-                @yield('content')
-</main>
-
+    @guest
+    <div class="text-center" style="margin-top: 80px; margin-bottom: 40px;">
+        <img src="{{ asset('images/logo-tam-2.png') }}" alt="Logo TCC" style="max-width: 300px;">
         </div>
-</div>
 
-@endguest
+            @yield('content')
+    @else
+        <!-- Scripts necesarios para Admin -->
+        <script src="{{ asset('js/jquery.js') }}"></script>
+        <script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
+        <script src="{{ asset('js/dataTables.bootstrap5.min.js') }}"></script>
 
-<script src="{{ asset('js/bootstrap.js') }}"></script>
+        <!-- Cabecera -->
+        <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+            <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">TCC Tababela CargoCenter S.A.</a>
+            <div class="navbar-nav">
+                <div class="nav-item text-nowrap">
+                    <a class="nav-link px-3" href="#">Bienvenido, {{ Auth::user()->email }}</a>
+                </div>
+            </div>
+        </header>
 
-@php
+        <div class="container-fluid">
+            <div class="row">
 
-    $userIsAdmin = Auth::check() && Auth::user()->type === 'Admin';
+                @if (Auth::user()->type == 'Admin')
+                    <!-- Menú lateral para Administrador -->
+                    <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                        <div class="position-sticky pt-3">
+                            <ul class="nav flex-column">
+                                <li class="nav-item {{ Request::segment(1) == 'dashboard' ? 'active-item' : '' }}">
+                                    <a class="nav-link {{ Request::segment(1) == 'dashboard' ? 'active' : '' }}"
+                                        href="/dashboard">Dashboard</a>
+                                </li>
+                                <li class="nav-item {{ Request::segment(1) == 'profile' ? 'active-item' : '' }}">
+                                    <a class="nav-link {{ Request::segment(1) == 'profile' ? 'active' : '' }}"
+                                        href="/profile">Perfil</a>
+                                </li>
+                                <li class="nav-item {{ Request::segment(1) == 'sub_user' ? 'active-item' : '' }}">
+                                    <a class="nav-link {{ Request::segment(1) == 'sub_user' ? 'active' : '' }}"
+                                        href="/sub_user">Sub Usuario</a>
+                                </li>
+                                <li class="nav-item {{ Request::segment(1) == 'department' ? 'active-item' : '' }}">
+                                    <a class="nav-link {{ Request::segment(1) == 'department' ? 'active' : '' }}"
+                                        href="/department">Departamento</a>
+                                </li>
+                                <li class="nav-item {{ Request::segment(1) == 'visitor' ? 'active-item' : '' }}">
+                                    <a class="nav-link {{ Request::segment(1) == 'visitor' ? 'active' : '' }}"
+                                        href="/visitor">Visitante</a>
+                                </li>
+                                <li class="nav-item {{ Request::segment(1) == 'key_type' ? 'active-item' : '' }}">
+                                    <a class="nav-link {{ Request::segment(1) == 'key_type' ? 'active' : '' }}"
+                                        href="{{ route('key_type.index') }}">Tipos de Llaves</a>
+                                </li>
+                                <li class="nav-item {{ Request::segment(1) == 'keylog' ? 'active-item' : '' }}">
+                                    <a class="nav-link {{ Request::segment(1) == 'keylog' ? 'active' : '' }}"
+                                        href="{{ route('keylog.index') }}">Registro de Llaves</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('logout') }}">Cerrar sesión</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                @endif
 
-@endphp
+                <main
+                    class="{{ Auth::user()->type == 'Admin' ? 'col-md-9 ms-sm-auto col-lg-10 px-md-4' : 'col-12 px-4' }}">
+                    @yield('content')
+                </main>
 
-<script>
+            </div>
+        </div>
+    @endguest
 
-document.addEventListener("DOMContentLoaded", function () {
+    <script src="{{ asset('js/bootstrap.js') }}"></script>
 
-    @if(Auth::check() && !$userIsAdmin)
+    @php
+        $userIsAdmin = Auth::check() && Auth::user()->type === 'Admin';
+    @endphp
 
-    function checkAndShowPopup() {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            @if (Auth::check() && !$userIsAdmin)
+                function checkAndShowPopup() {
+                    const now = Date.now();
+                    const lastRegister = localStorage.getItem('lastVisitorRegister');
+                    const mustShowPopup = !lastRegister || (now - parseInt(lastRegister)) >= 40000;
 
-        const now = Date.now();
+                    if (mustShowPopup && !window.popupAlreadyShown) {
+                        window.popupAlreadyShown = true;
 
-        const lastRegister = localStorage.getItem('lastVisitorRegister');
-
-        const mustShowPopup = !lastRegister || (now - parseInt(lastRegister)) >= 40000; // 40 segundos
-
-        if (mustShowPopup && !window.popupAlreadyShown) {
-
-            window.popupAlreadyShown = true;
-
-            Swal.fire({
-
-
-                html: `
+                        Swal.fire({
+                            html: `
 <div style="font-size: 20px; line-height: 1.5; text-align: center;">
 <strong>Bienvenido</strong><br>
-
-                        a<br>
+a<br>
 <strong>TCC Tababela CargoCenter S.A.</strong>
-</div>
-
-                `,
-
-                icon: 'info',
-
-                confirmButtonText: 'Sí, registrar visitante',
-
-                cancelButtonText: 'Más tarde',
-
-                showCancelButton: true
-
-            }).then((result) => {
-
-                const timestamp = Date.now();
-
-                if (result.isConfirmed) {
-
-                    Swal.fire({
-
-                        title: 'Uso de Datos Personales',
-
-                        html: `
+</div>`,
+                            icon: 'info',
+                            confirmButtonText: 'Sí, registrar visitante',
+                            cancelButtonText: 'Más tarde',
+                            showCancelButton: true
+                        }).then((result) => {
+                            const timestamp = Date.now();
+                            if (result.isConfirmed) {
+                                Swal.fire({
+                                    title: 'Uso de Datos Personales',
+                                    html: `
 <p style="font-size: 16px; text-align: justify;">
-
-                                Al continuar, aceptas que tus datos personales sean utilizados por
+Al continuar, aceptas que tus datos personales sean utilizados por
 <strong>TCC Tababela CargoCenter S.A.</strong> únicamente con fines de control y registro de visitas,
-
-                                de acuerdo con nuestra política de privacidad.
-</p>
-
-                        `,
-
-                        icon: 'warning',
-
-                        showCancelButton: true,
-
-                        confirmButtonText: 'Acepto',
-
-                        cancelButtonText: 'Cancelar'
-
-                    }).then((consent) => {
-
-                        if (consent.isConfirmed) {
-
-                            localStorage.setItem('lastVisitorRegister', timestamp);
-
-                            window.location.href = '{{ route("visitor.add") }}';
-
-                        } else {
-
-                            window.popupAlreadyShown = false;
-
-                        }
-
-                    });
-
-                } else {
-
-                    localStorage.setItem('lastVisitorRegister', timestamp);
-
-                    window.popupAlreadyShown = false;
-
+de acuerdo con nuestra política de privacidad.
+</p>`,
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Acepto',
+                                    cancelButtonText: 'Cancelar'
+                                }).then((consent) => {
+                                    if (consent.isConfirmed) {
+                                        localStorage.setItem('lastVisitorRegister', timestamp);
+                                        window.location.href = '{{ route('visitor.add') }}';
+                                    } else {
+                                        window.popupAlreadyShown = false;
+                                    }
+                                });
+                            } else {
+                                localStorage.setItem('lastVisitorRegister', timestamp);
+                                window.popupAlreadyShown = false;
+                            }
+                        });
+                    }
                 }
 
+                setInterval(checkAndShowPopup, 5000);
+                checkAndShowPopup();
+            @endif
+
+            $.ajaxSetup({
+                timeout: 40000
             });
+        });
+    </script>
 
-        }
-
-    }
-
-    setInterval(checkAndShowPopup, 5000); // Chequea cada 5 segundos
-
-    checkAndShowPopup();
-
+    @if (session('success'))
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Éxito',
+                    text: '{{ session('success') }}',
+                    timer: 1500,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                });
+            });
+        </script>
     @endif
 
-    $.ajaxSetup({ timeout: 40000 });
+    <!-- ✅ Estilo para resaltar ítem activo del menú lateral -->
+    <style>
+        .active-item {
+            background-color: #0d6efd !important;
+        }
 
-});
-</script>
+        .active-item .nav-link {
+            color: #fff !important;
+            font-weight: bold;
+        }
 
-@if(session('success'))
-<script>
-
-document.addEventListener("DOMContentLoaded", function () {
-
-    Swal.fire({
-
-        icon: 'success',
-
-        title: 'Éxito',
-
-        text: '{{ session('success') }}',
-
-        timer: 2500,
-
-        timerProgressBar: true,
-
-        showConfirmButton: false
-
-    }).then(() => {
-
-        // Nada adicional aquí
-
-    });
-
-});
-</script>
-
-@endif
+        .active-item .nav-link:hover {
+            color: #e2e6ea !important;
+        }
+    </style>
 
 </body>
-</html>
 
+</html>

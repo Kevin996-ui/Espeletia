@@ -9,6 +9,9 @@ use App\Http\Controllers\VisitorController;
 use App\Http\Controllers\RatingController;
 use App\Models\NewVisitor;
 use App\Http\Controllers\TestEmailController;
+use App\Http\Controllers\KeyLogController;
+use App\Http\Controllers\KeyTypeController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -109,3 +112,26 @@ Route::get('/visitor/report/export/{format}', [VisitorController::class, 'export
 //Test envío email
 
 Route::get('/test-email', [TestEmailController::class, 'testEmail']);
+
+//Registro Key
+
+Route::get('/keylog', [KeyLogController::class, 'index'])->name('keylog.index');
+Route::get('/keylog/create', [KeyLogController::class, 'create'])->name('keylog.create');
+Route::post('/keylog', [KeyLogController::class, 'store'])->name('keylog.store');
+Route::get('/keylog/{id}/edit', [KeyLogController::class, 'edit'])->name('keylog.edit');
+Route::put('/keylog/{id}', [KeyLogController::class, 'update'])->name('keylog.update');
+Route::delete('/keylog/{id}', [KeyLogController::class, 'destroy'])->name('keylog.destroy');
+Route::get('/keylog/fetch_all', [KeyLogController::class, 'fetchAll'])->name('keylog.fetch_all');
+Route::post('/keylog/return/{id}', [KeyLogController::class, 'registerReturn'])->name('keylog.return');
+Route::get('/keylog/report', [KeyLogController::class, 'showReportForm'])->name('keylog.report');
+Route::get('/keylog/report/export/{format}', [KeyLogController::class, 'exportReport'])->name('keylog.report.export');
+
+//Tipo de llave
+
+Route::get('/key_type', [KeyTypeController::class, 'index'])->middleware('auth')->name('key_type.index');
+Route::get('/key_type/fetch_all', [KeyTypeController::class, 'fetchAll'])->middleware('auth')->name('key_type.fetch_all');
+Route::get('/key_type/add', [KeyTypeController::class, 'create'])->middleware('auth')->name('key_type.add');
+Route::post('/key_type/store', [KeyTypeController::class, 'store'])->middleware('auth')->name('key_type.store');
+Route::get('/key_type/delete/{id}', [KeyTypeController::class, 'destroy'])->middleware('auth')->name('key_type.delete');
+Route::get('/key_type/edit/{id}', [KeyTypeController::class, 'edit'])->middleware('auth')->name('key_type.edit');
+Route::post('/key_type/update/{id}', [KeyTypeController::class, 'update'])->middleware('auth')->name('key_type.update');
