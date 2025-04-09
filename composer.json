@@ -9,7 +9,7 @@
         "adldap2/adldap2-laravel": "^6.1",
         "barryvdh/laravel-dompdf": "^2.2",
         "directorytree/ldaprecord-laravel": "^3.4",
-        "doctrine/dbal": "3.3",
+        "doctrine/dbal": "3.6",
         "dompdf/dompdf": "^2.0",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.9",

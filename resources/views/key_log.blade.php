@@ -147,7 +147,7 @@
 
         .table-header-colored th {
 
-            background-color: #d6dadb;
+            background-color: #f2f2f2;
             color: #0b0d0e;
             font-weight: bold;
             text-align: center;
