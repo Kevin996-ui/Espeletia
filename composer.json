@@ -8,6 +8,7 @@
         "php": "^7.3|^8.0",
         "adldap2/adldap2-laravel": "^6.1",
         "barryvdh/laravel-dompdf": "^2.2",
+        "directorytree/ldaprecord-laravel": "^3.4",
         "doctrine/dbal": "3.3",
         "dompdf/dompdf": "^2.0",
         "fruitcake/laravel-cors": "^2.0",
@@ -20,6 +21,12 @@
         "nesbot/carbon": "2.66.0",
         "yajra/laravel-datatables-oracle": "^9.0"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/DirectoryTree/LdapRecord"
+        }
+    ],
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.7",
         "facade/ignition": "^2.5",
