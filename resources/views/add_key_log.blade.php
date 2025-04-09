@@ -52,7 +52,7 @@
                         </div>
 
                         <div class="form-group text-center mt-4">
-                            <input type="submit" class="btn btn-primary" value="Guardar Registro">
+                            <input type="submit" class="btn btn-primary" value="Guardar">
                             <a href="{{ route('keylog.index') }}" class="btn btn-secondary">Cancelar</a>
                         </div>
                     </form>

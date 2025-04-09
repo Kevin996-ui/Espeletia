@@ -27,9 +27,12 @@
         <p><strong>🧾 No registrado como proveedor.</strong></p>
     @endif
 
-    <p><strong>🖼️ Foto del Visitante:</strong></p>
-    <img src="{{ url('storage/' . $visitor->visitor_photo) }}" alt="Foto del Visitante" width="300"
+    {{-- FOTO EN DESUSO TEMPORAL --}}
+    {{--
+<p><strong>🖼️ Foto del Visitante:</strong></p>
+<img src="{{ url('storage/' . $visitor->visitor_photo) }}" alt="Foto del Visitante" width="300"
         style="border: 1px solid #ccc; padding: 5px;">
+    --}}
 
     <hr style="margin-top: 30px;">
     <p style="font-size: 12px; color: #888;">Este correo fue enviado automáticamente por el sistema de registro de
