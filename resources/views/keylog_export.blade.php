@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>Reporte de Llaves</title>
-<style>
 
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Llaves</title>
+    <style>
         body {
 
             font-family: Arial, sans-serif;
@@ -35,13 +35,16 @@
 
         }
 
-        table, th, td {
+        table,
+        th,
+        td {
 
             border: 1px solid #444;
 
         }
 
-        th, td {
+        th,
+        td {
 
             padding: 6px;
 
@@ -60,56 +63,54 @@
             color: #666;
 
         }
-</style>
+    </style>
 </head>
+
 <body>
-<div class="header">
-<img src="{{ public_path('images/logo-tam-2.png') }}" alt="Logo">
-<h3>Reporte de Llaves</h3>
-</div>
+    <div class="header">
+        <img src="{{ public_path('images/logo-tam-2.png') }}" alt="Logo">
+        <h3>Reporte de Llaves</h3>
+    </div>
 
     <table>
-<thead>
-<tr>
-<th>Nombre</th>
-<th>Cédula</th>
-<th>Código de Llave</th>
-<th>Área</th>
-<th>Hora de Retiro</th>
-<th>Hora de Devolución</th>
-</tr>
-</thead>
-<tbody>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Cédula</th>
+                <th>Código de Llave</th>
+                <th>Área</th>
+                <th>Herramientas / Dispositivos</th>
+                <th>Fecha y Hora de Retiro</th>
+                <th>Fecha y Hora de Entrega</th>
+            </tr>
+        </thead>
+        <tbody>
 
-            @foreach($keyLogs as $log)
-<tr>
-<td>{{ $log->name_taken }}</td>
-<td>{{ $log->identity_card_taken }}</td>
-<td>{{ $log->key_code }}</td>
-<td>{{ $log->area }}</td>
-<td>{{ \Carbon\Carbon::parse($log->key_taken_at)->format('d/m/Y H:i') }}</td>
-<td>
+            @foreach ($keyLogs as $log)
+                <tr>
+                    <td>{{ $log->name_taken }}</td>
+                    <td>{{ $log->identity_card_taken }}</td>
+                    <td>{{ $log->key_code }}</td>
+                    <td>{{ $log->area }}</td>
+                    <td>{{ $log->taken_photo && $log->taken_photo !== '-' ? $log->taken_photo : 'N/A' }}</td>
+                    <td>{{ \Carbon\Carbon::parse($log->key_taken_at)->format('d/m/Y H:i') }}</td>
+                    <td>
 
                         @if ($log->key_returned_at)
-
                             {{ \Carbon\Carbon::parse($log->key_returned_at)->format('d/m/Y H:i') }}
-
                         @else
-
                             No registrada
-
                         @endif
-</td>
-</tr>
-
+                    </td>
+                </tr>
             @endforeach
-</tbody>
-</table>
+        </tbody>
+    </table>
 
     <div class="footer">
 
         Exportado el: {{ \Carbon\Carbon::now()->format('d/m/Y H:i:s') }}
-</div>
+    </div>
 </body>
-</html>
 
+</html>

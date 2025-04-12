@@ -1,80 +1,219 @@
 @extends('dashboard')
 
 @section('content')
-    <h2 class="mt-3">Registrar Nueva Llave</h2>
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('keylog.index') }}">Listado de Llaves</a></li>
-            <li class="breadcrumb-item active">Registrar</li>
-        </ol>
-    </nav>
+<h2 class="mt-3">Registrar Nueva Llave</h2>
+<nav aria-label="breadcrumb">
+<ol class="breadcrumb">
+<li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+<li class="breadcrumb-item"><a href="{{ route('keylog.index') }}">Listado de Llaves</a></li>
+<li class="breadcrumb-item active">Registrar</li>
+</ol>
+</nav>
 
-    <div class="row mt-4">
-        <div class="col-md-8 offset-md-2">
-            <div class="card">
-                <div class="card-header text-center">Formulario de Registro</div>
-                <div class="card-body">
-                    <form method="POST" action="{{ route('keylog.store') }}">
-                        @csrf
+<div class="row mt-4">
+<div class="col-md-8 offset-md-2">
+<div class="card">
+<div class="card-header text-center">Formulario de Registro</div>
+<div class="card-body">
+<form method="POST" action="{{ route('keylog.store') }}">
 
-                        <div class="form-group mb-3">
-                            <label><b>Cédula</b></label>
-                            <input type="text" name="identity_card_taken" class="form-control" maxlength="10" required
-                                oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                        </div>
+          @csrf
 
-                        <div class="form-group mb-3">
-                            <label><b>Nombre</b></label>
-                            <input type="text" name="name_taken" class="form-control" required>
-                        </div>
+          <div class="form-group mb-3">
+<label><b>Cédula</b></label>
+<input type="text" name="identity_card_taken" class="form-control" maxlength="10" required
 
-                        <div class="form-group mb-3">
-                            <label><b>Código de la Llave</b></label>
-                            <select name="key_code" class="form-control" id="key_type_select" required>
-                                <option value="">Seleccione el código de la Llave</option>
-                                @foreach ($keyTypes as $type)
-                                    <option value="{{ $type->name }}" data-area="{{ $type->area }}">{{ $type->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
+              oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+</div>
 
-                        <div class="form-group mb-3">
-                            <label><b>Área</b></label>
-                            <input type="text" name="area" class="form-control" id="area_input" required readonly>
-                        </div>
+          <div class="form-group mb-3">
+<label><b>Nombre</b></label>
+<input type="text" name="name_taken" class="form-control" required>
+</div>
 
-                        <div class="form-group mb-3" style="display: none;">
-                            <label><b>Fecha y Hora de Retiro</b></label>
-                            <input type="datetime-local" name="key_taken_at" class="form-control" id="key_taken_at"
-                                required>
-                        </div>
+          <div id="key_fields">
+<div class="form-group mb-3 key-field" data-index="0">
+<label><b>Código de la Llave</b></label>
+<select name="key_code[]" class="form-control key-code-select" required>
+<option value="">Seleccione el código de la Llave</option>
 
-                        <div class="form-group text-center mt-4">
-                            <input type="submit" class="btn btn-primary" value="Guardar">
-                            <a href="{{ route('keylog.index') }}" class="btn btn-secondary">Cancelar</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+                @foreach ($keyTypes as $type)
+<option value="{{ $type->name }}" data-area="{{ $type->area }}">{{ $type->name }}</option>
 
-    <script>
-        window.onload = function() {
-            const now = new Date();
-            const formatted = now.toISOString().slice(0, 16);
-            document.getElementById('key_taken_at').value = formatted;
+                @endforeach
+</select>
+<label class="mt-2"><b>Área</b></label>
+<input type="text" name="area" class="form-control area-field" readonly>
+</div>
+</div>
 
-            const selectKeyType = document.getElementById('key_type_select');
-            const areaInput = document.getElementById('area_input');
+          <button type="button" id="add_key_field" class="btn btn-success btn-sm mt-2">+ Agregar otra llave</button>
 
-            selectKeyType.addEventListener('change', function() {
-                const selectedOption = this.options[this.selectedIndex];
-                const area = selectedOption.getAttribute('data-area');
-                areaInput.value = area ?? '';
-            });
-        };
-    </script>
+          <div class="form-group mb-3 mt-4">
+<label><b>¿Lleva herramientas o dispositivos?</b></label>
+<input type="checkbox" id="hasTools" name="hasTools" value="1" class="form-check-input">
+</div>
+
+          <div class="form-group mb-3" id="toolsDescriptionContainer" style="display: none;">
+<label><b>Detalle de herramientas/dispositivos</b></label>
+<textarea name="taken_photo" id="tools_description" class="form-control" rows="3"></textarea>
+</div>
+
+          <div class="form-group mb-3" style="display: none;">
+<label><b>Fecha y Hora de Retiro</b></label>
+<input type="datetime-local" name="key_taken_at" class="form-control" id="key_taken_at" required>
+</div>
+
+          <div class="form-group text-center mt-4">
+<input type="submit" class="btn btn-primary" value="Guardar">
+<a href="{{ route('keylog.index') }}" class="btn btn-secondary">Cancelar</a>
+</div>
+</form>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+
+  document.addEventListener('DOMContentLoaded', function () {
+
+    const now = new Date().toISOString().slice(0, 16);
+
+    document.getElementById('key_taken_at').value = now;
+
+    const keyTypes = @json($keyTypes);
+
+    const selectedKeys = new Set();
+
+    function updateArea(select, areaInput) {
+
+      const selected = select.options[select.selectedIndex];
+
+      areaInput.value = selected.getAttribute('data-area') || '';
+
+    }
+
+    function updateOptions() {
+
+      const allSelects = document.querySelectorAll('.key-code-select');
+
+      selectedKeys.clear();
+
+      allSelects.forEach(select => {
+
+        if (select.value) selectedKeys.add(select.value);
+
+      });
+
+      allSelects.forEach(currentSelect => {
+
+        const currentValue = currentSelect.value;
+
+        currentSelect.innerHTML = '<option value="">Seleccione el código de la Llave</option>';
+
+        keyTypes.forEach(type => {
+
+          if (!selectedKeys.has(type.name) || currentValue === type.name) {
+
+            currentSelect.innerHTML += `<option value="${type.name}" data-area="${type.area}">${type.name}</option>`;
+
+          }
+
+        });
+
+        currentSelect.value = currentValue;
+
+      });
+
+    }
+
+    document.getElementById('add_key_field').addEventListener('click', () => {
+
+      const index = document.querySelectorAll('.key-field').length;
+
+      const div = document.createElement('div');
+
+      div.className = 'form-group mb-3 key-field';
+
+      div.setAttribute('data-index', index);
+
+      div.innerHTML = `
+<label><b>Código de la Llave</b></label>
+<select name="key_code[]" class="form-control key-code-select" required>
+<option value="">Seleccione el código de la Llave</option>
+
+          ${keyTypes.map(type => `<option value="${type.name}" data-area="${type.area}">${type.name}</option>`).join('')}
+</select>
+<label class="mt-2"><b>Área</b></label>
+<input type="text" name="area" class="form-control area-field" readonly>
+
+      `;
+
+      document.getElementById('key_fields').appendChild(div);
+
+      const newSelect = div.querySelector('.key-code-select');
+
+      const areaInput = div.querySelector('.area-field');
+
+      newSelect.addEventListener('change', function () {
+
+        updateArea(this, areaInput);
+
+        updateOptions();
+
+      });
+
+      updateOptions();
+
+    });
+
+    document.querySelectorAll('.key-code-select').forEach(select => {
+
+      select.addEventListener('change', function () {
+
+        const areaInput = this.closest('.key-field').querySelector('.area-field');
+
+        updateArea(this, areaInput);
+
+        updateOptions();
+
+      });
+
+    });
+
+    const hasToolsCheckbox = document.getElementById('hasTools');
+
+    const toolsDescriptionContainer = document.getElementById('toolsDescriptionContainer');
+
+    const toolsDescriptionInput = document.getElementById('tools_description');
+
+    function toggleToolsDescription() {
+
+      if (hasToolsCheckbox.checked) {
+
+        toolsDescriptionContainer.style.display = 'block';
+
+        toolsDescriptionInput.setAttribute('required', 'required');
+
+      } else {
+
+        toolsDescriptionContainer.style.display = 'none';
+
+        toolsDescriptionInput.removeAttribute('required');
+
+        toolsDescriptionInput.value = '';
+
+      }
+
+    }
+
+    hasToolsCheckbox.addEventListener('change', toggleToolsDescription);
+
+    toggleToolsDescription();
+
+  });
+</script>
+
 @endsection
+

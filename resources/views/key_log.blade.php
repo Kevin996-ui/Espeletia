@@ -25,7 +25,7 @@
                     <div class="col-md-6">
                         <a href="{{ route('keylog.create') }}" class="btn btn-success btn-sm float-end">Registrar llave</a>
 
-                        @if (auth()->check() && auth()->user()->type === 'Admin')
+                        @if (auth()->check())
                             <a href="{{ route('keylog.report') }}"
                                 class="btn btn-secondary btn-sm float-end me-2">Reporte</a>
                         @endif
@@ -42,6 +42,7 @@
                                 <th>Cédula</th>
                                 <th>Código de Llave</th>
                                 <th>Área</th>
+                                <th>Herramientas / Dispositivos</th>
                                 <th>Fecha y Hora de Retiro</th>
                                 <th>Fecha y Hora de Entrega</th>
                                 <th>Acciones</th>
@@ -55,6 +56,8 @@
                                     <td>{{ $keyLog->identity_card_taken }}</td>
                                     <td>{{ $keyLog->key_code }}</td>
                                     <td>{{ $keyLog->area }}</td>
+                                    <td>{{ $keyLog->taken_photo && $keyLog->taken_photo !== '-' ? $keyLog->taken_photo : 'N/A' }}
+                                    </td>
                                     <td>{{ \Carbon\Carbon::parse($keyLog->key_taken_at)->format('d/m/Y H:i') }}</td>
                                     <td>
 
@@ -64,10 +67,8 @@
                                             <form action="{{ route('keylog.return', $keyLog->id) }}" method="POST">
 
                                                 @csrf
-                                                <button type="submit" class="btn btn-soft-danger btn-sm">
-
-                                                    Registrar Devolución
-                                                </button>
+                                                <button type="submit" class="btn btn-soft-danger btn-sm">Registrar
+                                                    Devolución</button>
                                             </form>
                                         @endif
                                     </td>
@@ -78,7 +79,6 @@
 
                                             Editar
                                         </a>
-
                                         <form action="{{ route('keylog.destroy', $keyLog->id) }}" method="POST"
                                             style="display:inline;">
 
@@ -118,7 +118,9 @@
         .btn-soft-danger {
 
             background-color: #f8d7da;
+
             border-color: #f5c6cb;
+
             color: #721c24;
 
         }
@@ -126,7 +128,9 @@
         .btn-soft-danger:hover {
 
             background-color: #f1b0b7;
+
             border-color: #f1b0b7;
+
             color: #721c24;
 
         }
@@ -134,6 +138,7 @@
         .btn[disabled] {
 
             cursor: not-allowed;
+
             opacity: 0.6;
 
         }
@@ -144,12 +149,14 @@
 
         }
 
-
         .table-header-colored th {
 
             background-color: #f2f2f2;
+
             color: #0b0d0e;
+
             font-weight: bold;
+
             text-align: center;
 
         }
