@@ -95,7 +95,6 @@
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>Foto</th>
                                     <th>Nombre del Visitante</th>
                                     <th>Empresa</th>
                                     <th>Cédula de Identidad</th>
@@ -110,13 +109,6 @@
 
                                 @foreach ($visitors as $visitor)
                                     <tr>
-                                        <td>
-                                            <div style="text-align: center;">
-                                                <img src="{{ asset('storage/' . $visitor->visitor_photo) }}"
-                                                    alt="Foto de {{ $visitor->visitor_name }}"
-                                                    style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 1px solid #ccc;">
-                                            </div>
-                                        </td>
                                         <td>{{ $visitor->visitor_name }}</td>
                                         <td>{{ $visitor->visitor_company }}</td>
                                         <td>{{ $visitor->visitor_identity_card }}</td>
