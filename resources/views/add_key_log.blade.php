@@ -47,9 +47,12 @@
 </div>
 </div>
 
-          <button type="button" id="add_key_field" class="btn btn-success btn-sm mt-2">+ Agregar otra llave</button>
+          <div class="d-flex gap-2 mb-3">
+<button type="button" id="add_key_field" class="btn btn-success btn-sm">+ Agregar otra llave</button>
+<button type="button" id="remove_last_key_field" class="btn btn-danger btn-sm" style="display: none;">-</button>
+</div>
 
-          <div class="form-group mb-3 mt-4">
+          <div class="form-group mb-3">
 <label><b>¿Lleva herramientas o dispositivos?</b></label>
 <input type="checkbox" id="hasTools" name="hasTools" value="1" class="form-check-input">
 </div>
@@ -128,6 +131,10 @@
 
     }
 
+    const keyFieldsContainer = document.getElementById('key_fields');
+
+    const removeBtn = document.getElementById('remove_last_key_field');
+
     document.getElementById('add_key_field').addEventListener('click', () => {
 
       const index = document.querySelectorAll('.key-field').length;
@@ -150,7 +157,7 @@
 
       `;
 
-      document.getElementById('key_fields').appendChild(div);
+      keyFieldsContainer.appendChild(div);
 
       const newSelect = div.querySelector('.key-code-select');
 
@@ -165,6 +172,32 @@
       });
 
       updateOptions();
+
+      if (document.querySelectorAll('.key-field').length > 1) {
+
+        removeBtn.style.display = 'inline-block';
+
+      }
+
+    });
+
+    removeBtn.addEventListener('click', () => {
+
+      const allFields = document.querySelectorAll('.key-field');
+
+      if (allFields.length > 1) {
+
+        allFields[allFields.length - 1].remove();
+
+        updateOptions();
+
+        if (allFields.length - 1 === 1) {
+
+          removeBtn.style.display = 'none';
+
+        }
+
+      }
 
     });
 
