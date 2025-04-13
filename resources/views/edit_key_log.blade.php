@@ -16,62 +16,87 @@
 <div class="card-header text-center">Formulario de Edición</div>
 <div class="card-body">
 <form method="POST" action="{{ route('keylog.update', $keyLog->id) }}">
-                    @csrf
-                    @method('PUT')
 
-                    <div class="form-group mb-3">
+          @csrf
+
+          @method('PUT')
+
+          <div class="form-group mb-3">
 <label><b>Cédula</b></label>
 <input type="text" name="identity_card_taken" class="form-control" maxlength="10" required
-                               value="{{ $keyLog->identity_card_taken }}"
-                               oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+
+              value="{{ $keyLog->identity_card_taken }}"
+
+              oninput="this.value = this.value.replace(/[^0-9]/g, '')">
 </div>
 
-                    <div class="form-group mb-3">
+          <div class="form-group mb-3">
 <label><b>Nombre</b></label>
 <input type="text" name="name_taken" class="form-control" required
-                               value="{{ $keyLog->name_taken }}">
+
+              value="{{ $keyLog->name_taken }}">
 </div>
 
-                    <div id="key_fields">
-                        @php
-                            $keyCodes = explode(',', $keyLog->key_code);
-                        @endphp
+          <div id="key_fields">
 
-                        @foreach ($keyCodes as $index => $code)
-                            @php $code = trim($code); @endphp
+            @php
+
+              $keyCodes = explode(',', $keyLog->key_code);
+
+            @endphp
+
+            @foreach ($keyCodes as $index => $code)
+
+              @php $code = trim($code); @endphp
 <div class="form-group mb-3 key-field" data-index="{{ $index }}">
 <label><b>Código de la Llave</b></label>
 <select name="key_code[]" class="form-control key-code-select" required>
 <option value="">Seleccione el código de la Llave</option>
-                                    @foreach ($keyTypes as $type)
+
+                  @foreach ($keyTypes as $type)
 <option value="{{ $type->name }}"
-                                            data-area="{{ $type->area }}"
-                                            {{ $code === $type->name ? 'selected' : '' }}>
-                                            {{ $type->name }}
+
+                      data-area="{{ $type->area }}"
+
+                      {{ $code === $type->name ? 'selected' : '' }}>
+
+                      {{ $type->name }}
 </option>
-                                    @endforeach
+
+                  @endforeach
 </select>
 <label class="mt-2"><b>Área</b></label>
 <input type="text" name="area" class="form-control area-field"
-                                       value="{{ $keyLog->area }}" readonly>
-</div>
-                        @endforeach
+
+                  value="{{ $keyLog->area }}" readonly>
 </div>
 
-                    {{-- Checkbox herramientas/dispositivos --}}
-<div class="form-group mb-3">
+            @endforeach
+</div>
+
+          <div class="d-flex gap-2 mb-3">
+<button type="button" id="add_key_field" class="btn btn-success btn-sm">+ Agregar otra llave</button>
+<button type="button" id="remove_last_key_field" class="btn btn-danger btn-sm"
+
+              style="display: {{ count($keyCodes) > 1 ? 'inline-block' : 'none' }}">-</button>
+</div>
+
+          <div class="form-group mb-3">
 <label><b>¿Lleva herramientas o dispositivos?</b></label>
 <input type="checkbox" id="hasTools" name="hasTools" value="1" class="form-check-input"
-                               {{ $keyLog->taken_photo !== 'N/A' && $keyLog->taken_photo !== '-' ? 'checked' : '' }}>
+
+              {{ $keyLog->taken_photo !== 'N/A' && $keyLog->taken_photo !== '-' ? 'checked' : '' }}>
 </div>
 
-                    {{-- Campo de texto si lleva herramientas --}}
-<div class="form-group mb-3" id="toolsDescriptionContainer" style="display: none;">
+          <div class="form-group mb-3" id="toolsDescriptionContainer" style="display: none;">
 <label><b>Detalle de herramientas/dispositivos</b></label>
-<textarea name="taken_photo" id="tools_description" class="form-control" rows="3">{{ $keyLog->taken_photo !== 'N/A' && $keyLog->taken_photo !== '-' ? $keyLog->taken_photo : '' }}</textarea>
+<textarea name="taken_photo" id="tools_description" class="form-control" rows="3">
+
+              {{ $keyLog->taken_photo !== 'N/A' && $keyLog->taken_photo !== '-' ? trim($keyLog->taken_photo) : '' }}
+</textarea>
 </div>
 
-                    <div class="form-group text-center mt-4">
+          <div class="form-group text-center mt-4">
 <input type="submit" class="btn btn-primary" value="Actualizar Registro">
 <a href="{{ route('keylog.index') }}" class="btn btn-secondary">Cancelar</a>
 </div>
@@ -82,66 +107,179 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const keyTypes = @json($keyTypes);
-        const selectedKeys = new Set();
 
-        function updateArea(select, areaField) {
-            const selectedOption = select.options[select.selectedIndex];
-            const area = selectedOption.getAttribute('data-area');
-            areaField.value = area ?? '';
-        }
+  document.addEventListener('DOMContentLoaded', function () {
 
-        function updateOptions() {
-            const allSelects = document.querySelectorAll('.key-code-select');
-            selectedKeys.clear();
+    const keyTypes = @json($keyTypes);
 
-            allSelects.forEach(select => {
-                if (select.value) {
-                    selectedKeys.add(select.value);
-                }
-            });
+    const selectedKeys = new Set();
 
-            allSelects.forEach(currentSelect => {
-                const currentValue = currentSelect.value;
-                currentSelect.innerHTML = '<option value="">Seleccione el código de la Llave</option>';
-                keyTypes.forEach(type => {
-                    if (!selectedKeys.has(type.name) || type.name === currentValue) {
-                        currentSelect.innerHTML += `<option value="${type.name}" data-area="${type.area}">${type.name}</option>`;
-                    }
-                });
-                currentSelect.value = currentValue;
-            });
-        }
+    function updateArea(select, areaField) {
 
-        document.querySelectorAll('.key-code-select').forEach(select => {
-            select.addEventListener('change', function () {
-                const areaInput = this.closest('.key-field').querySelector('.area-field');
-                updateArea(this, areaInput);
-                updateOptions();
-            });
+      const selectedOption = select.options[select.selectedIndex];
+
+      const area = selectedOption.getAttribute('data-area');
+
+      areaField.value = area ?? '';
+
+    }
+
+    function updateOptions() {
+
+      const allSelects = document.querySelectorAll('.key-code-select');
+
+      selectedKeys.clear();
+
+      allSelects.forEach(select => {
+
+        if (select.value) selectedKeys.add(select.value);
+
+      });
+
+      allSelects.forEach(currentSelect => {
+
+        const currentValue = currentSelect.value;
+
+        currentSelect.innerHTML = '<option value="">Seleccione el código de la Llave</option>';
+
+        keyTypes.forEach(type => {
+
+          if (!selectedKeys.has(type.name) || type.name === currentValue) {
+
+            currentSelect.innerHTML += `<option value="${type.name}" data-area="${type.area}">${type.name}</option>`;
+
+          }
+
         });
+
+        currentSelect.value = currentValue;
+
+      });
+
+    }
+
+    document.querySelectorAll('.key-code-select').forEach(select => {
+
+      select.addEventListener('change', function () {
+
+        const areaInput = this.closest('.key-field').querySelector('.area-field');
+
+        updateArea(this, areaInput);
 
         updateOptions();
 
-        // Mostrar u ocultar campo de herramientas
-        const hasToolsCheckbox = document.getElementById('hasTools');
-        const toolsContainer = document.getElementById('toolsDescriptionContainer');
-        const toolsTextarea = document.getElementById('tools_description');
+      });
 
-        function toggleToolsField() {
-            if (hasToolsCheckbox.checked) {
-                toolsContainer.style.display = 'block';
-                toolsTextarea.setAttribute('required', 'required');
-            } else {
-                toolsContainer.style.display = 'none';
-                toolsTextarea.removeAttribute('required');
-                toolsTextarea.value = '';
-            }
+    });
+
+    updateOptions();
+
+    const keyFieldsContainer = document.getElementById('key_fields');
+
+    const addBtn = document.getElementById('add_key_field');
+
+    const removeBtn = document.getElementById('remove_last_key_field');
+
+    addBtn.addEventListener('click', () => {
+
+      const index = document.querySelectorAll('.key-field').length;
+
+      const div = document.createElement('div');
+
+      div.className = 'form-group mb-3 key-field';
+
+      div.setAttribute('data-index', index);
+
+      div.innerHTML = `
+<label><b>Código de la Llave</b></label>
+<select name="key_code[]" class="form-control key-code-select" required>
+<option value="">Seleccione el código de la Llave</option>
+
+          ${keyTypes.map(type => `<option value="${type.name}" data-area="${type.area}">${type.name}</option>`).join('')}
+</select>
+<label class="mt-2"><b>Área</b></label>
+<input type="text" name="area" class="form-control area-field" readonly>
+
+      `;
+
+      keyFieldsContainer.appendChild(div);
+
+      const select = div.querySelector('.key-code-select');
+
+      const areaInput = div.querySelector('.area-field');
+
+      select.addEventListener('change', function () {
+
+        updateArea(this, areaInput);
+
+        updateOptions();
+
+      });
+
+      updateOptions();
+
+      if (document.querySelectorAll('.key-field').length > 1) {
+
+        removeBtn.style.display = 'inline-block';
+
+      }
+
+    });
+
+    removeBtn.addEventListener('click', () => {
+
+      const allFields = document.querySelectorAll('.key-field');
+
+      if (allFields.length > 1) {
+
+        allFields[allFields.length - 1].remove();
+
+        updateOptions();
+
+        if (allFields.length - 1 === 1) {
+
+          removeBtn.style.display = 'none';
+
         }
 
-        hasToolsCheckbox.addEventListener('change', toggleToolsField);
-        toggleToolsField();
+      }
+
     });
+
+    // Checkbox herramientas
+
+    const hasToolsCheckbox = document.getElementById('hasTools');
+
+    const toolsContainer = document.getElementById('toolsDescriptionContainer');
+
+    const toolsTextarea = document.getElementById('tools_description');
+
+    function toggleToolsField() {
+
+      if (hasToolsCheckbox.checked) {
+
+        toolsContainer.style.display = 'block';
+
+        toolsTextarea.setAttribute('required', 'required');
+
+      } else {
+
+        toolsContainer.style.display = 'none';
+
+        toolsTextarea.removeAttribute('required');
+
+        toolsTextarea.value = '';
+
+      }
+
+    }
+
+    hasToolsCheckbox.addEventListener('change', toggleToolsField);
+
+    toggleToolsField();
+
+  });
 </script>
+
 @endsection
+

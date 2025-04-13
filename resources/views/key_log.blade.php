@@ -38,10 +38,9 @@
                     <table class="table table-bordered" id="keylog_table">
                         <thead class="table-header-colored">
                             <tr>
-                                <th>Nombre</th>
                                 <th>Cédula</th>
+                                <th>Nombre</th>
                                 <th>Código de Llave</th>
-                                <th>Área</th>
                                 <th>Herramientas / Dispositivos</th>
                                 <th>Fecha y Hora de Retiro</th>
                                 <th>Fecha y Hora de Entrega</th>
@@ -52,10 +51,9 @@
 
                             @foreach ($keyLogs as $keyLog)
                                 <tr>
-                                    <td>{{ $keyLog->name_taken }}</td>
                                     <td>{{ $keyLog->identity_card_taken }}</td>
+                                    <td>{{ $keyLog->name_taken }}</td>
                                     <td>{{ $keyLog->key_code }}</td>
-                                    <td>{{ $keyLog->area }}</td>
                                     <td>{{ $keyLog->taken_photo && $keyLog->taken_photo !== '-' ? $keyLog->taken_photo : 'N/A' }}
                                     </td>
                                     <td>{{ \Carbon\Carbon::parse($keyLog->key_taken_at)->format('d/m/Y H:i') }}</td>
