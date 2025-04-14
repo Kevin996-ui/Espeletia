@@ -16,6 +16,8 @@ class CreateKeyTypesTable extends Migration
         Schema::create('key_types', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('area')->nullable();
+            $table->string('email')->nullable();
             $table->timestamps();
         });
     }
