@@ -9,15 +9,23 @@ class CreateNewVisitorsTable extends Migration
     public function up()
     {
         Schema::create('new_visitors', function (Blueprint $table) {
-            $table->id();  // Campo de ID auto-incremental
-            $table->string('visitor_name');  // Nombre del visitante
-            $table->string('visitor_company');  // Empresa del visitante
-            $table->string('visitor_identity_card');  // Cédula de identidad
-            $table->dateTime('visitor_enter_time');  // Hora de entrada
-            $table->dateTime('visitor_out_time')->nullable();  // Hora de salida (opcional)
-            $table->string('visitor_reason_to_meet');  // Motivo de la visita
-            $table->string('visitor_photo')->nullable();  // Foto (opcional)
-            $table->timestamps();  // Campos created_at y updated_at
+            $table->id();  // bigint(20) unsigned AUTO_INCREMENT
+            $table->string('visitor_name');
+            $table->string('visitor_company');
+            $table->string('visitor_identity_card');
+            $table->dateTime('visitor_enter_time');
+            $table->dateTime('visitor_out_time')->nullable();
+            $table->string('visitor_reason_to_meet');
+            $table->string('visitor_photo')->nullable();
+            $table->string('visitor_card')->nullable(); // FALTANTE AGREGADO
+
+            $table->foreignId('department_id')
+                ->nullable()
+                ->constrained('departments')
+                ->onDelete('set null');
+
+            $table->timestamp('created_at')->nullable();
+            $table->timestamp('updated_at')->nullable();
         });
     }
 

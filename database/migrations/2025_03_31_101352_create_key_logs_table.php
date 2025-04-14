@@ -4,25 +4,42 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class MakeReturnFieldsNullableInKeyLogsTable extends Migration
+class CreateKeyLogsTable extends Migration
 {
+    /**
+     * Ejecutar las migraciones.
+     *
+     * @return void
+     */
     public function up()
     {
-        Schema::table('key_logs', function (Blueprint $table) {
-            $table->string('name_returned')->nullable()->change();
-            $table->string('identity_card_returned')->nullable()->change();
-            $table->string('returned_photo')->nullable()->change();
-            $table->dateTime('key_returned_at')->nullable()->change();
+        Schema::create('key_logs', function (Blueprint $table) {
+            $table->id();
+
+            $table->string('name_taken');
+            $table->string('identity_card_taken');
+            $table->string('taken_photo');
+            $table->string('area');
+            $table->text('key_code');
+            $table->dateTime('key_taken_at');
+
+            $table->string('name_returned')->nullable();
+            $table->string('identity_card_returned')->nullable();
+            $table->string('returned_photo')->nullable();
+            $table->dateTime('key_returned_at')->nullable();
+
+            $table->timestamp('created_at')->nullable();
+            $table->timestamp('updated_at')->nullable();
         });
     }
 
+    /**
+     * Revertir las migraciones.
+     *
+     * @return void
+     */
     public function down()
     {
-        Schema::table('key_logs', function (Blueprint $table) {
-            $table->string('name_returned')->nullable(false)->change();
-            $table->string('identity_card_returned')->nullable(false)->change();
-            $table->string('returned_photo')->nullable(false)->change();
-            $table->dateTime('key_returned_at')->nullable(false)->change();
-        });
+        Schema::dropIfExists('key_logs');
     }
 }
