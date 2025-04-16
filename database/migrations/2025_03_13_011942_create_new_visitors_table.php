@@ -17,7 +17,7 @@ class CreateNewVisitorsTable extends Migration
             $table->dateTime('visitor_out_time')->nullable();
             $table->string('visitor_reason_to_meet');
             $table->string('visitor_photo')->nullable();
-            $table->string('visitor_card')->nullable(); // FALTANTE AGREGADO
+            $table->string('visitor_card')->nullable();
 
             $table->foreignId('department_id')
                 ->nullable()
