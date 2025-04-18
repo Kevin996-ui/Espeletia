@@ -9,7 +9,7 @@ class CreateNewVisitorsTable extends Migration
     public function up()
     {
         Schema::create('new_visitors', function (Blueprint $table) {
-            $table->id();  // bigint(20) unsigned AUTO_INCREMENT
+            $table->id();
             $table->string('visitor_name');
             $table->string('visitor_company');
             $table->string('visitor_identity_card');
@@ -22,6 +22,11 @@ class CreateNewVisitorsTable extends Migration
             $table->foreignId('department_id')
                 ->nullable()
                 ->constrained('departments')
+                ->onDelete('set null');
+
+            $table->foreignId('card_id')
+                ->nullable()
+                ->constrained('cards')
                 ->onDelete('set null');
 
             $table->timestamp('created_at')->nullable();

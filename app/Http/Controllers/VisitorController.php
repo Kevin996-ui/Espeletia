@@ -6,6 +6,8 @@ use App\Models\NewVisitor;
 
 use App\Models\Department;
 
+use App\Models\Card;
+
 use Illuminate\Http\Request;
 
 use App\Mail\VisitorNotification;
@@ -18,21 +20,9 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 use Maatwebsite\Excel\Facades\Excel;
 
-// use App\Services\TeamsNotificationService;
-
 class VisitorController extends Controller
 
 {
-
-    // protected $teamsService;
-
-    // public function __construct(TeamsNotificationService $teamsService)
-
-    // {
-
-    //     $this->teamsService = $teamsService;
-
-    // }
 
     public function index(Request $request)
 
@@ -43,23 +33,16 @@ class VisitorController extends Controller
         if ($request->has('search') && $request->search != '') {
 
             $query->where('visitor_identity_card', 'like', '%' . $request->search . '%');
-
         }
 
         if ($request->has('start_date') && $request->has('end_date') && $request->start_date && $request->end_date) {
 
             $query->whereBetween('visitor_enter_time', [$request->start_date, $request->end_date]);
-
         }
 
-        $visitors = $query->with('department')
-
-                          ->orderBy('visitor_enter_time', 'desc')
-
-                          ->paginate(5);
+        $visitors = $query->with('department', 'card')->orderBy('visitor_enter_time', 'desc')->paginate(5);
 
         return view('visitor', compact('visitors'));
-
     }
 
     public function add()
@@ -68,8 +51,11 @@ class VisitorController extends Controller
 
         $departments = Department::all();
 
-        return view('add_visitor', compact('departments'));
+        $usedCardIds = NewVisitor::whereNull('visitor_out_time')->pluck('card_id')->filter()->toArray();
 
+        $cards = Card::whereNotIn('id', $usedCardIds)->get();
+
+        return view('add_visitor', compact('departments', 'cards'));
     }
 
     public function store(Request $request)
@@ -92,11 +78,11 @@ class VisitorController extends Controller
 
             'visitor_card' => 'nullable|string|max:255',
 
+            'card_id' => 'nullable|exists:cards,id',
+
         ]);
 
         $identityCard = $request->visitor_identity_card;
-
-        //$photoPath = $this->handleVisitorPhoto($request->input('visitor_photo'), $identityCard);
 
         $visitor = NewVisitor::create([
 
@@ -112,11 +98,11 @@ class VisitorController extends Controller
 
             'visitor_reason_to_meet' => $request->visitor_reason_to_meet,
 
-            //'visitor_photo' => $photoPath,
-
             'department_id' => $request->department_id,
 
             'visitor_card' => $request->visitor_card,
+
+            'card_id' => $request->card_id,
 
         ]);
 
@@ -124,26 +110,7 @@ class VisitorController extends Controller
 
         Mail::to($department->contact_emails)->send(new VisitorNotification($visitor, $department));
 
-        /*
-
-        // Notificación a Microsoft Teams (deshabilitada temporalmente)
-
-        $message = "Nuevo Visitante Registrado: \n";
-
-        $message .= "Nombre: " . $visitor->visitor_name . "\n";
-
-        $message .= "Departamento: " . $department->name . "\n";
-
-        $message .= "Motivo de la visita: " . $visitor->visitor_reason_to_meet . "\n";
-
-        $message .= "Hora de entrada: " . $visitor->visitor_enter_time . "\n";
-
-        $this->teamsService->sendMessage($message);
-
-        */
-
         return redirect()->route('visitor.index')->with('success', 'Visitante agregado exitosamente');
-
     }
 
     private function handleVisitorPhoto($imageData, $identityCard)
@@ -161,7 +128,6 @@ class VisitorController extends Controller
         file_put_contents($imagePath, base64_decode($image));
 
         return 'visitor_photos/' . $imageName;
-
     }
 
     public function edit($id)
@@ -172,8 +138,14 @@ class VisitorController extends Controller
 
         $departments = Department::all();
 
-        return view('edit_visitor', compact('visitor', 'departments'));
+        $usedCardIds = NewVisitor::where('id', '!=', $visitor->id)->whereNull('visitor_out_time')->pluck('card_id')->filter()->toArray();
 
+        $cards = Card::where(function ($query) use ($usedCardIds, $visitor) {
+
+            $query->whereNotIn('id', $usedCardIds)->orWhere('id', $visitor->card_id);
+        })->get();
+
+        return view('edit_visitor', compact('visitor', 'departments', 'cards'));
     }
 
     public function update(Request $request, $id)
@@ -198,6 +170,8 @@ class VisitorController extends Controller
 
             'visitor_card' => 'nullable|string|max:255',
 
+            'card_id' => 'nullable|exists:cards,id',
+
         ]);
 
         $visitor = NewVisitor::findOrFail($id);
@@ -209,7 +183,6 @@ class VisitorController extends Controller
             $photoPath = $this->handleVisitorPhoto($request->input('visitor_photo'), $identityCard);
 
             $visitor->visitor_photo = $photoPath;
-
         }
 
         $visitor->visitor_name = $request->visitor_name;
@@ -226,46 +199,26 @@ class VisitorController extends Controller
 
         $visitor->visitor_card = $request->visitor_card;
 
+        $visitor->card_id = $request->card_id;
+
         $visitor->save();
 
         $department = Department::find($visitor->department_id);
 
         Mail::to($department->contact_emails)->send(new VisitorNotification($visitor, $department));
 
-        /*
-
-        // Notificación a Microsoft Teams (deshabilitada temporalmente)
-
-        $message = "Visitante Actualizado: \n";
-
-        $message .= "Nombre: " . $visitor->visitor_name . "\n";
-
-        $message .= "Departamento: " . $department->name . "\n";
-
-        $message .= "Motivo de la visita: " . $visitor->visitor_reason_to_meet . "\n";
-
-        $message .= "Hora de entrada: " . $visitor->visitor_enter_time . "\n";
-
-        $this->teamsService->sendMessage($message);
-
-        */
-
         return redirect()->route('visitor.index')->with('success', 'Visitante actualizado exitosamente');
-
     }
 
     public function delete($id)
+
     {
-    $visitor = NewVisitor::findOrFail($id);
 
-    // $imagePath = public_path($visitor->visitor_photo);
-    // if (!empty($visitor->visitor_photo) && file_exists($imagePath) && is_file($imagePath)) {
-    //     unlink($imagePath);
-    // }
+        $visitor = NewVisitor::findOrFail($id);
 
-    $visitor->delete();
+        $visitor->delete();
 
-    return redirect()->route('visitor.index')->with('success', 'Visitante eliminado exitosamente');
+        return redirect()->route('visitor.index')->with('success', 'Visitante eliminado exitosamente');
     }
 
     public function registerExit($id)
@@ -279,7 +232,6 @@ class VisitorController extends Controller
         $visitor->save();
 
         return redirect()->route('visitor.index')->with('success', 'Hora de salida registrada.');
-
     }
 
     public function showReportForm(Request $request)
@@ -293,7 +245,6 @@ class VisitorController extends Controller
         if ($request->has('search') && $request->search != '') {
 
             $query->where('visitor_identity_card', 'like', '%' . $request->search . '%');
-
         }
 
         if ($request->has('start_date') && $request->has('end_date') && $request->start_date && $request->end_date) {
@@ -301,37 +252,30 @@ class VisitorController extends Controller
             if ($request->start_date == $request->end_date) {
 
                 $query->whereDate('visitor_enter_time', $request->start_date);
-
             } else {
 
                 $query->whereBetween('visitor_enter_time', [$request->start_date, $request->end_date]);
-
             }
-
         }
 
         if ($request->has('department_id') && $request->department_id != '') {
 
             $query->where('department_id', $request->department_id);
-
         }
 
         if ($request->has('no_exit') && $request->no_exit == '1') {
 
             $query->whereNull('visitor_out_time');
-
         }
 
         if ($request->has('visitor_card') && $request->visitor_card != '') {
 
             $query->where('visitor_card', 'like', '%' . $request->visitor_card . '%');
-
         }
 
-        $visitors = $query->with('department')->get();
+        $visitors = $query->with('department', 'card')->get();
 
         return view('visitor_report', compact('departments', 'visitors'));
-
     }
 
     public function exportReport(Request $request, $format)
@@ -343,7 +287,6 @@ class VisitorController extends Controller
         if ($request->has('search') && $request->search != '') {
 
             $query->where('visitor_identity_card', 'like', '%' . $request->search . '%');
-
         }
 
         if ($request->has('start_date') && $request->has('end_date') && $request->start_date && $request->end_date) {
@@ -351,55 +294,55 @@ class VisitorController extends Controller
             if ($request->start_date == $request->end_date) {
 
                 $query->whereDate('visitor_enter_time', $request->start_date);
-
             } else {
 
                 $query->whereBetween('visitor_enter_time', [$request->start_date, $request->end_date]);
-
             }
-
         }
 
         if ($request->has('department_id') && $request->department_id != '') {
 
             $query->where('department_id', $request->department_id);
-
         }
 
         if ($request->has('no_exit') && $request->no_exit == '1') {
 
             $query->whereNull('visitor_out_time');
-
         }
 
         if ($request->has('visitor_card') && $request->visitor_card != '') {
 
             $query->where('visitor_card', 'like', '%' . $request->visitor_card . '%');
-
         }
 
-        $visitors = $query->with('department')->get();
+        $visitors = $query->with('department', 'card')->get();
 
         if ($format === 'csv') {
 
             $filename = 'reporte_visitantes_' . now()->format('Ymd_His') . '.csv';
 
             return Excel::download(new VisitorExport($visitors), $filename);
-
         }
 
         if ($format === 'pdf') {
 
-            $pdf = Pdf::loadView('exports.visitor_export', ['visitors' => $visitors])
+            $generated_by = auth()->check()
 
-                      ->setPaper('a4', 'landscape');
+                ? (auth()->user()->name ?? auth()->user()->email)
+
+                : 'Usuario no autenticado';
+
+            $pdf = Pdf::loadView('exports.visitor_export', [
+
+                'visitors' => $visitors,
+
+                'generated_by' => $generated_by,
+
+            ])->setPaper('a4', 'landscape');
 
             return $pdf->download('reporte_visitantes_' . now()->format('Ymd_His') . '.pdf');
-
         }
 
         return redirect()->route('visitor.report')->with('error', 'Formato no válido');
-
     }
-
 }

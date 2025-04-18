@@ -1,151 +1,153 @@
 @extends('dashboard')
 
 @section('content')
-<h2 class="mt-3">Registrar Nueva Llave</h2>
-<nav aria-label="breadcrumb">
-<ol class="breadcrumb">
-<li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
-<li class="breadcrumb-item"><a href="{{ route('keylog.index') }}">Listado de Llaves</a></li>
-<li class="breadcrumb-item active">Registrar</li>
-</ol>
-</nav>
+    <h2 class="mt-3">Registrar Nueva Llave</h2>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('keylog.index') }}">Listado de Llaves</a></li>
+            <li class="breadcrumb-item active">Registrar</li>
+        </ol>
+    </nav>
 
-<div class="row mt-4">
-<div class="col-md-8 offset-md-2">
-<div class="card">
-<div class="card-header text-center">Formulario de Registro</div>
-<div class="card-body">
-<form method="POST" action="{{ route('keylog.store') }}">
+    <div class="row mt-4">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header text-center">Formulario de Registro</div>
+                <div class="card-body">
+                    <form method="POST" action="{{ route('keylog.store') }}">
 
-          @csrf
+                        @csrf
 
-          <div class="form-group mb-3">
-<label><b>Cédula</b></label>
-<input type="text" name="identity_card_taken" class="form-control" maxlength="10" required
+                        <div class="form-group mb-3">
+                            <label><b>Cédula</b></label>
+                            <input type="text" name="identity_card_taken" class="form-control" maxlength="10" required
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        </div>
 
-              oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-</div>
+                        <div class="form-group mb-3">
+                            <label><b>Nombre</b></label>
+                            <input type="text" name="name_taken" class="form-control" required>
+                        </div>
 
-          <div class="form-group mb-3">
-<label><b>Nombre</b></label>
-<input type="text" name="name_taken" class="form-control" required>
-</div>
+                        <div id="key_fields">
+                            <div class="form-group mb-3 key-field" data-index="0">
+                                <label><b>Código de la Llave</b></label>
+                                <select name="key_code[]" class="form-control key-code-select" required>
+                                    <option value="">Seleccione el código de la Llave</option>
 
-          <div id="key_fields">
-<div class="form-group mb-3 key-field" data-index="0">
-<label><b>Código de la Llave</b></label>
-<select name="key_code[]" class="form-control key-code-select" required>
-<option value="">Seleccione el código de la Llave</option>
+                                    @foreach ($keyTypes as $type)
+                                        <option value="{{ $type->name }}" data-area="{{ $type->area }}">
+                                            {{ $type->name }}</option>
+                                    @endforeach
+                                </select>
+                                <label class="mt-2"><b>Área</b></label>
+                                <input type="text" name="area" class="form-control area-field" readonly>
+                            </div>
+                        </div>
 
-                @foreach ($keyTypes as $type)
-<option value="{{ $type->name }}" data-area="{{ $type->area }}">{{ $type->name }}</option>
+                        <div class="d-flex gap-2 mb-3">
+                            <button type="button" id="add_key_field" class="btn btn-success btn-sm">+ Agregar otra
+                                llave</button>
+                            <button type="button" id="remove_last_key_field" class="btn btn-danger btn-sm"
+                                style="display: none;">-</button>
+                        </div>
 
-                @endforeach
-</select>
-<label class="mt-2"><b>Área</b></label>
-<input type="text" name="area" class="form-control area-field" readonly>
-</div>
-</div>
+                        <div class="form-group mb-3">
+                            <label><b>¿Lleva herramientas o dispositivos?</b></label>
+                            <input type="checkbox" id="hasTools" name="hasTools" value="1" class="form-check-input">
+                        </div>
 
-          <div class="d-flex gap-2 mb-3">
-<button type="button" id="add_key_field" class="btn btn-success btn-sm">+ Agregar otra llave</button>
-<button type="button" id="remove_last_key_field" class="btn btn-danger btn-sm" style="display: none;">-</button>
-</div>
+                        <div class="form-group mb-3" id="toolsDescriptionContainer" style="display: none;">
+                            <label><b>Detalle de herramientas/dispositivos</b></label>
+                            <textarea name="taken_photo" id="tools_description" class="form-control" rows="3"></textarea>
+                        </div>
 
-          <div class="form-group mb-3">
-<label><b>¿Lleva herramientas o dispositivos?</b></label>
-<input type="checkbox" id="hasTools" name="hasTools" value="1" class="form-check-input">
-</div>
+                        <div class="form-group mb-3" style="display: none;">
+                            <label><b>Fecha y Hora de Retiro</b></label>
+                            <input type="datetime-local" name="key_taken_at" class="form-control" id="key_taken_at"
+                                required>
+                        </div>
 
-          <div class="form-group mb-3" id="toolsDescriptionContainer" style="display: none;">
-<label><b>Detalle de herramientas/dispositivos</b></label>
-<textarea name="taken_photo" id="tools_description" class="form-control" rows="3"></textarea>
-</div>
+                        <div class="form-group text-center mt-4">
+                            <input type="submit" class="btn btn-primary" value="Guardar">
+                            <a href="{{ route('keylog.index') }}" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
-          <div class="form-group mb-3" style="display: none;">
-<label><b>Fecha y Hora de Retiro</b></label>
-<input type="datetime-local" name="key_taken_at" class="form-control" id="key_taken_at" required>
-</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
 
-          <div class="form-group text-center mt-4">
-<input type="submit" class="btn btn-primary" value="Guardar">
-<a href="{{ route('keylog.index') }}" class="btn btn-secondary">Cancelar</a>
-</div>
-</form>
-</div>
-</div>
-</div>
-</div>
+            const now = new Date().toISOString().slice(0, 16);
 
-<script>
+            document.getElementById('key_taken_at').value = now;
 
-  document.addEventListener('DOMContentLoaded', function () {
+            const keyTypes = @json($keyTypes);
 
-    const now = new Date().toISOString().slice(0, 16);
+            const selectedKeys = new Set();
 
-    document.getElementById('key_taken_at').value = now;
+            function updateArea(select, areaInput) {
 
-    const keyTypes = @json($keyTypes);
+                const selected = select.options[select.selectedIndex];
 
-    const selectedKeys = new Set();
+                areaInput.value = selected.getAttribute('data-area') || '';
 
-    function updateArea(select, areaInput) {
+            }
 
-      const selected = select.options[select.selectedIndex];
+            function updateOptions() {
 
-      areaInput.value = selected.getAttribute('data-area') || '';
+                const allSelects = document.querySelectorAll('.key-code-select');
 
-    }
+                selectedKeys.clear();
 
-    function updateOptions() {
+                allSelects.forEach(select => {
 
-      const allSelects = document.querySelectorAll('.key-code-select');
+                    if (select.value) selectedKeys.add(select.value);
 
-      selectedKeys.clear();
+                });
 
-      allSelects.forEach(select => {
+                allSelects.forEach(currentSelect => {
 
-        if (select.value) selectedKeys.add(select.value);
+                    const currentValue = currentSelect.value;
 
-      });
+                    currentSelect.innerHTML = '<option value="">Seleccione el código de la Llave</option>';
 
-      allSelects.forEach(currentSelect => {
+                    keyTypes.forEach(type => {
 
-        const currentValue = currentSelect.value;
+                        if (!selectedKeys.has(type.name) || currentValue === type.name) {
 
-        currentSelect.innerHTML = '<option value="">Seleccione el código de la Llave</option>';
+                            currentSelect.innerHTML +=
+                                `<option value="${type.name}" data-area="${type.area}">${type.name}</option>`;
 
-        keyTypes.forEach(type => {
+                        }
 
-          if (!selectedKeys.has(type.name) || currentValue === type.name) {
+                    });
 
-            currentSelect.innerHTML += `<option value="${type.name}" data-area="${type.area}">${type.name}</option>`;
+                    currentSelect.value = currentValue;
 
-          }
+                });
 
-        });
+            }
 
-        currentSelect.value = currentValue;
+            const keyFieldsContainer = document.getElementById('key_fields');
 
-      });
+            const removeBtn = document.getElementById('remove_last_key_field');
 
-    }
+            document.getElementById('add_key_field').addEventListener('click', () => {
 
-    const keyFieldsContainer = document.getElementById('key_fields');
+                const index = document.querySelectorAll('.key-field').length;
 
-    const removeBtn = document.getElementById('remove_last_key_field');
+                const div = document.createElement('div');
 
-    document.getElementById('add_key_field').addEventListener('click', () => {
+                div.className = 'form-group mb-3 key-field';
 
-      const index = document.querySelectorAll('.key-field').length;
+                div.setAttribute('data-index', index);
 
-      const div = document.createElement('div');
-
-      div.className = 'form-group mb-3 key-field';
-
-      div.setAttribute('data-index', index);
-
-      div.innerHTML = `
+                div.innerHTML = `
 <label><b>Código de la Llave</b></label>
 <select name="key_code[]" class="form-control key-code-select" required>
 <option value="">Seleccione el código de la Llave</option>
@@ -157,96 +159,94 @@
 
       `;
 
-      keyFieldsContainer.appendChild(div);
+                keyFieldsContainer.appendChild(div);
 
-      const newSelect = div.querySelector('.key-code-select');
+                const newSelect = div.querySelector('.key-code-select');
 
-      const areaInput = div.querySelector('.area-field');
+                const areaInput = div.querySelector('.area-field');
 
-      newSelect.addEventListener('change', function () {
+                newSelect.addEventListener('change', function() {
 
-        updateArea(this, areaInput);
+                    updateArea(this, areaInput);
 
-        updateOptions();
+                    updateOptions();
 
-      });
+                });
 
-      updateOptions();
+                updateOptions();
 
-      if (document.querySelectorAll('.key-field').length > 1) {
+                if (document.querySelectorAll('.key-field').length > 1) {
 
-        removeBtn.style.display = 'inline-block';
+                    removeBtn.style.display = 'inline-block';
 
-      }
+                }
 
-    });
+            });
 
-    removeBtn.addEventListener('click', () => {
+            removeBtn.addEventListener('click', () => {
 
-      const allFields = document.querySelectorAll('.key-field');
+                const allFields = document.querySelectorAll('.key-field');
 
-      if (allFields.length > 1) {
+                if (allFields.length > 1) {
 
-        allFields[allFields.length - 1].remove();
+                    allFields[allFields.length - 1].remove();
 
-        updateOptions();
+                    updateOptions();
 
-        if (allFields.length - 1 === 1) {
+                    if (allFields.length - 1 === 1) {
 
-          removeBtn.style.display = 'none';
+                        removeBtn.style.display = 'none';
 
-        }
+                    }
 
-      }
+                }
 
-    });
+            });
 
-    document.querySelectorAll('.key-code-select').forEach(select => {
+            document.querySelectorAll('.key-code-select').forEach(select => {
 
-      select.addEventListener('change', function () {
+                select.addEventListener('change', function() {
 
-        const areaInput = this.closest('.key-field').querySelector('.area-field');
+                    const areaInput = this.closest('.key-field').querySelector('.area-field');
 
-        updateArea(this, areaInput);
+                    updateArea(this, areaInput);
 
-        updateOptions();
+                    updateOptions();
 
-      });
+                });
 
-    });
+            });
 
-    const hasToolsCheckbox = document.getElementById('hasTools');
+            const hasToolsCheckbox = document.getElementById('hasTools');
 
-    const toolsDescriptionContainer = document.getElementById('toolsDescriptionContainer');
+            const toolsDescriptionContainer = document.getElementById('toolsDescriptionContainer');
 
-    const toolsDescriptionInput = document.getElementById('tools_description');
+            const toolsDescriptionInput = document.getElementById('tools_description');
 
-    function toggleToolsDescription() {
+            function toggleToolsDescription() {
 
-      if (hasToolsCheckbox.checked) {
+                if (hasToolsCheckbox.checked) {
 
-        toolsDescriptionContainer.style.display = 'block';
+                    toolsDescriptionContainer.style.display = 'block';
 
-        toolsDescriptionInput.setAttribute('required', 'required');
+                    toolsDescriptionInput.setAttribute('required', 'required');
 
-      } else {
+                } else {
 
-        toolsDescriptionContainer.style.display = 'none';
+                    toolsDescriptionContainer.style.display = 'none';
 
-        toolsDescriptionInput.removeAttribute('required');
+                    toolsDescriptionInput.removeAttribute('required');
 
-        toolsDescriptionInput.value = '';
+                    toolsDescriptionInput.value = '';
 
-      }
+                }
 
-    }
+            }
 
-    hasToolsCheckbox.addEventListener('change', toggleToolsDescription);
+            hasToolsCheckbox.addEventListener('change', toggleToolsDescription);
 
-    toggleToolsDescription();
+            toggleToolsDescription();
 
-  });
-</script>
-
+        });
+    </script>
 @endsection
-

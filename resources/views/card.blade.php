@@ -1,11 +1,11 @@
 @extends('dashboard')
 
 @section('content')
-    <h2 class="mt-3">Administración de Departamentos</h2>
+    <h2 class="mt-3">Administración de Tarjetas</h2>
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
-            <li class="breadcrumb-item active">Administración de Departamentos</li>
+            <li class="breadcrumb-item active">Administración de Tarjetas</li>
         </ol>
     </nav>
 
@@ -19,22 +19,20 @@
         <div class="card">
             <div class="card-header">
                 <div class="row">
-                    <div class="col col-md-6">Administración de Departamentos</div>
+                    <div class="col col-md-6">Administración de Tarjetas</div>
                     <div class="col col-md-6">
-                        <a href="/department/add" class="btn btn-success btn-sm float-end">Agregar</a>
+                        <a href="{{ route('card.create') }}" class="btn btn-success btn-sm float-end">Agregar</a>
                     </div>
                 </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="department_table">
+                    <table class="table table-bordered" id="card_table">
                         <thead>
                             <tr>
-                                <th>Nombre del Departamento</th>
-                                <th>Persona de contacto</th>
-                                <th>Correo Electrónico</th>
-                                <th>Creado</th>
-                                <th>Actualizado</th>
+                                <th>Código de la Tarjeta</th>
+                                <th>Fecha de Creación</th>
+                                <th>Fecha de Actualización</th>
                                 <th>Acción</th>
                             </tr>
                         </thead>
@@ -46,21 +44,14 @@
     </div>
 
     <script>
-        var table = $('#department_table').DataTable({
+        var table = $('#card_table').DataTable({
             processing: true,
             serverSide: true,
-            ajax: '{{ route('department.fetch_all') }}',
-            columns: [{
-                    data: 'department_name',
-                    name: 'department_name'
-                },
+            ajax: '{{ route('card.fetch_all') }}',
+            columns: [
                 {
-                    data: 'contact_person',
-                    name: 'contact_person'
-                },
-                {
-                    data: 'email',
-                    name: 'email'
+                    data: 'code',
+                    name: 'code'
                 },
                 {
                     data: 'created_at',
@@ -96,8 +87,8 @@
 
         $(document).on('click', '.delete', function() {
             var id = $(this).data('id');
-            if (confirm("¿Estás segura de que quieres eliminarlo?")) {
-                window.location.href = '/department/delete/' + id;
+            if (confirm("¿Estás segura de que quieres eliminarla?")) {
+                window.location.href = '/card/delete/' + id;
             }
         });
     </script>

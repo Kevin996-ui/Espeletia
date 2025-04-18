@@ -12,6 +12,7 @@
     <p><strong>🏢 Empresa:</strong> {{ $visitor->visitor_company }}</p>
     <p><strong>🪪 Cédula:</strong> {{ $visitor->visitor_identity_card }}</p>
     <p><strong>🕐 Hora de Entrada:</strong>
+
         {{ \Carbon\Carbon::parse($visitor->visitor_enter_time)->format('d/m/Y H:i') }}</p>
 
     <p><strong>🏬 Departamento:</strong> {{ $department->department_name }}</p>
@@ -20,22 +21,29 @@
 
     <p><strong>📄 Motivo de la Visita:</strong> {{ $visitor->visitor_reason_to_meet }}</p>
 
+    {{-- Mostrar tarjeta de visitante (relación card_id) --}}
+    <p><strong>💳 Tarjeta de Visitante:</strong> {{ $visitor->card ? $visitor->card->code : 'N/A' }}</p>
+
     @if ($visitor->visitor_card)
         <p><strong>🧾 Visitante registrado como proveedor.</strong></p>
-        <p><strong>🔖 Tarjeta de visitante:</strong> {{ $visitor->visitor_card }}</p>
+        <p><strong>🔖 Tarjeta de proveedor:</strong> {{ $visitor->visitor_card }}</p>
     @else
         <p><strong>🧾 No registrado como proveedor.</strong></p>
     @endif
 
     {{-- FOTO EN DESUSO TEMPORAL --}}
+
     {{--
 <p><strong>🖼️ Foto del Visitante:</strong></p>
 <img src="{{ url('storage/' . $visitor->visitor_photo) }}" alt="Foto del Visitante" width="300"
+
         style="border: 1px solid #ccc; padding: 5px;">
+
     --}}
 
     <hr style="margin-top: 30px;">
     <p style="font-size: 12px; color: #888;">Este correo fue enviado automáticamente por el sistema de registro de
+
         visitantes.</p>
 </body>
 
