@@ -18,10 +18,16 @@ class NewVisitor extends Model
         'visitor_reason_to_meet',
         'department_id',
         'visitor_card',
+        'card_id',
     ];
 
     public function department()
     {
         return $this->belongsTo(Department::class);
     }
+    public function card()
+    {
+        return $this->belongsTo(Card::class, 'card_id');
+    }
+
 }

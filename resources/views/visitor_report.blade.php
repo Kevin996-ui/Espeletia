@@ -1,7 +1,6 @@
 @extends('dashboard')
 
 @section('content')
-
     <h2 class="mt-3">Reporte de Visitantes</h2>
 
     <nav aria-label="breadcrumb">
@@ -29,6 +28,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="card-body">
                 <form method="GET" action="{{ route('visitor.report') }}">
                     <div class="row mb-3">
@@ -98,10 +98,11 @@
                                     <th>Nombre del Visitante</th>
                                     <th>Empresa</th>
                                     <th>Cédula de Identidad</th>
-                                    <th>Hora de Entrada</th>
                                     <th>Motivo de Visita</th>
                                     <th>Departamento</th>
-                                    <th>Tarjeta de Visitante</th>
+                                    <th>Tarjeta Visitante</th>
+                                    <th>Tarjeta Proveedor</th>
+                                    <th>Hora de Entrada</th>
                                     <th>Hora de Salida</th>
                                 </tr>
                             </thead>
@@ -112,10 +113,11 @@
                                         <td>{{ $visitor->visitor_name }}</td>
                                         <td>{{ $visitor->visitor_company }}</td>
                                         <td>{{ $visitor->visitor_identity_card }}</td>
-                                        <td>{{ $visitor->visitor_enter_time }}</td>
                                         <td>{{ $visitor->visitor_reason_to_meet }}</td>
                                         <td>{{ optional($visitor->department)->department_name ?? 'N/A' }}</td>
+                                        <td>{{ $visitor->card ? $visitor->card->code : 'N/A' }}</td>
                                         <td>{{ $visitor->visitor_card ?? 'N/A' }}</td>
+                                        <td>{{ $visitor->visitor_enter_time }}</td>
                                         <td>{{ $visitor->visitor_out_time ?? 'No registrado' }}</td>
                                     </tr>
                                 @endforeach

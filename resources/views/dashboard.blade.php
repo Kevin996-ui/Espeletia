@@ -58,6 +58,10 @@
                                         <a class="nav-link {{ Request::segment(1) == 'department' ? 'active' : '' }}"
                                             href="/department">Departamento</a>
                                     </li>
+                                    <li class="nav-item {{ Request::segment(1) == 'card' ? 'active-item' : '' }}">
+                                        <a class="nav-link {{ Request::segment(1) == 'card' ? 'active' : '' }}"
+                                            href="{{ url('/card') }}">Registrar Tarjetas</a>
+                                    </li>
                                     <li class="nav-item {{ Request::segment(1) == 'visitor' ? 'active-item' : '' }}">
                                         <a class="nav-link {{ Request::segment(1) == 'visitor' ? 'active' : '' }}"
                                             href="/visitor">Visitante</a>

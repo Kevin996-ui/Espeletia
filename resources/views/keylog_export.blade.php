@@ -108,7 +108,7 @@
     </table>
 
     <div class="footer">
-
+        Generado por: {{ $generated_by }}<br>
         Exportado el: {{ \Carbon\Carbon::now()->format('d/m/Y H:i:s') }}
     </div>
 </body>
