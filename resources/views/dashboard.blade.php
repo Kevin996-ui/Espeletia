@@ -3,6 +3,7 @@
 
 <head>
     <title>TCC Tababela CargoCenter S.A.</title>
+    <link rel="icon" href="{{ asset('images/logo-tam-3.png') }}" type="image/png">
     <link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
     <link rel="stylesheet" href="{{ asset('css/dataTables.bootstrap5.min.css') }}">
@@ -23,7 +24,10 @@
         <script src="{{ asset('js/dataTables.bootstrap5.min.js') }}"></script>
 
         <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-            <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">TCC Tababela CargoCenter S.A.</a>
+            <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 d-flex align-items-center" href="#">
+                <img src="{{ asset('images/logo-tam-3.png') }}" alt="Logo TCC" style="height: 32px; margin-right: 8px;">
+                TCC Tababela CargoCenter S.A.
+            </a>
             <div class="navbar-nav">
                 <div class="nav-item text-nowrap">
                     <a class="nav-link px-3" href="#">Bienvenido, {{ Auth::user()->email }}</a>
@@ -84,11 +88,10 @@
                                             href="{{ route('keylog.index') }}">Registro de Llaves</a>
                                     </li>
                                 @elseif ($type === 'User')
-
-                                <li class="nav-item {{ Request::segment(1) == 'department' ? 'active-item' : '' }}">
-                                    <a class="nav-link {{ Request::segment(1) == 'department' ? 'active' : '' }}"
-                                        href="/department">Departamento</a>
-                                </li>
+                                    <li class="nav-item {{ Request::segment(1) == 'department' ? 'active-item' : '' }}">
+                                        <a class="nav-link {{ Request::segment(1) == 'department' ? 'active' : '' }}"
+                                            href="/department">Departamento</a>
+                                    </li>
                                     <li class="nav-item {{ Request::segment(1) == 'visitor' ? 'active-item' : '' }}">
                                         <a class="nav-link {{ Request::segment(1) == 'visitor' ? 'active' : '' }}"
                                             href="/visitor">Visitante</a>
