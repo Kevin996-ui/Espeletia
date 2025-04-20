@@ -8,7 +8,7 @@ class TestEmailController extends Controller
 {
     public function testEmail()
     {
-        $email = 'pasante.it@tcc.com.ec';  // Dirección a la que enviarás el correo
+        $email = 'pasante.it@tcc.com.ec';
 
         Mail::raw('Este es un correo de prueba', function ($message) use ($email) {
             $message->to($email)

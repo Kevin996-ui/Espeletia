@@ -3,21 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\NewVisitor;
-
 use App\Models\Department;
-
 use App\Models\Card;
-
 use Illuminate\Http\Request;
-
 use App\Mail\VisitorNotification;
-
 use Illuminate\Support\Facades\Mail;
-
 use App\Exports\VisitorExport;
-
 use Barryvdh\DomPDF\Facade\Pdf;
-
 use Maatwebsite\Excel\Facades\Excel;
 
 class VisitorController extends Controller
@@ -50,9 +42,7 @@ class VisitorController extends Controller
     {
 
         $departments = Department::all();
-
         $usedCardIds = NewVisitor::whereNull('visitor_out_time')->pluck('card_id')->filter()->toArray();
-
         $cards = Card::whereNotIn('id', $usedCardIds)->get();
 
         return view('add_visitor', compact('departments', 'cards'));
@@ -65,47 +55,29 @@ class VisitorController extends Controller
         $request->validate([
 
             'visitor_name' => 'required',
-
             'visitor_company' => 'required',
-
             'visitor_identity_card' => 'required',
-
             'visitor_enter_time' => 'required|date',
-
             'visitor_reason_to_meet' => 'required',
-
             'department_id' => 'nullable|exists:departments,id',
-
             'visitor_card' => 'nullable|string|max:255',
-
             'card_id' => 'nullable|exists:cards,id',
-
             'visitor_photo' => 'nullable|string|max:255',
 
         ]);
 
         $identityCard = $request->visitor_identity_card;
-
         $visitor = NewVisitor::create([
 
             'visitor_name' => $request->visitor_name,
-
             'visitor_company' => $request->visitor_company,
-
             'visitor_identity_card' => $identityCard,
-
             'visitor_enter_time' => $request->visitor_enter_time,
-
             'visitor_out_time' => null,
-
             'visitor_reason_to_meet' => $request->visitor_reason_to_meet,
-
             'department_id' => $request->department_id,
-
             'visitor_card' => $request->visitor_card,
-
             'card_id' => $request->card_id,
-
             'visitor_photo' => $request->input('visitor_photo') ?? null,
 
         ]);
@@ -122,11 +94,8 @@ class VisitorController extends Controller
     {
 
         $visitor = NewVisitor::findOrFail($id);
-
         $departments = Department::all();
-
         $usedCardIds = NewVisitor::where('id', '!=', $visitor->id)->whereNull('visitor_out_time')->pluck('card_id')->filter()->toArray();
-
         $cards = Card::where(function ($query) use ($usedCardIds, $visitor) {
 
             $query->whereNotIn('id', $usedCardIds)->orWhere('id', $visitor->card_id);
@@ -142,47 +111,28 @@ class VisitorController extends Controller
         $request->validate([
 
             'visitor_name' => 'required',
-
             'visitor_company' => 'required',
-
             'visitor_identity_card' => 'required',
-
             'visitor_enter_time' => 'required|date',
-
             'visitor_reason_to_meet' => 'required',
-
             'visitor_photo' => 'nullable|string|max:255',
-
             'department_id' => 'nullable|exists:departments,id',
-
             'visitor_card' => 'nullable|string|max:255',
-
             'card_id' => 'nullable|exists:cards,id',
 
         ]);
 
         $visitor = NewVisitor::findOrFail($id);
-
         $visitor->visitor_name = $request->visitor_name;
-
         $visitor->visitor_company = $request->visitor_company;
-
         $visitor->visitor_identity_card = $request->visitor_identity_card;
-
         $visitor->visitor_enter_time = $request->visitor_enter_time;
-
         $visitor->visitor_reason_to_meet = $request->visitor_reason_to_meet;
-
         $visitor->department_id = $request->department_id;
-
         $visitor->visitor_card = $request->visitor_card;
-
         $visitor->card_id = $request->card_id;
-
         $visitor->visitor_photo = $request->input('visitor_photo') ?? null;
-
         $visitor->save();
-
         $department = Department::find($visitor->department_id);
 
         Mail::to($department->contact_emails)->send(new VisitorNotification($visitor, $department));
@@ -195,7 +145,6 @@ class VisitorController extends Controller
     {
 
         $visitor = NewVisitor::findOrFail($id);
-
         $visitor->delete();
 
         return redirect()->route('visitor.index')->with('success', 'Visitante eliminado exitosamente');
@@ -206,9 +155,7 @@ class VisitorController extends Controller
     {
 
         $visitor = NewVisitor::findOrFail($id);
-
         $visitor->visitor_out_time = now();
-
         $visitor->save();
 
         return redirect()->route('visitor.index')->with('success', 'Hora de salida registrada.');
@@ -219,7 +166,6 @@ class VisitorController extends Controller
     {
 
         $departments = Department::all();
-
         $query = NewVisitor::query();
 
         if ($request->has('search') && $request->search != '') {
@@ -300,18 +246,15 @@ class VisitorController extends Controller
         if ($format === 'csv') {
 
             $filename = 'reporte_visitantes_' . now()->format('Ymd_His') . '.csv';
-
             return Excel::download(new VisitorExport($visitors), $filename);
         }
 
         if ($format === 'pdf') {
 
             $generated_by = auth()->check() ? (auth()->user()->name ?? auth()->user()->email) : 'Usuario no autenticado';
-
             $pdf = Pdf::loadView('exports.visitor_export', [
 
                 'visitors' => $visitors,
-
                 'generated_by' => $generated_by,
 
             ])->setPaper('a4', 'landscape');
