@@ -19,6 +19,7 @@ class NewVisitor extends Model
         'department_id',
         'visitor_card',
         'card_id',
+        'visitor_photo',
     ];
 
     public function department()

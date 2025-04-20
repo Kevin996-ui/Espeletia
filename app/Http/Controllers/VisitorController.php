@@ -80,6 +80,8 @@ class VisitorController extends Controller
 
             'card_id' => 'nullable|exists:cards,id',
 
+            'visitor_photo' => 'nullable|string|max:255',
+
         ]);
 
         $identityCard = $request->visitor_identity_card;
@@ -104,6 +106,8 @@ class VisitorController extends Controller
 
             'card_id' => $request->card_id,
 
+            'visitor_photo' => $request->input('visitor_photo') ?? null,
+
         ]);
 
         $department = Department::find($request->department_id);
@@ -111,23 +115,6 @@ class VisitorController extends Controller
         Mail::to($department->contact_emails)->send(new VisitorNotification($visitor, $department));
 
         return redirect()->route('visitor.index')->with('success', 'Visitante agregado exitosamente');
-    }
-
-    private function handleVisitorPhoto($imageData, $identityCard)
-
-    {
-
-        $image = str_replace('data:image/jpeg;base64,', '', $imageData);
-
-        $image = str_replace(' ', '+', $image);
-
-        $imageName = $identityCard . '.jpg';
-
-        $imagePath = public_path('storage/visitor_photos/' . $imageName);
-
-        file_put_contents($imagePath, base64_decode($image));
-
-        return 'visitor_photos/' . $imageName;
     }
 
     public function edit($id)
@@ -164,7 +151,7 @@ class VisitorController extends Controller
 
             'visitor_reason_to_meet' => 'required',
 
-            'visitor_photo' => 'nullable',
+            'visitor_photo' => 'nullable|string|max:255',
 
             'department_id' => 'nullable|exists:departments,id',
 
@@ -176,20 +163,11 @@ class VisitorController extends Controller
 
         $visitor = NewVisitor::findOrFail($id);
 
-        $identityCard = $request->visitor_identity_card;
-
-        if ($request->has('visitor_photo')) {
-
-            $photoPath = $this->handleVisitorPhoto($request->input('visitor_photo'), $identityCard);
-
-            $visitor->visitor_photo = $photoPath;
-        }
-
         $visitor->visitor_name = $request->visitor_name;
 
         $visitor->visitor_company = $request->visitor_company;
 
-        $visitor->visitor_identity_card = $identityCard;
+        $visitor->visitor_identity_card = $request->visitor_identity_card;
 
         $visitor->visitor_enter_time = $request->visitor_enter_time;
 
@@ -200,6 +178,8 @@ class VisitorController extends Controller
         $visitor->visitor_card = $request->visitor_card;
 
         $visitor->card_id = $request->card_id;
+
+        $visitor->visitor_photo = $request->input('visitor_photo') ?? null;
 
         $visitor->save();
 
@@ -326,11 +306,7 @@ class VisitorController extends Controller
 
         if ($format === 'pdf') {
 
-            $generated_by = auth()->check()
-
-                ? (auth()->user()->name ?? auth()->user()->email)
-
-                : 'Usuario no autenticado';
+            $generated_by = auth()->check() ? (auth()->user()->name ?? auth()->user()->email) : 'Usuario no autenticado';
 
             $pdf = Pdf::loadView('exports.visitor_export', [
 

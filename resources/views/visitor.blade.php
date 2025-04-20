@@ -54,8 +54,9 @@
                                 <th>Departamento</th>
                                 <th>Tarjeta de Visitante</th>
                                 <th>Tarjeta de Proveedor</th>
-                                <th>Hora de Entrada</th> <!-- Ahora antes -->
-                                <th>Hora de Salida</th> <!-- Luego -->
+                                <th>Herramientas / Dispositivos</th> <!-- NUEVO -->
+                                <th>Hora de Entrada</th>
+                                <th>Hora de Salida</th>
                                 <th>Acción</th>
                             </tr>
                         </thead>
@@ -70,6 +71,7 @@
                                     <td>{{ $visitor->department ? $visitor->department->department_name : 'N/A' }}</td>
                                     <td>{{ $visitor->card ? $visitor->card->code : 'N/A' }}</td>
                                     <td>{{ $visitor->visitor_card ? $visitor->visitor_card : 'N/A' }}</td>
+                                    <td>{{ $visitor->visitor_photo && $visitor->visitor_photo !== 'N/A' ? $visitor->visitor_photo : 'N/A' }}</td>
                                     <td>{{ $visitor->visitor_enter_time }}</td>
                                     <td>
 
