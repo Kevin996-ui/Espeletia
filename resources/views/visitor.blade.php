@@ -137,7 +137,8 @@
                 timer = setTimeout(() => {
                     if (value.length >= 4) {
                         fetch(
-                                `{{ route('visitor.ajax-search') }}?search=${encodeURIComponent(value)}`)
+                                `{{ route('visitor.ajax-search') }}?search=${encodeURIComponent(value)}`
+                            )
                             .then(response => response.json())
                             .then(data => {
                                 tableBody.innerHTML = data.table_html;

@@ -13,7 +13,6 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 
 class VisitorController extends Controller
-
 {
     public function index(Request $request)
     {
@@ -34,7 +33,6 @@ class VisitorController extends Controller
     }
 
     public function ajaxSearch(Request $request)
-
     {
 
         $search = $request->input('search');
@@ -54,7 +52,6 @@ class VisitorController extends Controller
     }
 
     public function add()
-
     {
         $departments = Department::all();
         $usedCardIds = NewVisitor::whereNull('visitor_out_time')->pluck('card_id')->filter()->toArray();
@@ -63,7 +60,6 @@ class VisitorController extends Controller
     }
 
     public function store(Request $request)
-
     {
         $request->validate([
 
@@ -101,7 +97,6 @@ class VisitorController extends Controller
     }
 
     public function edit($id)
-
     {
 
         $visitor = NewVisitor::findOrFail($id);
@@ -116,7 +111,6 @@ class VisitorController extends Controller
     }
 
     public function update(Request $request, $id)
-
     {
 
         $request->validate([
@@ -152,7 +146,6 @@ class VisitorController extends Controller
     }
 
     public function delete($id)
-
     {
         $visitor = NewVisitor::findOrFail($id);
         $visitor->delete();
@@ -161,7 +154,6 @@ class VisitorController extends Controller
     }
 
     public function registerExit($id)
-
     {
         $visitor = NewVisitor::findOrFail($id);
         $visitor->visitor_out_time = now();
@@ -171,7 +163,6 @@ class VisitorController extends Controller
     }
 
     public function showReportForm(Request $request)
-
     {
 
         $departments = Department::all();
@@ -209,7 +200,6 @@ class VisitorController extends Controller
     }
 
     public function exportReport(Request $request, $format)
-
     {
         $query = NewVisitor::query();
 

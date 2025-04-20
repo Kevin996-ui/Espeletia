@@ -23,25 +23,22 @@ class ProfileController extends Controller
     function edit_validation(Request $request)
     {
         $request->validate([
-            'email'     =>  'required|email',
-            'name'      =>  'required'
+            'email' => 'required|email',
+            'name' => 'required'
         ]);
 
         $data = $request->all();
 
-        if(!empty($data['password']))
-        {
+        if (!empty($data['password'])) {
             $form_data = array(
-                'name'      =>  $data['name'],
-                'email'     =>  $data['email'],
-                'password'  =>  Hash::make($data['password'])
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password'])
             );
-        }
-        else
-        {
+        } else {
             $form_data = array(
-                'name'      =>  $data['name'],
-                'email'     =>  $data['email']
+                'name' => $data['name'],
+                'email' => $data['email']
             );
         }
 
