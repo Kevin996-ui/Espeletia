@@ -59,8 +59,10 @@
                         <div class="col">
                             <select name="no_exit" class="form-control">
                                 <option value="">Registros de salida</option>
-                                <option value="1" {{ request('no_exit') == '1' ? 'selected' : '' }}>No han registrado
-                                    salida</option>
+                                <option value="1" {{ request('no_exit') == '1' ? 'selected' : '' }}>
+
+                                    No han registrado salida
+                                </option>
                             </select>
                         </div>
                         <div class="col">
@@ -102,6 +104,7 @@
                                     <th>Departamento</th>
                                     <th>Tarjeta Visitante</th>
                                     <th>Tarjeta Proveedor</th>
+                                    <th>Herramientas / Dispositivos</th>
                                     <th>Hora de Entrada</th>
                                     <th>Hora de Salida</th>
                                 </tr>
@@ -117,6 +120,7 @@
                                         <td>{{ optional($visitor->department)->department_name ?? 'N/A' }}</td>
                                         <td>{{ $visitor->card ? $visitor->card->code : 'N/A' }}</td>
                                         <td>{{ $visitor->visitor_card ?? 'N/A' }}</td>
+                                        <td>{{ $visitor->visitor_photo ?? 'N/A' }}</td>
                                         <td>{{ $visitor->visitor_enter_time }}</td>
                                         <td>{{ $visitor->visitor_out_time ?? 'No registrado' }}</td>
                                     </tr>

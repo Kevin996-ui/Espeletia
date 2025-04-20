@@ -21,29 +21,23 @@
 
     <p><strong>📄 Motivo de la Visita:</strong> {{ $visitor->visitor_reason_to_meet }}</p>
 
-    {{-- Mostrar tarjeta de visitante (relación card_id) --}}
     <p><strong>💳 Tarjeta de Visitante:</strong> {{ $visitor->card ? $visitor->card->code : 'N/A' }}</p>
 
     @if ($visitor->visitor_card)
         <p><strong>🧾 Visitante registrado como proveedor.</strong></p>
         <p><strong>🔖 Tarjeta de proveedor:</strong> {{ $visitor->visitor_card }}</p>
     @else
-        <p><strong>🧾 No registrado como proveedor.</strong></p>
+        <p><strong>🧾 No registrado como proveedor:</strong> No registrado</p>
     @endif
 
-    {{-- FOTO EN DESUSO TEMPORAL --}}
-
-    {{--
-<p><strong>🖼️ Foto del Visitante:</strong></p>
-<img src="{{ url('storage/' . $visitor->visitor_photo) }}" alt="Foto del Visitante" width="300"
-
-        style="border: 1px solid #ccc; padding: 5px;">
-
-    --}}
+    @if ($visitor->visitor_photo)
+        <p><strong>🔧 Herramientas / Dispositivos:</strong> {{ $visitor->visitor_photo }}</p>
+    @else
+        <p><strong>🔧 Herramientas / Dispositivos:</strong> No registrado</p>
+    @endif
 
     <hr style="margin-top: 30px;">
     <p style="font-size: 12px; color: #888;">Este correo fue enviado automáticamente por el sistema de registro de
-
         visitantes.</p>
 </body>
 
