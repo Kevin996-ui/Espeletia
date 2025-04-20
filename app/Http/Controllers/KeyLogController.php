@@ -3,21 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\KeyLog;
-
 use App\Models\KeyType;
-
 use Illuminate\Http\Request;
-
 use Yajra\DataTables\Facades\DataTables;
-
 use Illuminate\Support\Facades\Mail;
-
 use App\Mail\KeyLogNotification;
-
 use App\Exports\KeyLogExport;
-
 use Barryvdh\DomPDF\Facade\Pdf;
-
 use Maatwebsite\Excel\Facades\Excel;
 
 class KeyLogController extends Controller
@@ -61,13 +53,9 @@ class KeyLogController extends Controller
         $request->validate([
 
             'name_taken' => 'required|string|max:255',
-
             'identity_card_taken' => 'required|string|max:20',
-
             'area' => 'required|string|max:255',
-
             'key_code' => 'required|array|min:1',
-
             'key_code.*' => 'string|max:255',
 
         ]);
@@ -99,23 +87,14 @@ class KeyLogController extends Controller
         $keyLog = KeyLog::create([
 
             'name_taken' => $request->name_taken,
-
             'identity_card_taken' => $request->identity_card_taken,
-
             'taken_photo' => $taken_photo,
-
             'area' => $request->area,
-
             'key_code' => $keyCodesString,
-
             'key_taken_at' => now(),
-
             'name_returned' => '-',
-
             'identity_card_returned' => '-',
-
             'returned_photo' => '-',
-
             'key_returned_at' => null,
 
         ]);
@@ -141,9 +120,7 @@ class KeyLogController extends Controller
         $usedKeyCodes = KeyLog::whereNull('key_returned_at')
 
             ->where('key_code', '!=', $keyLog->key_code)
-
             ->pluck('key_code')
-
             ->toArray();
 
         $usedCodesArray = [];
@@ -168,13 +145,9 @@ class KeyLogController extends Controller
         $request->validate([
 
             'name_taken' => 'required|string|max:255',
-
             'identity_card_taken' => 'required|string|max:20',
-
             'area' => 'required|string|max:255',
-
             'key_code' => 'required|array|min:1',
-
             'key_code.*' => 'string|max:255',
 
         ]);
@@ -193,13 +166,9 @@ class KeyLogController extends Controller
         $keyLog->update([
 
             'name_taken' => $request->name_taken,
-
             'identity_card_taken' => $request->identity_card_taken,
-
             'area' => $request->area,
-
             'key_code' => $keyCodesString,
-
             'taken_photo' => $taken_photo,
 
         ]);
@@ -251,11 +220,8 @@ class KeyLogController extends Controller
         $keyLog->update([
 
             'key_returned_at' => now(),
-
             'name_returned' => auth()->user()->name ?? 'Sistema',
-
             'identity_card_returned' => auth()->user()->identity_card ?? '0000000000',
-
             'returned_photo' => '-',
 
         ]);
@@ -358,7 +324,6 @@ class KeyLogController extends Controller
             $pdf = Pdf::loadView('keylog_export', [
 
                 'keyLogs' => $keyLogs,
-
                 'generated_by' => $generatedBy,
 
             ])->setPaper('a4', 'landscape');

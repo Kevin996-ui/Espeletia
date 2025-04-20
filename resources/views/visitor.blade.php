@@ -54,7 +54,7 @@
                                 <th>Departamento</th>
                                 <th>Tarjeta de Visitante</th>
                                 <th>Tarjeta de Proveedor</th>
-                                <th>Herramientas / Dispositivos</th> <!-- NUEVO -->
+                                <th>Herramientas / Dispositivos</th>
                                 <th>Hora de Entrada</th>
                                 <th>Hora de Salida</th>
                                 <th>Acción</th>
@@ -133,9 +133,7 @@
         .btn-soft-danger {
 
             background-color: #f8d7da;
-
             border-color: #f5c6cb;
-
             color: #721c24;
 
         }
@@ -143,9 +141,7 @@
         .btn-soft-danger:hover {
 
             background-color: #f1b0b7;
-
             border-color: #f1b0b7;
-
             color: #721c24;
 
         }
@@ -153,7 +149,6 @@
         .btn[disabled] {
 
             cursor: not-allowed;
-
             opacity: 0.6;
 
         }
@@ -167,9 +162,7 @@
         .thead-colored th {
 
             background-color: #f2f2f2;
-
             font-weight: bold;
-
             text-align: center;
 
         }
