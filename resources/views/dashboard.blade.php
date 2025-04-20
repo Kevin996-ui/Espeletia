@@ -115,7 +115,6 @@
                     </nav>
                 @endif
 
-
                 <main
                     class="{{ in_array($type, ['Admin', 'Supervisor', 'User']) ? 'col-md-9 ms-sm-auto col-lg-10 px-md-4' : 'col-12 px-4' }}">
 
@@ -130,7 +129,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <script>
                             document.addEventListener("DOMContentLoaded", function() {
 
@@ -145,31 +143,90 @@
                                         labels: {!! json_encode($chart_labels) !!},
 
                                         datasets: [{
-
                                             label: 'Cantidad de visitas',
-
                                             data: {!! json_encode($chart_data) !!},
-
+                                            borderColor: 'blue',
+                                            backgroundColor: 'rgba(0, 123, 255, 0.1)',
                                             borderWidth: 2,
-
                                             fill: true,
-
                                             tension: 0.4
-
                                         }]
-
                                     },
 
                                     options: {
-
                                         responsive: true,
-
                                         plugins: {
-
                                             legend: {
                                                 display: true
                                             },
+                                            tooltip: {
+                                                mode: 'index',
+                                                intersect: false
+                                            }
+                                        },
 
+                                        scales: {
+                                            x: {
+                                                title: {
+                                                    display: true,
+                                                    text: 'Fecha'
+                                                }
+                                            },
+                                            y: {
+                                                beginAtZero: true,
+                                                title: {
+                                                    display: true,
+                                                    text: 'Visitas'
+                                                },
+                                                ticks: {
+                                                    precision: 0
+                                                }
+                                            }
+                                        }
+                                    }
+                                });
+                            });
+                        </script>
+                    @endif
+
+                    @if (isset($key_chart_labels) && isset($key_chart_data))
+                        <div class="mt-4 mb-4">
+                            <h4>🔐 Llaves Retiradas por Día</h4>
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <canvas id="keyLineChart" height="90"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function() {
+
+                                const keyCtx = document.getElementById('keyLineChart').getContext('2d');
+
+                                new Chart(keyCtx, {
+
+                                    type: 'line',
+
+                                    data: {
+
+                                        labels: {!! json_encode($key_chart_labels) !!},
+
+                                        datasets: [{
+                                            label: 'Cantidad de llaves retiradas',
+                                            data: {!! json_encode($key_chart_data) !!},
+                                            borderColor: 'green',
+                                            backgroundColor: 'rgba(0, 218, 97, 0.1)',
+                                            borderWidth: 2,
+                                            fill: true,
+                                            tension: 0.4
+                                        }]
+                                    },
+                                    options: {
+                                        responsive: true,
+                                        plugins: {
+                                            legend: {
+                                                display: true
+                                            },
                                             tooltip: {
                                                 mode: 'index',
                                                 intersect: false
@@ -192,7 +249,7 @@
 
                                                 title: {
                                                     display: true,
-                                                    text: 'Visitas'
+                                                    text: 'Llaves retiradas'
                                                 },
 
                                                 ticks: {

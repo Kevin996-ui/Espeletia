@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Session;
 
 use App\Models\NewVisitor;
 
+use App\Models\KeyLog;
+
 use Illuminate\Support\Facades\DB;
 
 use Carbon\Carbon;
@@ -112,11 +114,32 @@ class CustomAuthController extends Controller
 
             $data = $visitsPerDay->pluck('total');
 
+            $keysPerDay = KeyLog::select(DB::raw('DATE(key_taken_at) as date'), DB::raw('count(*) as total'))
+
+                ->where('key_taken_at', '>=', Carbon::now()->subDays(30))
+
+                ->groupBy('date')
+
+                ->orderBy('date', 'asc')
+
+                ->get();
+
+            $key_chart_labels = $keysPerDay->pluck('date')->map(function ($d) {
+
+                return Carbon::parse($d)->format('d M');
+            });
+
+            $key_chart_data = $keysPerDay->pluck('total');
+
             return view('dashboard', [
 
                 'chart_labels' => $labels,
 
                 'chart_data' => $data,
+
+                'key_chart_labels' => $key_chart_labels,
+
+                'key_chart_data' => $key_chart_data
 
             ]);
         }
