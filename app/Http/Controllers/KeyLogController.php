@@ -25,12 +25,23 @@ class KeyLogController extends Controller
         return view('key_log', compact('keyLogs'));
     }
 
+    public function ajaxSearch(Request $request)
+    {
+        $search = $request->input('search');
+
+        $keyLogs = KeyLog::when($search, function ($query) use ($search) {
+            $query->where('identity_card_taken', 'like', "%{$search}%");
+        })->orderBy('key_taken_at', 'desc')->get();
+
+        $tableHtml = view('partials.keylog_table', compact('keyLogs'))->render();
+
+        return response()->json(['table_html' => $tableHtml]);
+    }
     public function create()
 
     {
 
         $usedKeyCodes = KeyLog::whereNull('key_returned_at')->pluck('key_code')->toArray();
-
         $usedCodesArray = [];
 
         foreach ($usedKeyCodes as $entry) {
@@ -42,7 +53,6 @@ class KeyLogController extends Controller
         }
 
         $keyTypes = KeyType::whereNotIn('name', $usedCodesArray)->get(['name', 'area']);
-
         return view('add_key_log', compact('keyTypes'));
     }
 
@@ -65,14 +75,11 @@ class KeyLogController extends Controller
         foreach ($request->key_code as $code) {
 
             $keyInUse = KeyLog::where(function ($query) use ($code) {
-
                 $query->whereNull('key_returned_at')
-
                     ->where('key_code', 'like', "%$code%");
             })->exists();
 
             if ($keyInUse) {
-
                 return back()->withErrors(['key_code' => "La llave '$code' ya está en uso y no puede ser asignada."])->withInput();
             }
         }
@@ -80,7 +87,6 @@ class KeyLogController extends Controller
         $taken_photo = 'N/A';
 
         if ($request->has('hasTools') && $request->filled('taken_photo')) {
-
             $taken_photo = $request->taken_photo;
         }
 
@@ -100,14 +106,11 @@ class KeyLogController extends Controller
         ]);
 
         $firstCode = $request->key_code[0] ?? null;
-
         $keyType = KeyType::where('name', $firstCode)->first();
 
         if ($keyType && $keyType->email) {
-
             Mail::to($keyType->email)->send(new KeyLogNotification($keyLog, $keyType));
         }
-
         return redirect()->route('keylog.index')->with('success', 'Registro de llave creado con éxito');
     }
 
@@ -116,7 +119,6 @@ class KeyLogController extends Controller
     {
 
         $keyLog = KeyLog::findOrFail($id);
-
         $usedKeyCodes = KeyLog::whereNull('key_returned_at')
 
             ->where('key_code', '!=', $keyLog->key_code)
@@ -126,15 +128,12 @@ class KeyLogController extends Controller
         $usedCodesArray = [];
 
         foreach ($usedKeyCodes as $entry) {
-
             foreach (explode(',', $entry) as $code) {
-
                 $usedCodesArray[] = trim($code);
             }
         }
 
         $keyTypes = KeyType::whereNotIn('name', $usedCodesArray)->get(['name', 'area']);
-
         return view('edit_key_log', compact('keyLog', 'keyTypes'));
     }
 
@@ -153,16 +152,13 @@ class KeyLogController extends Controller
         ]);
 
         $keyCodesString = implode(', ', $request->key_code);
-
         $taken_photo = 'N/A';
 
         if ($request->has('hasTools') && $request->filled('taken_photo')) {
-
             $taken_photo = $request->taken_photo;
         }
 
         $keyLog = KeyLog::findOrFail($id);
-
         $keyLog->update([
 
             'name_taken' => $request->name_taken,
@@ -179,9 +175,7 @@ class KeyLogController extends Controller
     public function destroy($id)
 
     {
-
         $keyLog = KeyLog::findOrFail($id);
-
         $keyLog->delete();
 
         return redirect()->route('keylog.index')->with('success', 'Log de llave eliminado con éxito');
@@ -192,7 +186,6 @@ class KeyLogController extends Controller
     {
 
         if ($request->ajax()) {
-
             $keyLogs = KeyLog::orderBy('created_at', 'desc');
 
             return DataTables::of($keyLogs)
@@ -216,7 +209,6 @@ class KeyLogController extends Controller
     {
 
         $keyLog = KeyLog::findOrFail($id);
-
         $keyLog->update([
 
             'key_returned_at' => now(),
@@ -234,40 +226,31 @@ class KeyLogController extends Controller
     {
 
         $query = KeyLog::query();
-
         if ($request->has('search') && $request->search != '') {
-
             $query->where('identity_card_taken', 'like', '%' . $request->search . '%');
         }
 
         if ($request->has('start_date') && $request->has('end_date') && $request->start_date && $request->end_date) {
-
             if ($request->start_date == $request->end_date) {
-
                 $query->whereDate('key_taken_at', $request->start_date);
             } else {
-
                 $query->whereBetween('key_taken_at', [$request->start_date, $request->end_date]);
             }
         }
 
         if ($request->has('key_code') && $request->key_code != '') {
-
             $query->where('key_code', 'like', '%' . $request->key_code . '%');
         }
 
         if ($request->has('area') && $request->area != '') {
-
             $query->where('area', 'like', '%' . $request->area . '%');
         }
 
         if ($request->has('no_return') && $request->no_return == '1') {
-
             $query->whereNull('key_returned_at');
         }
 
         $keyLogs = $query->orderBy('created_at', 'desc')->get();
-
         $keyTypes = KeyType::all();
 
         return view('keylog_report', compact('keyLogs', 'keyTypes'));
@@ -280,7 +263,6 @@ class KeyLogController extends Controller
         $query = KeyLog::query();
 
         if ($request->has('search') && $request->search != '') {
-
             $query->where('identity_card_taken', 'like', '%' . $request->search . '%');
         }
 
@@ -296,22 +278,18 @@ class KeyLogController extends Controller
         }
 
         if ($request->has('key_code') && $request->key_code != '') {
-
             $query->where('key_code', 'like', '%' . $request->key_code . '%');
         }
 
         if ($request->has('area') && $request->area != '') {
-
             $query->where('area', 'like', '%' . $request->area . '%');
         }
 
         if ($request->has('no_return') && $request->no_return == '1') {
-
             $query->whereNull('key_returned_at');
         }
 
         $keyLogs = $query->orderBy('created_at', 'desc')->get();
-
         $generatedBy = auth()->user()->name ?? 'Sistema';
 
         if ($format === 'csv') {
@@ -320,7 +298,6 @@ class KeyLogController extends Controller
         }
 
         if ($format === 'pdf') {
-
             $pdf = Pdf::loadView('keylog_export', [
 
                 'keyLogs' => $keyLogs,

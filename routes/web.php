@@ -40,6 +40,7 @@ Route::get('login', [CustomAuthController::class, 'index'])->name('login');
 Route::post('custom-login', [CustomAuthController::class, 'custom_login'])->name('login.custom');
 Route::get('dashboard', [CustomAuthController::class, 'dashboard'])->name('dashboard');
 Route::get('logout', [CustomAuthController::class, 'logout'])->name('logout');
+Route::get('/register', function () {return view('auth.registration');})->name('register.custom.view');
 
 //Rutas de perfil
 
@@ -91,6 +92,7 @@ Route::post('/visitor/{id}/exit', [VisitorController::class, 'registerExit'])->n
 Route::post('/ratings', [RatingController::class, 'store']);
 Route::get('/visitor/report', [VisitorController::class, 'showReportForm'])->name('visitor.report');
 Route::get('/visitor/report/export/{format}', [VisitorController::class, 'exportReport'])->name('visitor.report.export');
+Route::get('/visitor/ajax-search', [VisitorController::class, 'ajaxSearch'])->name('visitor.ajax-search');
 
 //Test envío email
 
@@ -108,6 +110,7 @@ Route::get('/keylog/fetch_all', [KeyLogController::class, 'fetchAll'])->name('ke
 Route::post('/keylog/return/{id}', [KeyLogController::class, 'registerReturn'])->name('keylog.return');
 Route::get('/keylog/report', [KeyLogController::class, 'showReportForm'])->name('keylog.report');
 Route::get('/keylog/report/export/{format}', [KeyLogController::class, 'exportReport'])->name('keylog.report.export');
+Route::get('/keylog/ajax-search', [KeyLogController::class, 'ajaxSearch'])->name('keylog.ajax-search');
 
 //Tipo de llave
 

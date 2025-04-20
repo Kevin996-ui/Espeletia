@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
     <link rel="stylesheet" href="{{ asset('css/dataTables.bootstrap5.min.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -26,6 +27,7 @@
         <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
             <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 d-flex align-items-center" href="#">
                 <img src="{{ asset('images/logo-tam-3.png') }}" alt="Logo TCC" style="height: 32px; margin-right: 8px;">
+
                 TCC Tababela CargoCenter S.A.
             </a>
             <div class="navbar-nav">
@@ -113,8 +115,101 @@
                     </nav>
                 @endif
 
+
                 <main
                     class="{{ in_array($type, ['Admin', 'Supervisor', 'User']) ? 'col-md-9 ms-sm-auto col-lg-10 px-md-4' : 'col-12 px-4' }}">
+
+                    {{-- Gráfico de visitas por día --}}
+
+                    @if (isset($chart_labels) && isset($chart_data))
+                        <div class="mt-4 mb-4">
+                            <h4>📈 Visitas por Día</h4>
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <canvas id="visitorLineChart" height="90"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function() {
+
+                                const ctx = document.getElementById('visitorLineChart').getContext('2d');
+
+                                new Chart(ctx, {
+
+                                    type: 'line',
+
+                                    data: {
+
+                                        labels: {!! json_encode($chart_labels) !!},
+
+                                        datasets: [{
+
+                                            label: 'Cantidad de visitas',
+
+                                            data: {!! json_encode($chart_data) !!},
+
+                                            borderWidth: 2,
+
+                                            fill: true,
+
+                                            tension: 0.4
+
+                                        }]
+
+                                    },
+
+                                    options: {
+
+                                        responsive: true,
+
+                                        plugins: {
+
+                                            legend: {
+                                                display: true
+                                            },
+
+                                            tooltip: {
+                                                mode: 'index',
+                                                intersect: false
+                                            }
+
+                                        },
+
+                                        scales: {
+
+                                            x: {
+                                                title: {
+                                                    display: true,
+                                                    text: 'Fecha'
+                                                }
+                                            },
+
+                                            y: {
+
+                                                beginAtZero: true,
+
+                                                title: {
+                                                    display: true,
+                                                    text: 'Visitas'
+                                                },
+
+                                                ticks: {
+                                                    precision: 0
+                                                }
+
+                                            }
+
+                                        }
+
+                                    }
+
+                                });
+
+                            });
+                        </script>
+                    @endif
 
                     @yield('content')
                 </main>
@@ -124,129 +219,6 @@
     @endguest
 
     <script src="{{ asset('js/bootstrap.js') }}"></script>
-
-    @php
-
-        $userIsAdmin = Auth::check() && Auth::user()->type === 'Admin';
-
-        $userIsSupervisor = Auth::check() && Auth::user()->type === 'Supervisor';
-
-    @endphp
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-
-            @if (Auth::check() && !$userIsAdmin && !$userIsSupervisor)
-
-                function checkAndShowPopup() {
-
-                    const now = Date.now();
-
-                    const lastRegister = localStorage.getItem('lastVisitorRegister');
-
-                    const mustShowPopup = !lastRegister || (now - parseInt(lastRegister)) >= 40000;
-
-                    if (mustShowPopup && !window.popupAlreadyShown) {
-
-                        window.popupAlreadyShown = true;
-
-                        Swal.fire({
-
-                            html: `<div style="font-size: 20px; line-height: 1.5; text-align: center;"><strong>Bienvenido</strong><br>a<br><strong>TCC Tababela CargoCenter S.A.</strong></div>`,
-
-                            icon: 'info',
-
-                            confirmButtonText: 'Sí, registrar visitante',
-
-                            cancelButtonText: 'Más tarde',
-
-                            showCancelButton: true
-
-                        }).then((result) => {
-
-                            const timestamp = Date.now();
-
-                            if (result.isConfirmed) {
-
-                                Swal.fire({
-
-                                    title: 'Uso de Datos Personales',
-
-                                    html: `<p style="font-size: 16px; text-align: justify;">Al continuar, aceptas que tus datos personales sean utilizados por <strong>TCC Tababela CargoCenter S.A.</strong> únicamente con fines de control y registro de visitas, de acuerdo con nuestra política de privacidad.</p>`,
-
-                                    icon: 'warning',
-
-                                    showCancelButton: true,
-
-                                    confirmButtonText: 'Acepto',
-
-                                    cancelButtonText: 'Cancelar'
-
-                                }).then((consent) => {
-
-                                    if (consent.isConfirmed) {
-
-                                        localStorage.setItem('lastVisitorRegister', timestamp);
-
-                                        window.location.href = '{{ route('visitor.add') }}';
-
-                                    } else {
-
-                                        window.popupAlreadyShown = false;
-
-                                    }
-
-                                });
-
-                            } else {
-
-                                localStorage.setItem('lastVisitorRegister', timestamp);
-
-                                window.popupAlreadyShown = false;
-
-                            }
-
-                        });
-
-                    }
-
-                }
-
-                setInterval(checkAndShowPopup, 5000);
-
-                checkAndShowPopup();
-            @endif
-
-            $.ajaxSetup({
-                timeout: 40000
-            });
-
-        });
-    </script>
-
-    @if (session('success'))
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-
-                Swal.fire({
-
-                    icon: 'success',
-
-                    title: 'Éxito',
-
-                    text: '{{ session('success') }}',
-
-                    timer: 1500,
-
-                    timerProgressBar: true,
-
-                    showConfirmButton: false
-
-                });
-
-            });
-        </script>
-    @endif
 
     <style>
         .active-item {

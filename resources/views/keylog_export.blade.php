@@ -36,7 +36,9 @@
         }
 
         table,
+
         th,
+
         td {
 
             border: 1px solid #444;
@@ -44,6 +46,7 @@
         }
 
         th,
+
         td {
 
             padding: 6px;
@@ -79,7 +82,6 @@
                 <th>Cédula</th>
                 <th>Código de Llave</th>
                 <th>Área</th>
-                <th>Herramientas / Dispositivos</th>
                 <th>Fecha y Hora de Retiro</th>
                 <th>Fecha y Hora de Entrega</th>
             </tr>
@@ -92,7 +94,6 @@
                     <td>{{ $log->identity_card_taken }}</td>
                     <td>{{ $log->key_code }}</td>
                     <td>{{ $log->area }}</td>
-                    <td>{{ $log->taken_photo && $log->taken_photo !== '-' ? $log->taken_photo : 'N/A' }}</td>
                     <td>{{ \Carbon\Carbon::parse($log->key_taken_at)->format('d/m/Y H:i') }}</td>
                     <td>
 
@@ -108,7 +109,9 @@
     </table>
 
     <div class="footer">
+
         Generado por: {{ $generated_by }}<br>
+
         Exportado el: {{ \Carbon\Carbon::now()->format('d/m/Y H:i:s') }}
     </div>
 </body>
