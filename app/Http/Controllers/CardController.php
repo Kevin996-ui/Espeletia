@@ -10,30 +10,26 @@ class CardController extends Controller
 
 {
     public function index()
-
     {
         return view('card');
     }
 
     public function fetchAll(Request $request)
-
     {
         if ($request->ajax()) {
             $data = Card::select(['id', 'code', 'created_at', 'updated_at']);
             return DataTables::of($data)
-
                 ->editColumn('created_at', function ($row) {
-                    return $row->created_at->format('d-m-Y H:i');
+                    return $row->created_at->format('d/m/Y H:i');
                 })
 
                 ->editColumn('updated_at', function ($row) {
-                    return $row->updated_at->format('d-m-Y H:i');
+                    return $row->updated_at->format('d/m/Y H:i');
                 })
 
                 ->addColumn('action', function ($row) {
                     $editBtn = '<a href="/card/edit/' . $row->id . '" class="btn btn-primary btn-sm">Editar</a>';
                     $deleteBtn = ' <button type="button" class="btn btn-danger btn-sm delete" data-id="' . $row->id . '">Eliminar</button>';
-
                     return $editBtn . $deleteBtn;
                 })
 
@@ -43,13 +39,11 @@ class CardController extends Controller
     }
 
     public function create()
-
     {
         return view('add_card');
     }
 
     public function store(Request $request)
-
     {
         if (!$request->filled('code')) {
             return redirect()->back()->with('error', 'Debe ingresar un código válido.');
@@ -57,7 +51,6 @@ class CardController extends Controller
 
         $request->validate([
             'code' => 'required|string|max:255|unique:cards,code',
-
         ]);
 
         Card::create([
@@ -74,7 +67,6 @@ class CardController extends Controller
 
     public function update(Request $request, $id)
     {
-
         $card = Card::findOrFail($id);
         $request->validate([
             'code' => 'required|string|max:255|unique:cards,code,' . $id,

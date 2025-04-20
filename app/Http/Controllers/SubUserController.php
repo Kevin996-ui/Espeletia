@@ -7,10 +7,11 @@ use App\Models\User;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class SubUserController extends Controller
-
 {
+
     public function __construct()
     {
         $this->middleware('auth');
@@ -23,23 +24,27 @@ class SubUserController extends Controller
 
     function fetch_all(Request $request)
     {
+
         if ($request->ajax()) {
-
             $data = User::whereIn('type', ['User', 'Supervisor'])->get();
-
             return DataTables::of($data)
 
                 ->addIndexColumn()
-                ->addColumn('type', function($row){
-
+                ->addColumn('type', function ($row) {
                     return $row->type === 'Supervisor' ? 'Supervisor' : 'Sub Usuario';
                 })
 
-                ->addColumn('action', function ($row) {
+                ->editColumn('created_at', function ($row) {
+                    return Carbon::parse($row->created_at)->format('d/m/Y H:i');
+                })
 
+                ->editColumn('updated_at', function ($row) {
+                    return Carbon::parse($row->updated_at)->format('d/m/Y H:i');
+                })
+
+                ->addColumn('action', function ($row) {
                     return '<a href="/sub_user/edit/' . $row->id . '" class="btn btn-primary btn-sm">Editar</a>&nbsp;
 <button type="button" class="btn btn-danger btn-sm delete" data-id="' . $row->id . '">Eliminar</button>';
-
                 })
 
                 ->rawColumns(['action'])
@@ -55,6 +60,7 @@ class SubUserController extends Controller
     function add_validation(Request $request)
     {
         $request->validate([
+
             'name'     => 'required',
             'email'    => 'required|email|unique:users',
             'password' => 'required|min:6',
@@ -62,8 +68,8 @@ class SubUserController extends Controller
         ]);
 
         $data = $request->all();
-        User::create([
 
+        User::create([
             'name'     => $data['name'],
             'email'    => $data['email'],
             'password' => Hash::make($data['password']),
@@ -88,7 +94,6 @@ class SubUserController extends Controller
 
         $data = $request->all();
         $form_data = [
-
             'name'  => $data['name'],
             'email' => $data['email'],
             'type'  => $data['type']
@@ -109,4 +114,3 @@ class SubUserController extends Controller
         return redirect('sub_user')->with('success', 'Usuario eliminado');
     }
 }
-

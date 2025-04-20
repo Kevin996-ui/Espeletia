@@ -107,8 +107,9 @@
                                             href="{{ route('keylog.index') }}">Registro de Llaves</a>
                                     </li>
                                 @endif
+
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('logout') }}">Cerrar sesión</a>
+                                    <a class="nav-link" href="#" id="logout-link">Cerrar sesión</a>
                                 </li>
                             </ul>
                         </div>
@@ -117,8 +118,6 @@
 
                 <main
                     class="{{ in_array($type, ['Admin', 'Supervisor', 'User']) ? 'col-md-9 ms-sm-auto col-lg-10 px-md-4' : 'col-12 px-4' }}">
-
-                    {{-- Gráfico de visitas por día --}}
 
                     @if (isset($chart_labels) && isset($chart_data))
                         <div class="mt-4 mb-4">
@@ -131,17 +130,11 @@
                         </div>
                         <script>
                             document.addEventListener("DOMContentLoaded", function() {
-
                                 const ctx = document.getElementById('visitorLineChart').getContext('2d');
-
                                 new Chart(ctx, {
-
                                     type: 'line',
-
                                     data: {
-
                                         labels: {!! json_encode($chart_labels) !!},
-
                                         datasets: [{
                                             label: 'Cantidad de visitas',
                                             data: {!! json_encode($chart_data) !!},
@@ -159,6 +152,7 @@
                                             legend: {
                                                 display: true
                                             },
+
                                             tooltip: {
                                                 mode: 'index',
                                                 intersect: false
@@ -172,12 +166,15 @@
                                                     text: 'Fecha'
                                                 }
                                             },
+
                                             y: {
+
                                                 beginAtZero: true,
                                                 title: {
                                                     display: true,
                                                     text: 'Visitas'
                                                 },
+
                                                 ticks: {
                                                     precision: 0
                                                 }
@@ -202,15 +199,12 @@
                             document.addEventListener("DOMContentLoaded", function() {
 
                                 const keyCtx = document.getElementById('keyLineChart').getContext('2d');
-
                                 new Chart(keyCtx, {
 
                                     type: 'line',
-
                                     data: {
 
                                         labels: {!! json_encode($key_chart_labels) !!},
-
                                         datasets: [{
                                             label: 'Cantidad de llaves retiradas',
                                             data: {!! json_encode($key_chart_data) !!},
@@ -221,21 +215,21 @@
                                             tension: 0.4
                                         }]
                                     },
+
                                     options: {
                                         responsive: true,
                                         plugins: {
                                             legend: {
                                                 display: true
                                             },
+
                                             tooltip: {
                                                 mode: 'index',
                                                 intersect: false
                                             }
-
                                         },
 
                                         scales: {
-
                                             x: {
                                                 title: {
                                                     display: true,
@@ -255,15 +249,10 @@
                                                 ticks: {
                                                     precision: 0
                                                 }
-
                                             }
-
                                         }
-
                                     }
-
                                 });
-
                             });
                         </script>
                     @endif
@@ -277,27 +266,48 @@
 
     <script src="{{ asset('js/bootstrap.js') }}"></script>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const logoutLink = document.getElementById("logout-link");
+            if (logoutLink) {
+                logoutLink.addEventListener("click", function(e) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: "Estás a punto de cerrar sesión.",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Sí, cerrar sesión',
+                        cancelButtonText: 'Cancelar'
+
+                    }).then((result) => {
+
+                        if (result.isConfirmed) {
+                            window.location.href = "{{ route('logout') }}";
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+
     <style>
         .active-item {
-
             background-color: #0d6efd !important;
-
         }
 
         .active-item .nav-link {
-
             color: #fff !important;
-
             font-weight: bold;
-
         }
 
         .active-item .nav-link:hover {
-
             color: #e2e6ea !important;
-
         }
     </style>
+
 </body>
 
 </html>
