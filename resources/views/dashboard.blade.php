@@ -48,62 +48,66 @@
                             <ul class="nav flex-column">
 
                                 @if ($type === 'Admin')
-                                    <li class="nav-item {{ Request::segment(1) == 'dashboard' ? 'active-item' : '' }}">
-                                        <a class="nav-link {{ Request::segment(1) == 'dashboard' ? 'active' : '' }}"
+                                    <li class="nav-item {{ Request::is('dashboard') ? 'active-item' : '' }}">
+                                        <a class="nav-link {{ Request::is('dashboard') ? 'active' : '' }}"
                                             href="/dashboard">Dashboard</a>
                                     </li>
-                                    <li class="nav-item {{ Request::segment(1) == 'profile' ? 'active-item' : '' }}">
-                                        <a class="nav-link {{ Request::segment(1) == 'profile' ? 'active' : '' }}"
+                                    <li class="nav-item {{ Request::is('profile') ? 'active-item' : '' }}">
+                                        <a class="nav-link {{ Request::is('profile') ? 'active' : '' }}"
                                             href="/profile">Perfil</a>
                                     </li>
-                                    <li class="nav-item {{ Request::segment(1) == 'sub_user' ? 'active-item' : '' }}">
-                                        <a class="nav-link {{ Request::segment(1) == 'sub_user' ? 'active' : '' }}"
+                                    <li class="nav-item {{ Request::is('sub_user') ? 'active-item' : '' }}">
+                                        <a class="nav-link {{ Request::is('sub_user') ? 'active' : '' }}"
                                             href="/sub_user">Sub Usuario</a>
                                     </li>
-                                    <li class="nav-item {{ Request::segment(1) == 'department' ? 'active-item' : '' }}">
-                                        <a class="nav-link {{ Request::segment(1) == 'department' ? 'active' : '' }}"
+                                    <li class="nav-item {{ Request::is('department') ? 'active-item' : '' }}">
+                                        <a class="nav-link {{ Request::is('department') ? 'active' : '' }}"
                                             href="/department">Departamento</a>
                                     </li>
-                                    <li class="nav-item {{ Request::segment(1) == 'card' ? 'active-item' : '' }}">
-                                        <a class="nav-link {{ Request::segment(1) == 'card' ? 'active' : '' }}"
-                                            href="{{ url('/card') }}">Registrar Tarjetas</a>
+                                    <li class="nav-item {{ Request::is('card') ? 'active-item' : '' }}">
+                                        <a class="nav-link {{ Request::is('card') ? 'active' : '' }}"
+                                            href="/card">Registrar Tarjetas</a>
                                     </li>
-                                    <li class="nav-item {{ Request::segment(1) == 'visitor' ? 'active-item' : '' }}">
-                                        <a class="nav-link {{ Request::segment(1) == 'visitor' ? 'active' : '' }}"
+                                    <li class="nav-item {{ Request::is('visitor') ? 'active-item' : '' }}">
+                                        <a class="nav-link {{ Request::is('visitor') ? 'active' : '' }}"
                                             href="/visitor">Visitante</a>
                                     </li>
-                                    <li class="nav-item {{ Request::segment(1) == 'key_type' ? 'active-item' : '' }}">
-                                        <a class="nav-link {{ Request::segment(1) == 'key_type' ? 'active' : '' }}"
+                                    <li class="nav-item {{ Request::is('key_type') ? 'active-item' : '' }}">
+                                        <a class="nav-link {{ Request::is('key_type') ? 'active' : '' }}"
                                             href="{{ route('key_type.index') }}">Tipos de Llaves</a>
                                     </li>
-                                    <li class="nav-item {{ Request::segment(1) == 'keylog' ? 'active-item' : '' }}">
-                                        <a class="nav-link {{ Request::segment(1) == 'keylog' ? 'active' : '' }}"
-                                            href="{{ route('keylog.index') }}">Registro de Llaves</a>
-                                    </li>
-                                @elseif ($type === 'Supervisor')
-                                    <li class="nav-item {{ Request::segment(1) == 'key_type' ? 'active-item' : '' }}">
-                                        <a class="nav-link {{ Request::segment(1) == 'key_type' ? 'active' : '' }}"
-                                            href="{{ route('key_type.index') }}">Tipos de Llaves</a>
-                                    </li>
-                                    <li class="nav-item {{ Request::segment(1) == 'keylog' ? 'active-item' : '' }}">
-                                        <a class="nav-link {{ Request::segment(1) == 'keylog' ? 'active' : '' }}"
+                                    <li class="nav-item {{ Request::is('keylog') ? 'active-item' : '' }}">
+                                        <a class="nav-link {{ Request::is('keylog') ? 'active' : '' }}"
                                             href="{{ route('keylog.index') }}">Registro de Llaves</a>
                                     </li>
                                 @elseif ($type === 'User')
-                                    <li class="nav-item {{ Request::segment(1) == 'department' ? 'active-item' : '' }}">
-                                        <a class="nav-link {{ Request::segment(1) == 'department' ? 'active' : '' }}"
+                                    <li class="nav-item {{ Request::is('department') ? 'active-item' : '' }}">
+                                        <a class="nav-link {{ Request::is('department') ? 'active' : '' }}"
                                             href="/department">Departamento</a>
                                     </li>
-                                    <li class="nav-item {{ Request::segment(1) == 'visitor' ? 'active-item' : '' }}">
-                                        <a class="nav-link {{ Request::segment(1) == 'visitor' ? 'active' : '' }}"
+                                    <li class="nav-item {{ Request::is('card') ? 'active-item' : '' }}">
+                                        <a class="nav-link {{ Request::is('card') ? 'active' : '' }}"
+                                            href="/card">Registrar Tarjetas</a>
+                                    </li>
+                                    <li class="nav-item {{ Request::is('visitor') ? 'active-item' : '' }}">
+                                        <a class="nav-link {{ Request::is('visitor') ? 'active' : '' }}"
                                             href="/visitor">Visitante</a>
                                     </li>
-                                    <li class="nav-item {{ Request::segment(1) == 'key_type' ? 'active-item' : '' }}">
-                                        <a class="nav-link {{ Request::segment(1) == 'key_type' ? 'active' : '' }}"
+                                    <li class="nav-item {{ Request::is('key_type') ? 'active-item' : '' }}">
+                                        <a class="nav-link {{ Request::is('key_type') ? 'active' : '' }}"
                                             href="{{ route('key_type.index') }}">Tipos de Llaves</a>
                                     </li>
-                                    <li class="nav-item {{ Request::segment(1) == 'keylog' ? 'active-item' : '' }}">
-                                        <a class="nav-link {{ Request::segment(1) == 'keylog' ? 'active' : '' }}"
+                                    <li class="nav-item {{ Request::is('keylog') ? 'active-item' : '' }}">
+                                        <a class="nav-link {{ Request::is('keylog') ? 'active' : '' }}"
+                                            href="{{ route('keylog.index') }}">Registro de Llaves</a>
+                                    </li>
+                                @elseif ($type === 'Supervisor')
+                                    <li class="nav-item {{ Request::is('key_type') ? 'active-item' : '' }}">
+                                        <a class="nav-link {{ Request::is('key_type') ? 'active' : '' }}"
+                                            href="{{ route('key_type.index') }}">Tipos de Llaves</a>
+                                    </li>
+                                    <li class="nav-item {{ Request::is('keylog') ? 'active-item' : '' }}">
+                                        <a class="nav-link {{ Request::is('keylog') ? 'active' : '' }}"
                                             href="{{ route('keylog.index') }}">Registro de Llaves</a>
                                     </li>
                                 @endif
@@ -132,6 +136,7 @@
                             document.addEventListener("DOMContentLoaded", function() {
                                 const ctx = document.getElementById('visitorLineChart').getContext('2d');
                                 new Chart(ctx, {
+
                                     type: 'line',
                                     data: {
                                         labels: {!! json_encode($chart_labels) !!},
@@ -152,7 +157,6 @@
                                             legend: {
                                                 display: true
                                             },
-
                                             tooltip: {
                                                 mode: 'index',
                                                 intersect: false
@@ -206,6 +210,7 @@
 
                                         labels: {!! json_encode($key_chart_labels) !!},
                                         datasets: [{
+
                                             label: 'Cantidad de llaves retiradas',
                                             data: {!! json_encode($key_chart_data) !!},
                                             borderColor: 'green',
@@ -215,20 +220,17 @@
                                             tension: 0.4
                                         }]
                                     },
-
                                     options: {
                                         responsive: true,
                                         plugins: {
                                             legend: {
                                                 display: true
                                             },
-
                                             tooltip: {
                                                 mode: 'index',
                                                 intersect: false
                                             }
                                         },
-
                                         scales: {
                                             x: {
                                                 title: {
@@ -236,16 +238,12 @@
                                                     text: 'Fecha'
                                                 }
                                             },
-
                                             y: {
-
                                                 beginAtZero: true,
-
                                                 title: {
                                                     display: true,
                                                     text: 'Llaves retiradas'
                                                 },
-
                                                 ticks: {
                                                     precision: 0
                                                 }
@@ -269,10 +267,14 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const logoutLink = document.getElementById("logout-link");
+
             if (logoutLink) {
+
                 logoutLink.addEventListener("click", function(e) {
                     e.preventDefault();
+
                     Swal.fire({
+
                         title: '¿Estás seguro?',
                         text: "Estás a punto de cerrar sesión.",
                         icon: 'warning',
@@ -290,6 +292,52 @@
                     });
                 });
             }
+
+            @if (Auth::check() && Auth::user()->type === 'User')
+
+                function checkAndShowPopup() {
+                    const lastShown = localStorage.getItem('lastVisitorRegister');
+                    const now = Date.now();
+                    const diff = lastShown ? now - parseInt(lastShown) : null;
+                    const shouldShow = !lastShown || diff >= 40000;
+
+                    if (shouldShow && !window.popupAlreadyShown) {
+                        window.popupAlreadyShown = true;
+
+                        Swal.fire({
+                            html: '<div style="font-size: 20px; line-height: 1.5; text-align: center;"><strong>Bienvenido</strong><br>a<br><strong>TCC Tababela CargoCenter S.A.</strong></div>',
+                            icon: 'info',
+                            confirmButtonText: 'Sí, registrar visitante',
+                            cancelButtonText: 'Más tarde',
+                            showCancelButton: true
+                        }).then((result) => {
+                            const timestamp = Date.now();
+                            if (result.isConfirmed) {
+                                Swal.fire({
+                                    title: 'Uso de Datos Personales',
+                                    html: '<p style="font-size: 16px; text-align: justify;">Al continuar, aceptas que tus datos personales sean utilizados por <strong>TCC Tababela CargoCenter S.A.</strong> únicamente con fines de control y registro de visitas, de acuerdo con nuestra política de privacidad.</p>',
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Acepto',
+                                    cancelButtonText: 'Cancelar'
+                                }).then((consent) => {
+                                    if (consent.isConfirmed) {
+                                        localStorage.setItem('lastVisitorRegister', timestamp);
+                                        window.location.href = '{{ route('visitor.add') }}';
+                                    } else {
+                                        window.popupAlreadyShown = false;
+                                    }
+                                });
+                            } else {
+                                localStorage.setItem('lastVisitorRegister', timestamp);
+                                window.popupAlreadyShown = false;
+                            }
+                        });
+                    }
+                }
+                setInterval(checkAndShowPopup, 5000);
+                checkAndShowPopup();
+            @endif
         });
     </script>
 
