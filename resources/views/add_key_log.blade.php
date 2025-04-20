@@ -38,6 +38,7 @@
 
                                     @foreach ($keyTypes as $type)
                                         <option value="{{ $type->name }}" data-area="{{ $type->area }}">
+
                                             {{ $type->name }}</option>
                                     @endforeach
                                 </select>
@@ -48,19 +49,10 @@
 
                         <div class="d-flex gap-2 mb-3">
                             <button type="button" id="add_key_field" class="btn btn-success btn-sm">+ Agregar otra
+
                                 llave</button>
                             <button type="button" id="remove_last_key_field" class="btn btn-danger btn-sm"
                                 style="display: none;">-</button>
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label><b>¿Lleva herramientas o dispositivos?</b></label>
-                            <input type="checkbox" id="hasTools" name="hasTools" value="1" class="form-check-input">
-                        </div>
-
-                        <div class="form-group mb-3" id="toolsDescriptionContainer" style="display: none;">
-                            <label><b>Detalle de herramientas/dispositivos</b></label>
-                            <textarea name="taken_photo" id="tools_description" class="form-control" rows="3"></textarea>
                         </div>
 
                         <div class="form-group mb-3" style="display: none;">
@@ -121,6 +113,7 @@
                         if (!selectedKeys.has(type.name) || currentValue === type.name) {
 
                             currentSelect.innerHTML +=
+
                                 `<option value="${type.name}" data-area="${type.area}">${type.name}</option>`;
 
                         }
@@ -152,12 +145,12 @@
 <select name="key_code[]" class="form-control key-code-select" required>
 <option value="">Seleccione el código de la Llave</option>
 
-          ${keyTypes.map(type => `<option value="${type.name}" data-area="${type.area}">${type.name}</option>`).join('')}
+                        ${keyTypes.map(type => `<option value="${type.name}" data-area="${type.area}">${type.name}</option>`).join('')}
 </select>
 <label class="mt-2"><b>Área</b></label>
 <input type="text" name="area" class="form-control area-field" readonly>
 
-      `;
+                `;
 
                 keyFieldsContainer.appendChild(div);
 
@@ -216,36 +209,6 @@
                 });
 
             });
-
-            const hasToolsCheckbox = document.getElementById('hasTools');
-
-            const toolsDescriptionContainer = document.getElementById('toolsDescriptionContainer');
-
-            const toolsDescriptionInput = document.getElementById('tools_description');
-
-            function toggleToolsDescription() {
-
-                if (hasToolsCheckbox.checked) {
-
-                    toolsDescriptionContainer.style.display = 'block';
-
-                    toolsDescriptionInput.setAttribute('required', 'required');
-
-                } else {
-
-                    toolsDescriptionContainer.style.display = 'none';
-
-                    toolsDescriptionInput.removeAttribute('required');
-
-                    toolsDescriptionInput.value = '';
-
-                }
-
-            }
-
-            hasToolsCheckbox.addEventListener('change', toggleToolsDescription);
-
-            toggleToolsDescription();
 
         });
     </script>

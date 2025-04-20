@@ -12,7 +12,7 @@
     }
 
     .signup-card {
-        background-color: rgba(255, 255, 255, 0.92); /* Fondo blanco con transparencia */
+        background-color: rgba(255, 255, 255, 0.92);
         border-radius: 10px;
         box-shadow: 0 0 20px rgba(0,0,0,0.3);
     }

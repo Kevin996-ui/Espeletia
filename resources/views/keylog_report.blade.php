@@ -11,8 +11,10 @@
     </nav>
 
     <div class="mt-4 mb-4">
+
         @if (session()->has('success'))
             <div class="alert alert-success">
+
                 {{ session('success') }}
             </div>
         @endif
@@ -44,9 +46,11 @@
                         <div class="col">
                             <select name="key_code" class="form-control">
                                 <option value="">Seleccione una Llave</option>
+
                                 @foreach ($keyTypes as $type)
                                     <option value="{{ $type->name }}"
                                         {{ request('key_code') == $type->name ? 'selected' : '' }}>
+
                                         {{ $type->name }}
                                     </option>
                                 @endforeach
@@ -77,6 +81,7 @@
 
                 @if ($keyLogs->isEmpty())
                     <div class="alert alert-warning">
+
                         No se encontraron llaves que coincidan con los filtros.
                     </div>
                 @else
@@ -88,7 +93,6 @@
                                     <th>Cédula</th>
                                     <th>Código de Llave</th>
                                     <th>Área</th>
-                                    <th>Herramientas / Dispositivos</th>
                                     <th>Fecha y Hora de Retiro</th>
                                     <th>Fecha y Hora de Entrega</th>
                                 </tr>
@@ -101,8 +105,6 @@
                                         <td>{{ $log->identity_card_taken }}</td>
                                         <td>{{ $log->key_code }}</td>
                                         <td>{{ $log->area }}</td>
-                                        <td>{{ $log->taken_photo && $log->taken_photo !== '-' ? $log->taken_photo : 'N/A' }}
-                                        </td>
                                         <td>{{ \Carbon\Carbon::parse($log->key_taken_at)->format('d/m/Y H:i') }}</td>
                                         <td>
 
@@ -121,4 +123,5 @@
             </div>
         </div>
     </div>
+
 @endsection

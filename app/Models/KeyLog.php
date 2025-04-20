@@ -9,12 +9,10 @@ class KeyLog extends Model
 {
     use HasFactory;
 
-    // Los campos que son asignables
     protected $fillable = [
         'key_type_id',
         'name_taken',
         'identity_card_taken',
-        'taken_photo',
         'area',
         'key_code',
         'key_taken_at',

@@ -34,14 +34,7 @@
             </div>
 
             <div class="card-body">
-                <form method="GET" action="{{ route('visitor.index') }}">
-                    <div class="row mb-3">
-                        <div class="col">
-                            <input type="text" name="search" class="form-control"
-                                placeholder="Buscar por cédula y presione enter" value="{{ request('search') }}">
-                        </div>
-                    </div>
-                </form>
+                <input type="text" id="searchInput" class="form-control mb-3" placeholder="Buscar por cédula...">
 
                 <div class="table-responsive">
                     <table class="table table-bordered" id="visitor_table">
@@ -60,61 +53,14 @@
                                 <th>Acción</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="visitorTableBody">
 
-                            @foreach ($visitors as $visitor)
-                                <tr>
-                                    <td>{{ $visitor->visitor_name }}</td>
-                                    <td>{{ $visitor->visitor_company }}</td>
-                                    <td>{{ $visitor->visitor_identity_card }}</td>
-                                    <td>{{ $visitor->visitor_reason_to_meet }}</td>
-                                    <td>{{ $visitor->department ? $visitor->department->department_name : 'N/A' }}</td>
-                                    <td>{{ $visitor->card ? $visitor->card->code : 'N/A' }}</td>
-                                    <td>{{ $visitor->visitor_card ? $visitor->visitor_card : 'N/A' }}</td>
-                                    <td>{{ $visitor->visitor_photo && $visitor->visitor_photo !== 'N/A' ? $visitor->visitor_photo : 'N/A' }}</td>
-                                    <td>{{ $visitor->visitor_enter_time }}</td>
-                                    <td>
-
-                                        @if ($visitor->visitor_out_time)
-                                            {{ $visitor->visitor_out_time }}
-                                        @else
-                                            <form action="{{ route('visitor.exit', $visitor->id) }}" method="POST"
-                                                class="exit-form">
-
-                                                @csrf
-                                                <button type="submit" class="btn btn-soft-danger btn-sm"
-                                                    @if ($visitor->visitor_out_time) disabled @endif>
-
-                                                    Registrar Salida
-                                                </button>
-                                            </form>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <div>
-                                            <a href="{{ $visitor->visitor_out_time ? 'javascript:void(0);' : route('visitor.edit', $visitor->id) }}"
-                                                class="btn btn-warning btn-sm"
-                                                @if ($visitor->visitor_out_time) disabled @endif>
-
-                                                Editar
-                                            </a>
-                                        </div>
-                                        <div style="margin-top: 5px;">
-                                            <a href="{{ $visitor->visitor_out_time ? 'javascript:void(0);' : route('visitor.delete', $visitor->id) }}"
-                                                class="btn btn-danger btn-sm"
-                                                @if ($visitor->visitor_out_time) disabled @endif>
-
-                                                Eliminar
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
+                            @include('partials.visitor_table', ['visitors' => $visitors])
                         </tbody>
                     </table>
                 </div>
 
-                <div class="d-flex justify-content-between align-items-center mt-4">
+                <div id="paginationContainer" class="d-flex justify-content-between align-items-center mt-4">
                     <div>
 
                         Mostrando {{ $visitors->firstItem() }} a {{ $visitors->lastItem() }} de {{ $visitors->total() }}
@@ -133,7 +79,9 @@
         .btn-soft-danger {
 
             background-color: #f8d7da;
+
             border-color: #f5c6cb;
+
             color: #721c24;
 
         }
@@ -141,7 +89,9 @@
         .btn-soft-danger:hover {
 
             background-color: #f1b0b7;
+
             border-color: #f1b0b7;
+
             color: #721c24;
 
         }
@@ -149,6 +99,7 @@
         .btn[disabled] {
 
             cursor: not-allowed;
+
             opacity: 0.6;
 
         }
@@ -162,9 +113,42 @@
         .thead-colored th {
 
             background-color: #f2f2f2;
+
             font-weight: bold;
+
             text-align: center;
 
         }
     </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const tableBody = document.getElementById('visitorTableBody');
+            const pagination = document.querySelector('.pagination');
+            const info = document.querySelector('.d-flex.justify-content-between.align-items-center.mt-4 > div');
+
+            let timer;
+
+            searchInput.addEventListener('input', function() {
+                clearTimeout(timer);
+                const value = this.value.trim();
+
+                timer = setTimeout(() => {
+                    if (value.length >= 4) {
+                        fetch(
+                                `{{ route('visitor.ajax-search') }}?search=${encodeURIComponent(value)}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                tableBody.innerHTML = data.table_html;
+                                pagination.style.display = 'none';
+                                info.style.display = 'none';
+                            });
+                    } else if (value.length === 0) {
+                        window.location.href = "{{ route('visitor.index') }}";
+                    }
+                }, 300);
+            });
+        });
+    </script>
 @endsection

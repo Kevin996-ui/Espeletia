@@ -34,70 +34,14 @@
             </div>
 
             <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="keylog_table">
-                        <thead class="table-header-colored">
-                            <tr>
-                                <th>Cédula</th>
-                                <th>Nombre</th>
-                                <th>Código de Llave</th>
-                                <th>Herramientas / Dispositivos</th>
-                                <th>Fecha y Hora de Retiro</th>
-                                <th>Fecha y Hora de Entrega</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                <input type="text" id="searchInput" class="form-control mb-3" placeholder="Buscar por cédula...">
 
-                            @foreach ($keyLogs as $keyLog)
-                                <tr>
-                                    <td>{{ $keyLog->identity_card_taken }}</td>
-                                    <td>{{ $keyLog->name_taken }}</td>
-                                    <td>{{ $keyLog->key_code }}</td>
-                                    <td>{{ $keyLog->taken_photo && $keyLog->taken_photo !== '-' ? $keyLog->taken_photo : 'N/A' }}
-                                    </td>
-                                    <td>{{ \Carbon\Carbon::parse($keyLog->key_taken_at)->format('d/m/Y H:i') }}</td>
-                                    <td>
+                <div class="table-responsive" id="keylog-table-container">
 
-                                        @if ($keyLog->key_returned_at)
-                                            {{ \Carbon\Carbon::parse($keyLog->key_returned_at)->format('d/m/Y H:i') }}
-                                        @else
-                                            <form action="{{ route('keylog.return', $keyLog->id) }}" method="POST">
-
-                                                @csrf
-                                                <button type="submit" class="btn btn-soft-danger btn-sm">Registrar
-                                                    Devolución</button>
-                                            </form>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <a href="{{ $keyLog->key_returned_at ? 'javascript:void(0);' : route('keylog.edit', $keyLog->id) }}"
-                                            class="btn btn-warning btn-sm"
-                                            @if ($keyLog->key_returned_at) disabled @endif>
-
-                                            Editar
-                                        </a>
-                                        <form action="{{ route('keylog.destroy', $keyLog->id) }}" method="POST"
-                                            style="display:inline;">
-
-                                            @csrf
-
-                                            @method('DELETE')
-                                            <button class="btn btn-danger btn-sm mt-1"
-                                                @if ($keyLog->key_returned_at) disabled @endif>
-
-                                                Eliminar
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                    @include('partials.keylog_table', ['keyLogs' => $keyLogs])
                 </div>
 
-                <!-- Paginación -->
-                <div class="d-flex justify-content-between align-items-center mt-4">
+                <div id="paginationContainer" class="d-flex justify-content-between align-items-center mt-4">
                     <div>
 
                         Mostrando {{ $keyLogs->firstItem() }} a {{ $keyLogs->lastItem() }} de {{ $keyLogs->total() }}
@@ -114,49 +58,68 @@
 
     <style>
         .btn-soft-danger {
-
             background-color: #f8d7da;
-
             border-color: #f5c6cb;
-
             color: #721c24;
-
         }
 
         .btn-soft-danger:hover {
-
             background-color: #f1b0b7;
-
             border-color: #f1b0b7;
-
             color: #721c24;
-
         }
 
         .btn[disabled] {
-
             cursor: not-allowed;
-
             opacity: 0.6;
-
         }
 
         .btn-sm {
-
             margin-right: 10px;
-
         }
 
         .table-header-colored th {
-
             background-color: #f2f2f2;
-
             color: #0b0d0e;
-
             font-weight: bold;
-
             text-align: center;
-
         }
     </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const searchInput = document.getElementById('searchInput');
+            const tableContainer = document.getElementById('keylog-table-container');
+            const paginationContainer = document.getElementById('paginationContainer');
+
+            let timer;
+
+            searchInput.addEventListener('input', function() {
+                clearTimeout(timer);
+
+                const value = this.value.trim();
+
+                timer = setTimeout(() => {
+
+                    if (value.length >= 4 || value.length === 0) {
+
+                        fetch(
+                                `{{ route('keylog.ajax-search') }}?search=${encodeURIComponent(value)}`)
+
+                            .then(response => response.json())
+                            .then(data => {
+
+                                tableContainer.innerHTML = data.table_html;
+                                if (value.length > 0) {
+                                    paginationContainer.style.display = 'none';
+                                } else {
+                                    location.reload();
+                                }
+                            });
+                    }
+                }, 300);
+            });
+        });
+    </script>
 @endsection
