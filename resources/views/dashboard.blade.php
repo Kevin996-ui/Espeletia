@@ -7,8 +7,8 @@
     <link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
     <link rel="stylesheet" href="{{ asset('css/dataTables.bootstrap5.min.css') }}">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ asset('js/sweetalert2.all.min.js') }}"></script>
+    <script src="{{ asset('js/chart.js') }}"></script>
 </head>
 
 <body>
