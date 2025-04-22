@@ -164,5 +164,22 @@
             });
 
         });
+
+        function confirmDelete(visitorId) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "Esta acción eliminará el registro del visitante.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-form-' + visitorId).submit();
+                }
+            });
+        }
     </script>
 @endsection

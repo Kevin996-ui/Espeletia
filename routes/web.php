@@ -40,7 +40,9 @@ Route::get('login', [CustomAuthController::class, 'index'])->name('login');
 Route::post('custom-login', [CustomAuthController::class, 'custom_login'])->name('login.custom');
 Route::get('dashboard', [CustomAuthController::class, 'dashboard'])->name('dashboard');
 Route::get('logout', [CustomAuthController::class, 'logout'])->name('logout');
-Route::get('/register', function () {return view('auth.registration');})->name('register.custom.view');
+Route::get('/register', function () {
+    return view('auth.registration');
+})->name('register.custom.view');
 
 //Rutas de perfil
 
@@ -86,7 +88,7 @@ Route::get('/visitor/add', [VisitorController::class, 'add'])->name('visitor.add
 Route::post('/visitor/store', [VisitorController::class, 'store'])->name('visitor.store');
 Route::get('/visitor/edit/{id}', [VisitorController::class, 'edit'])->name('visitor.edit');
 Route::put('/visitor/update/{id}', [VisitorController::class, 'update'])->name('visitor.update');
-Route::get('/visitor/delete/{id}', [VisitorController::class, 'delete'])->name('visitor.delete');
+Route::delete('/visitor/delete/{id}', [VisitorController::class, 'delete'])->name('visitor.delete');
 Route::put('/visitor/update/{id}', [VisitorController::class, 'update'])->name('visitor.update');
 Route::post('/visitor/{id}/exit', [VisitorController::class, 'registerExit'])->name('visitor.exit');
 Route::post('/ratings', [RatingController::class, 'store']);
@@ -118,6 +120,8 @@ Route::get('/key_type', [KeyTypeController::class, 'index'])->middleware('auth')
 Route::get('/key_type/fetch_all', [KeyTypeController::class, 'fetchAll'])->middleware('auth')->name('key_type.fetch_all');
 Route::get('/key_type/add', [KeyTypeController::class, 'create'])->middleware('auth')->name('key_type.add');
 Route::post('/key_type/store', [KeyTypeController::class, 'store'])->middleware('auth')->name('key_type.store');
-Route::get('/key_type/delete/{id}', [KeyTypeController::class, 'destroy'])->middleware('auth')->name('key_type.delete');
+
+Route::delete('/key_type/{id}', [KeyTypeController::class, 'destroy'])->name('key_type.destroy');
+
 Route::get('/key_type/edit/{id}', [KeyTypeController::class, 'edit'])->middleware('auth')->name('key_type.edit');
 Route::post('/key_type/update/{id}', [KeyTypeController::class, 'update'])->middleware('auth')->name('key_type.update');

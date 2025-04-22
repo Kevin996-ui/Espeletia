@@ -44,6 +44,14 @@
                         <tbody></tbody>
                     </table>
                 </div>
+
+                <!-- Formulario oculto para eliminación -->
+                <form id="deleteForm" method="POST" style="display:none;">
+
+                    @csrf
+
+                    @method('DELETE')
+                </form>
             </div>
         </div>
     </div>
@@ -64,6 +72,7 @@
             var table = $('#key_type_table').DataTable({
 
                 processing: true,
+
                 serverSide: true,
 
                 ajax: '{{ route('key_type.fetch_all') }}',
@@ -96,15 +105,10 @@
                     },
 
                     {
-
                         data: 'action',
-
                         name: 'action',
-
                         orderable: false,
-
                         searchable: false
-
                     }
 
                 ],
@@ -112,21 +116,31 @@
                 language: {
 
                     processing: "Procesando...",
+
                     search: "Buscar:",
+
                     lengthMenu: "Mostrar _MENU_ registros",
+
                     info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+
                     infoEmpty: "Mostrando 0 a 0 de 0 registros",
+
                     infoFiltered: "(filtrado de _MAX_ registros totales)",
-                    infoPostFix: "",
+
                     loadingRecords: "Cargando...",
+
                     zeroRecords: "No se encontraron resultados",
+
                     emptyTable: "No hay datos disponibles en la tabla",
 
                     paginate: {
 
                         first: "Primero",
+
                         previous: "Anterior",
+
                         next: "Siguiente",
+
                         last: "Último"
 
                     },
@@ -134,6 +148,7 @@
                     aria: {
 
                         sortAscending: ": activar para ordenar la columna de manera ascendente",
+
                         sortDescending: ": activar para ordenar la columna de manera descendente"
 
                     }
@@ -142,18 +157,27 @@
 
             });
 
-            $(document).on('click', '.delete', function() {
+            $(document).on('click', '.delete-button', function(e) {
+                e.preventDefault();
+                const id = $(this).data('id');
 
-                var id = $(this).data('id');
-
-                if (confirm("¿Estás seguro de que quieres eliminarlo?")) {
-
-                    window.location.href = '/key_type/delete/' + id;
-
-                }
-
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "Esta acción eliminará el tipo de llave permanentemente.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = $('#deleteForm');
+                        form.attr('action', '/key_type/' + id);
+                        form.submit();
+                    }
+                });
             });
-
         });
     </script>
 @endsection
