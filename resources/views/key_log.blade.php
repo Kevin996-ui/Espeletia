@@ -35,7 +35,6 @@
 
             <div class="card-body">
                 <input type="text" id="searchInput" class="form-control mb-3" placeholder="Buscar por cédula...">
-
                 <div id="loadingSpinner" style="display: none; text-align:center; margin-bottom: 10px;">🔄 Buscando...</div>
 
                 <div class="table-responsive" id="keylog-table-container">
@@ -106,6 +105,8 @@
         }
     </style>
 
+    <script src="{{ asset('js/sweetalert2.all.min.js') }}"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
@@ -141,6 +142,8 @@
 
                                 paginationContainer.style.display = 'none';
 
+                                attachDeleteAlerts();
+
                             });
 
                     } else if (value.length === 0) {
@@ -149,11 +152,59 @@
 
                         paginationContainer.style.display = 'flex';
 
+                        attachDeleteAlerts();
+
                     }
 
                 }, 300);
 
             });
+
+            function attachDeleteAlerts() {
+
+                const deleteForms = document.querySelectorAll('.delete-form');
+
+                deleteForms.forEach(form => {
+
+                    form.addEventListener('submit', function(e) {
+
+                        e.preventDefault();
+
+                        Swal.fire({
+
+                            title: '¿Estás seguro?',
+
+                            text: "Esta acción eliminará el registro de llave permanentemente.",
+
+                            icon: 'warning',
+
+                            showCancelButton: true,
+
+                            confirmButtonColor: '#3085d6',
+
+                            cancelButtonColor: '#d33',
+
+                            confirmButtonText: 'Sí, eliminar',
+
+                            cancelButtonText: 'Cancelar'
+
+                        }).then((result) => {
+
+                            if (result.isConfirmed) {
+
+                                form.submit();
+
+                            }
+
+                        });
+
+                    });
+
+                });
+
+            }
+
+            attachDeleteAlerts();
 
         });
     </script>

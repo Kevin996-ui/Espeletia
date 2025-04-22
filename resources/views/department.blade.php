@@ -45,6 +45,8 @@
         </div>
     </div>
 
+    <script src="{{ asset('js/sweetalert2.all.min.js') }}"></script>
+
     <script>
         var table = $('#department_table').DataTable({
             processing: true,
@@ -94,11 +96,24 @@
             }
         });
 
-        $(document).on('click', '.delete', function() {
+        $(document).on('click', '.delete', function(e) {
+            e.preventDefault();
             var id = $(this).data('id');
-            if (confirm("¿Estás segura de que quieres eliminarlo?")) {
-                window.location.href = '/department/delete/' + id;
-            }
+
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "Esta acción eliminará el departamento permanentemente.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/department/delete/' + id;
+                }
+            });
         });
     </script>
 @endsection

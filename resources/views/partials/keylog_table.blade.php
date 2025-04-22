@@ -35,15 +35,12 @@
 
                         Editar
                     </a>
-                    <form action="{{ route('keylog.destroy', $keyLog->id) }}" method="POST" style="display:inline;">
-
+                    <form action="{{ route('keylog.destroy', $keyLog->id) }}" method="POST" style="display:inline;"
+                        class="delete-form">
                         @csrf
-
                         @method('DELETE')
-                        <button class="btn btn-danger btn-sm mt-1" @if ($keyLog->key_returned_at) disabled @endif>
-
-                            Eliminar
-                        </button>
+                        <button class="btn btn-danger btn-sm mt-1"
+                            @if ($keyLog->key_returned_at) disabled @endif>Eliminar</button>
                     </form>
                 </td>
             </tr>
