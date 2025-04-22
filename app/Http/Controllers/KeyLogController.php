@@ -13,11 +13,9 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 
 class KeyLogController extends Controller
-
 {
 
     public function index()
-
     {
 
         $keyLogs = KeyLog::orderBy('created_at', 'desc')->paginate(5);
@@ -38,7 +36,6 @@ class KeyLogController extends Controller
         return response()->json(['table_html' => $tableHtml]);
     }
     public function create()
-
     {
 
         $usedKeyCodes = KeyLog::whereNull('key_returned_at')->pluck('key_code')->toArray();
@@ -57,7 +54,6 @@ class KeyLogController extends Controller
     }
 
     public function store(Request $request)
-
     {
 
         $request->validate([
@@ -94,7 +90,7 @@ class KeyLogController extends Controller
 
             'name_taken' => $request->name_taken,
             'identity_card_taken' => $request->identity_card_taken,
-            'taken_photo' => $taken_photo,
+            //'taken_photo' => $taken_photo,
             'area' => $request->area,
             'key_code' => $keyCodesString,
             'key_taken_at' => now(),
@@ -105,17 +101,16 @@ class KeyLogController extends Controller
 
         ]);
 
-        $firstCode = $request->key_code[0] ?? null;
-        $keyType = KeyType::where('name', $firstCode)->first();
-
-        if ($keyType && $keyType->email) {
-            Mail::to($keyType->email)->send(new KeyLogNotification($keyLog, $keyType));
+        foreach ($request->key_code as $code) {
+            $keyType = KeyType::where('name', $code)->first();
+            if ($keyType && $keyType->email) {
+                Mail::to($keyType->email)->send(new KeyLogNotification($keyLog, $keyType));
+            }
         }
         return redirect()->route('keylog.index')->with('success', 'Registro de llave creado con éxito');
     }
 
     public function edit($id)
-
     {
 
         $keyLog = KeyLog::findOrFail($id);
@@ -138,7 +133,6 @@ class KeyLogController extends Controller
     }
 
     public function update(Request $request, $id)
-
     {
 
         $request->validate([
@@ -173,7 +167,6 @@ class KeyLogController extends Controller
     }
 
     public function destroy($id)
-
     {
         $keyLog = KeyLog::findOrFail($id);
         $keyLog->delete();
@@ -182,7 +175,6 @@ class KeyLogController extends Controller
     }
 
     public function fetchAll(Request $request)
-
     {
 
         if ($request->ajax()) {
@@ -205,7 +197,6 @@ class KeyLogController extends Controller
     }
 
     public function registerReturn($id)
-
     {
 
         $keyLog = KeyLog::findOrFail($id);
@@ -222,7 +213,6 @@ class KeyLogController extends Controller
     }
 
     public function showReportForm(Request $request)
-
     {
 
         $query = KeyLog::query();
@@ -257,7 +247,6 @@ class KeyLogController extends Controller
     }
 
     public function exportReport(Request $request, $format)
-
     {
 
         $query = KeyLog::query();

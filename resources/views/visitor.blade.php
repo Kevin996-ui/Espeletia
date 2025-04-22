@@ -40,16 +40,16 @@
                     <table class="table table-bordered" id="visitor_table">
                         <thead class="thead-colored">
                             <tr>
-                                <th>Nombre del Visitante</th>
-                                <th>Empresa</th>
                                 <th>Cédula de Identidad</th>
-                                <th>Motivo de Visita</th>
-                                <th>Departamento</th>
+                                <th>Visitante</th>
+                                <th>Empresa</th>
+                                <th>Motivo</th>
+                                <th>Depto</th>
                                 <th>Tarjeta de Visitante</th>
                                 <th>Tarjeta de Proveedor</th>
                                 <th>Herramientas / Dispositivos</th>
-                                <th>Hora de Entrada</th>
-                                <th>Hora de Salida</th>
+                                <th>Entrada</th>
+                                <th>Salida</th>
                                 <th>Acción</th>
                             </tr>
                         </thead>
@@ -79,9 +79,7 @@
         .btn-soft-danger {
 
             background-color: #f8d7da;
-
             border-color: #f5c6cb;
-
             color: #721c24;
 
         }
@@ -89,9 +87,7 @@
         .btn-soft-danger:hover {
 
             background-color: #f1b0b7;
-
             border-color: #f1b0b7;
-
             color: #721c24;
 
         }
@@ -99,7 +95,6 @@
         .btn[disabled] {
 
             cursor: not-allowed;
-
             opacity: 0.6;
 
         }
@@ -113,9 +108,7 @@
         .thead-colored th {
 
             background-color: #f2f2f2;
-
             font-weight: bold;
-
             text-align: center;
 
         }
@@ -123,6 +116,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+
             const searchInput = document.getElementById('searchInput');
             const tableBody = document.getElementById('visitorTableBody');
             const pagination = document.querySelector('.pagination');
@@ -130,26 +124,45 @@
 
             let timer;
 
+            const originalTableHTML = tableBody.innerHTML;
+            const originalPaginationHTML = document.getElementById('paginationContainer').innerHTML;
+
             searchInput.addEventListener('input', function() {
+
                 clearTimeout(timer);
+
                 const value = this.value.trim();
 
                 timer = setTimeout(() => {
+
                     if (value.length >= 4) {
+
                         fetch(
                                 `{{ route('visitor.ajax-search') }}?search=${encodeURIComponent(value)}`
                             )
+
                             .then(response => response.json())
+
                             .then(data => {
+
                                 tableBody.innerHTML = data.table_html;
                                 pagination.style.display = 'none';
                                 info.style.display = 'none';
+
                             });
+
                     } else if (value.length === 0) {
-                        window.location.href = "{{ route('visitor.index') }}";
+
+                        tableBody.innerHTML = originalTableHTML;
+                        document.getElementById('paginationContainer').innerHTML =
+                            originalPaginationHTML;
+
                     }
+
                 }, 300);
+
             });
+
         });
     </script>
 @endsection
