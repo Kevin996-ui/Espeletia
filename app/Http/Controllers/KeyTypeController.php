@@ -44,7 +44,7 @@ class KeyTypeController extends Controller
 
                     return '
 <a href="' . route('key_type.edit', $row->id) . '" class="btn btn-warning btn-sm me-1">Editar</a>
-<a href="' . route('key_type.delete', $row->id) . '" class="btn btn-danger btn-sm delete" data-id="' . $row->id . '">Eliminar</a>
+<a href="' . route('key_type.delete', $row->id) . '" class="btn btn-danger btn-sm delete">Eliminar</a>
 
 ';
                 })

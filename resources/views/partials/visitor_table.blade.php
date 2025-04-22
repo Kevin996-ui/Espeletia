@@ -1,8 +1,8 @@
 @foreach ($visitors as $visitor)
     <tr>
+        <td>{{ $visitor->visitor_identity_card }}</td>
         <td>{{ $visitor->visitor_name }}</td>
         <td>{{ $visitor->visitor_company }}</td>
-        <td>{{ $visitor->visitor_identity_card }}</td>
         <td>{{ $visitor->visitor_reason_to_meet }}</td>
         <td>{{ $visitor->department ? $visitor->department->department_name : 'N/A' }}</td>
         <td>{{ $visitor->card ? $visitor->card->code : 'N/A' }}</td>

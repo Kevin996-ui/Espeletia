@@ -36,6 +36,8 @@
             <div class="card-body">
                 <input type="text" id="searchInput" class="form-control mb-3" placeholder="Buscar por cédula...">
 
+                <div id="loadingSpinner" style="display: none; text-align:center; margin-bottom: 10px;">🔄 Buscando...</div>
+
                 <div class="table-responsive" id="keylog-table-container">
 
                     @include('partials.keylog_table', ['keyLogs' => $keyLogs])
@@ -58,31 +60,49 @@
 
     <style>
         .btn-soft-danger {
+
             background-color: #f8d7da;
+
             border-color: #f5c6cb;
+
             color: #721c24;
+
         }
 
         .btn-soft-danger:hover {
+
             background-color: #f1b0b7;
+
             border-color: #f1b0b7;
+
             color: #721c24;
+
         }
 
         .btn[disabled] {
+
             cursor: not-allowed;
+
             opacity: 0.6;
+
         }
 
         .btn-sm {
+
             margin-right: 10px;
+
         }
 
         .table-header-colored th {
+
             background-color: #f2f2f2;
+
             color: #0b0d0e;
+
             font-weight: bold;
+
             text-align: center;
+
         }
     </style>
 
@@ -90,36 +110,51 @@
         document.addEventListener('DOMContentLoaded', function() {
 
             const searchInput = document.getElementById('searchInput');
+
             const tableContainer = document.getElementById('keylog-table-container');
+
             const paginationContainer = document.getElementById('paginationContainer');
 
             let timer;
 
+            let originalTableHTML = tableContainer.innerHTML;
+
             searchInput.addEventListener('input', function() {
+
                 clearTimeout(timer);
 
                 const value = this.value.trim();
 
                 timer = setTimeout(() => {
 
-                    if (value.length >= 4 || value.length === 0) {
+                    if (value.length >= 4) {
 
                         fetch(
-                                `{{ route('keylog.ajax-search') }}?search=${encodeURIComponent(value)}`)
+                                `{{ route('keylog.ajax-search') }}?search=${encodeURIComponent(value)}`
+                            )
 
                             .then(response => response.json())
+
                             .then(data => {
 
                                 tableContainer.innerHTML = data.table_html;
-                                if (value.length > 0) {
-                                    paginationContainer.style.display = 'none';
-                                } else {
-                                    location.reload();
-                                }
+
+                                paginationContainer.style.display = 'none';
+
                             });
+
+                    } else if (value.length === 0) {
+
+                        tableContainer.innerHTML = originalTableHTML;
+
+                        paginationContainer.style.display = 'flex';
+
                     }
+
                 }, 300);
+
             });
+
         });
     </script>
 @endsection
