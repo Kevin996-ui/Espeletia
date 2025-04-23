@@ -79,8 +79,10 @@
 
                             <br />
                             <div class="text-center">
-                                <a href="{{ route('register.custom.view') }}">¿No tienes una cuenta? Regístrate</a>
+                                <a href="{{ route('register.custom.view') }}" class="btn btn-outline-primary mt-3">¿No
+                                    tienes una cuenta? Regístrate</a>
                             </div>
+
                         </div>
                     </div>
 
