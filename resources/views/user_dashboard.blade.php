@@ -2,7 +2,7 @@
 <html lang="es">
 
 <head>
-    <title>Demo Usuario | TCC Tababela CargoCenter S.A.</title>
+    <title>TCC Tababela CargoCenter S.A.</title>
     <link rel="icon" href="{{ asset('images/logo-tam-3.png') }}" type="image/png">
     <link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
@@ -12,7 +12,6 @@
 </head>
 
 <body>
-
     <script src="{{ asset('js/jquery.js') }}"></script>
     <script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('js/dataTables.bootstrap5.min.js') }}"></script>
@@ -30,8 +29,8 @@
 
     <div class="container-fluid">
         <div class="row">
+            <main class="col-12 px-4">
 
-            <main class="@if (Auth::check() && Auth::user()->role === 'demo') col-12 @else col-md-9 ms-sm-auto col-lg-10 @endif px-md-4">
                 @if (isset($chart_labels) && isset($chart_data))
                     <div class="mt-4 mb-4">
                         <h4>📈 Visitas por Día</h4>
@@ -43,39 +42,63 @@
                     </div>
                     <script>
                         document.addEventListener("DOMContentLoaded", function() {
+
                             const ctx = document.getElementById('visitorLineChart').getContext('2d');
+
                             new Chart(ctx, {
+
                                 type: 'line',
+
                                 data: {
+
                                     labels: {!! json_encode($chart_labels) !!},
+
                                     datasets: [{
+
                                         label: 'Cantidad de visitas',
+
                                         data: {!! json_encode($chart_data) !!},
+
                                         borderColor: 'blue',
+
                                         backgroundColor: 'rgba(0, 123, 255, 0.1)',
+
                                         borderWidth: 2,
+
                                         fill: true,
+
                                         tension: 0.4
+
                                     }]
+
                                 },
+
                                 options: {
+
                                     responsive: true,
+
                                     plugins: {
+
                                         legend: {
                                             display: true
                                         },
+
                                         tooltip: {
                                             mode: 'index',
                                             intersect: false
                                         }
+
                                     },
+
                                     scales: {
+
                                         x: {
                                             title: {
                                                 display: true,
                                                 text: 'Fecha'
                                             }
                                         },
+
                                         y: {
                                             beginAtZero: true,
                                             title: {
@@ -86,9 +109,13 @@
                                                 precision: 0
                                             }
                                         }
+
                                     }
+
                                 }
+
                             });
+
                         });
                     </script>
                 @endif
@@ -104,39 +131,63 @@
                     </div>
                     <script>
                         document.addEventListener("DOMContentLoaded", function() {
+
                             const keyCtx = document.getElementById('keyLineChart').getContext('2d');
+
                             new Chart(keyCtx, {
+
                                 type: 'line',
+
                                 data: {
+
                                     labels: {!! json_encode($key_chart_labels) !!},
+
                                     datasets: [{
+
                                         label: 'Cantidad de llaves retiradas',
+
                                         data: {!! json_encode($key_chart_data) !!},
+
                                         borderColor: 'green',
+
                                         backgroundColor: 'rgba(0, 218, 97, 0.1)',
+
                                         borderWidth: 2,
+
                                         fill: true,
+
                                         tension: 0.4
+
                                     }]
+
                                 },
+
                                 options: {
+
                                     responsive: true,
+
                                     plugins: {
+
                                         legend: {
                                             display: true
                                         },
+
                                         tooltip: {
                                             mode: 'index',
                                             intersect: false
                                         }
+
                                     },
+
                                     scales: {
+
                                         x: {
                                             title: {
                                                 display: true,
                                                 text: 'Fecha'
                                             }
                                         },
+
                                         y: {
                                             beginAtZero: true,
                                             title: {
@@ -147,74 +198,110 @@
                                                 precision: 0
                                             }
                                         }
+
                                     }
+
                                 }
+
                             });
+
                         });
                     </script>
                 @endif
 
                 @yield('content')
             </main>
-
         </div>
     </div>
 
     <script src="{{ asset('js/bootstrap.js') }}"></script>
 
-    <!-- POPUP SIEMPRE ACTIVO EN MODO DEMO -->
+    <!-- POPUP PERMANENTE PARA ROL USER (NO LOGUEADO) -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const DEMO_MODE = true;
 
-            if (DEMO_MODE) {
-                function checkAndShowPopup() {
-                    const lastShown = localStorage.getItem('lastVisitorRegister');
-                    const now = Date.now();
-                    const diff = lastShown ? now - parseInt(lastShown) : null;
-                    const shouldShow = !lastShown || diff >= 40000;
+            function checkAndShowPopup() {
 
-                    if (shouldShow && !window.popupAlreadyShown) {
-                        window.popupAlreadyShown = true;
+                const lastShown = localStorage.getItem('lastVisitorRegister');
 
-                        Swal.fire({
-                            html: '<div style="font-size: 20px; line-height: 1.5; text-align: center;"><strong>Bienvenido</strong><br>a<br><strong>TCC Tababela CargoCenter S.A.</strong></div>',
-                            icon: 'info',
-                            confirmButtonText: 'Sí, registrar visitante',
-                            cancelButtonText: 'Más tarde',
-                            showCancelButton: true
-                        }).then((result) => {
-                            const timestamp = Date.now();
-                            if (result.isConfirmed) {
-                                Swal.fire({
-                                    title: 'Uso de Datos Personales',
-                                    html: '<p style="font-size: 16px; text-align: justify;">Al continuar, aceptas que tus datos personales sean utilizados por <strong>TCC Tababela CargoCenter S.A.</strong> únicamente con fines de control y registro de visitas, de acuerdo con nuestra política de privacidad.</p>',
-                                    icon: 'warning',
-                                    showCancelButton: true,
-                                    confirmButtonText: 'Acepto',
-                                    cancelButtonText: 'Cancelar'
-                                }).then((consent) => {
-                                    if (consent.isConfirmed) {
-                                        localStorage.setItem('lastVisitorRegister', timestamp);
-                                        window.location.href = '{{ route('visitor.add') }}';
-                                    } else {
-                                        window.popupAlreadyShown = false;
-                                    }
-                                });
-                            } else {
-                                localStorage.setItem('lastVisitorRegister', timestamp);
-                                window.popupAlreadyShown = false;
-                            }
-                        });
-                    }
+                const now = Date.now();
+
+                const diff = lastShown ? now - parseInt(lastShown) : null;
+
+                const shouldShow = !lastShown || diff >= 40000;
+
+                if (shouldShow && !window.popupAlreadyShown) {
+
+                    window.popupAlreadyShown = true;
+
+                    Swal.fire({
+
+                        html: '<div style="font-size: 20px; line-height: 1.5; text-align: center;"><strong>Bienvenido</strong><br>a<br><strong>TCC Tababela CargoCenter S.A.</strong></div>',
+
+                        icon: 'info',
+
+                        confirmButtonText: 'Sí, registrar visitante',
+
+                        cancelButtonText: 'Más tarde',
+
+                        showCancelButton: true
+
+                    }).then((result) => {
+
+                        const timestamp = Date.now();
+
+                        if (result.isConfirmed) {
+
+                            Swal.fire({
+
+                                title: 'Uso de Datos Personales',
+
+                                html: '<p style="font-size: 16px; text-align: justify;">Al continuar, aceptas que tus datos personales sean utilizados por <strong>TCC Tababela CargoCenter S.A.</strong> únicamente con fines de control y registro de visitas, de acuerdo con nuestra política de privacidad.</p>',
+
+                                icon: 'warning',
+
+                                showCancelButton: true,
+
+                                confirmButtonText: 'Acepto',
+
+                                cancelButtonText: 'Cancelar'
+
+                            }).then((consent) => {
+
+                                if (consent.isConfirmed) {
+
+                                    localStorage.setItem('lastVisitorRegister', timestamp);
+
+                                    window.location.href = '{{ route('visitor.add') }}';
+
+                                } else {
+
+                                    window.popupAlreadyShown = false;
+
+                                }
+
+                            });
+
+                        } else {
+
+                            localStorage.setItem('lastVisitorRegister', timestamp);
+
+                            window.popupAlreadyShown = false;
+
+                        }
+
+                    });
+
                 }
 
-                setInterval(checkAndShowPopup, 5000);
-                checkAndShowPopup();
             }
+
+            setInterval(checkAndShowPopup, 5000);
+
+            checkAndShowPopup();
+
         });
     </script>
-
 </body>
 
 </html>
