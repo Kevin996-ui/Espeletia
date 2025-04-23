@@ -18,7 +18,8 @@
 
     <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
         <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 d-flex align-items-center" href="#">
-            <img src="{{ asset('images/logo-tam-3.png') }}" alt="Logo TCC" style="height: 32px; margin-right: 8px;">
+            <img src="{{ asset('images/logo-tam-3.png') }}" alt="Logo TCC"
+                style="height: 36px; margin-right: 8px; background-color: rgb(255, 255, 255); border-radius: 4px; padding: 2px;">
         </a>
         <div class="navbar-nav">
             <div class="nav-item text-nowrap">
