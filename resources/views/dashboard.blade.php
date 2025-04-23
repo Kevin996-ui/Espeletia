@@ -42,7 +42,7 @@
 
                 @php $type = Auth::user()->type; @endphp
 
-                @if (in_array($type, ['Admin', 'Supervisor', 'User']))
+                @if (in_array($type, ['Admin', 'Supervisor']))
                     <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
                         <div class="position-sticky pt-3">
                             <ul class="nav flex-column">
@@ -80,7 +80,24 @@
                                         <a class="nav-link {{ Request::is('keylog') ? 'active' : '' }}"
                                             href="{{ route('keylog.index') }}">Registro de Llaves</a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#" id="logout-link">Cerrar sesión</a>
+                                    </li>
                                 @elseif ($type === 'User')
+
+                                @elseif ($type === 'Supervisor')
+                                    <li class="nav-item {{ Request::is('dashboard') ? 'active-item' : '' }}">
+                                        <a class="nav-link {{ Request::is('dashboard') ? 'active' : '' }}"
+                                            href="/dashboard">Dashboard</a>
+                                    </li>
+                                    <li class="nav-item {{ Request::is('profile') ? 'active-item' : '' }}">
+                                        <a class="nav-link {{ Request::is('profile') ? 'active' : '' }}"
+                                            href="/profile">Perfil</a>
+                                    </li>
+                                    <li class="nav-item {{ Request::is('sub_user') ? 'active-item' : '' }}">
+                                        <a class="nav-link {{ Request::is('sub_user') ? 'active' : '' }}"
+                                            href="/sub_user">Sub Usuario</a>
+                                    </li>
                                     <li class="nav-item {{ Request::is('department') ? 'active-item' : '' }}">
                                         <a class="nav-link {{ Request::is('department') ? 'active' : '' }}"
                                             href="/department">Departamento</a>
@@ -101,27 +118,17 @@
                                         <a class="nav-link {{ Request::is('keylog') ? 'active' : '' }}"
                                             href="{{ route('keylog.index') }}">Registro de Llaves</a>
                                     </li>
-                                @elseif ($type === 'Supervisor')
-                                    <li class="nav-item {{ Request::is('key_type') ? 'active-item' : '' }}">
-                                        <a class="nav-link {{ Request::is('key_type') ? 'active' : '' }}"
-                                            href="{{ route('key_type.index') }}">Tipos de Llaves</a>
-                                    </li>
-                                    <li class="nav-item {{ Request::is('keylog') ? 'active-item' : '' }}">
-                                        <a class="nav-link {{ Request::is('keylog') ? 'active' : '' }}"
-                                            href="{{ route('keylog.index') }}">Registro de Llaves</a>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#" id="logout-link">Cerrar sesión</a>
                                     </li>
                                 @endif
-
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#" id="logout-link">Cerrar sesión</a>
-                                </li>
                             </ul>
                         </div>
                     </nav>
                 @endif
 
                 <main
-                    class="{{ in_array($type, ['Admin', 'Supervisor', 'User']) ? 'col-md-9 ms-sm-auto col-lg-10 px-md-4' : 'col-12 px-4' }}">
+                    class="{{ in_array($type, ['Admin', 'Supervisor']) ? 'col-md-9 ms-sm-auto col-lg-10 px-md-4' : 'col-12 px-4' }}">
 
                     @if (isset($chart_labels) && isset($chart_data))
                         <div class="mt-4 mb-4">
