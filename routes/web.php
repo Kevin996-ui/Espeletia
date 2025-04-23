@@ -27,10 +27,18 @@ use App\Http\Controllers\CardController;
 
 Route::get('/', function () {
     //return view('welcome');
-    return view('auth.registration');
-    //return view('auth.login');
+    //return view('auth.registration');
+    return view('auth.login');
 });
 
+Route::get('/acceso-user', function () {
+    session(['user_guest_type' => 'User']);
+    return redirect('/dashboard-user');
+});
+
+Route::get('/dashboard-user', function () {
+    return view('user_dashboard');
+});
 
 //Rutas de autenticación
 
