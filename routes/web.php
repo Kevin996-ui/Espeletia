@@ -167,7 +167,7 @@ Route::post('/keylog/return/{id}', [KeyLogController::class, 'registerReturn'])-
 Route::get('/keylog/report', [KeyLogController::class, 'showReportForm'])->name('keylog.report');
 Route::get('/keylog/report/export/{format}', [KeyLogController::class, 'exportReport'])->name('keylog.report.export');
 Route::get('/keylog/ajax-search', [KeyLogController::class, 'ajaxSearch'])->name('keylog.ajax-search');
-
+Route::get('/keylog/export/csv', [App\Http\Controllers\KeyLogController::class, 'exportCSV'])->name('keylog.export.csv');
 //Tipo de llave
 
 Route::get('/key_type', [KeyTypeController::class, 'index'])->middleware('auth')->name('key_type.index');

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -10,20 +11,25 @@
             font-family: Arial, sans-serif;
             margin: 20px;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
         }
-        th, td {
+
+        th,
+        td {
             padding: 8px;
             text-align: left;
             border: 1px solid #ddd;
         }
+
         th {
             background-color: #f2f2f2;
         }
     </style>
 </head>
+
 <body>
 
     <h1>Reporte de Visitantes</h1>
@@ -41,7 +47,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($visitors as $visitor)
+            @foreach ($visitors as $visitor)
                 <tr>
                     <td>{{ $visitor->visitor_name }}</td>
                     <td>{{ $visitor->visitor_company }}</td>
@@ -56,4 +62,5 @@
     </table>
 
 </body>
+
 </html>
