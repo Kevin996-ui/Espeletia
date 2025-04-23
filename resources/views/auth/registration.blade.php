@@ -70,8 +70,10 @@
 
                             <br />
                             <div class="text-center">
-                                <a href="{{ route('login') }}">Iniciar sesión</a>
+                                <a href="{{ route('login') }}" class="btn btn-outline-primary mt-3">¿Ya tienes una cuenta?
+                                    Inicia sesión</a>
                             </div>
+
                         </div>
                     </div>
 
