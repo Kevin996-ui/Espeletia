@@ -1,4 +1,4 @@
-@extends('dashboard')
+@extends(session('user_guest_type') === 'User' ? 'user_dashboard' : 'dashboard')
 
 @section('content')
     <h2 class="mt-3">Listado de Visitas</h2>
@@ -25,7 +25,7 @@
                     <div class="col col-md-6">
                         <a href="{{ route('visitor.add') }}" class="btn btn-success btn-sm float-end">Registrar Visita</a>
 
-                        @if (auth()->check() && in_array(auth()->user()->type, ['Admin', 'User']))
+                        @if ((auth()->check() && in_array(auth()->user()->type, ['Admin', 'User'])) || session('user_guest_type') === 'User')
                             <a href="{{ route('visitor.report') }}"
                                 class="btn btn-secondary btn-sm float-end ms-2">Reporte</a>
                         @endif
@@ -79,7 +79,9 @@
         .btn-soft-danger {
 
             background-color: #f8d7da;
+
             border-color: #f5c6cb;
+
             color: #721c24;
 
         }
@@ -87,7 +89,9 @@
         .btn-soft-danger:hover {
 
             background-color: #f1b0b7;
+
             border-color: #f1b0b7;
+
             color: #721c24;
 
         }
@@ -95,6 +99,7 @@
         .btn[disabled] {
 
             cursor: not-allowed;
+
             opacity: 0.6;
 
         }
@@ -108,7 +113,9 @@
         .thead-colored th {
 
             background-color: #f2f2f2;
+
             font-weight: bold;
+
             text-align: center;
 
         }
@@ -118,13 +125,17 @@
         document.addEventListener('DOMContentLoaded', function() {
 
             const searchInput = document.getElementById('searchInput');
+
             const tableBody = document.getElementById('visitorTableBody');
+
             const pagination = document.querySelector('.pagination');
+
             const info = document.querySelector('.d-flex.justify-content-between.align-items-center.mt-4 > div');
 
             let timer;
 
             const originalTableHTML = tableBody.innerHTML;
+
             const originalPaginationHTML = document.getElementById('paginationContainer').innerHTML;
 
             searchInput.addEventListener('input', function() {
@@ -146,7 +157,9 @@
                             .then(data => {
 
                                 tableBody.innerHTML = data.table_html;
+
                                 pagination.style.display = 'none';
+
                                 info.style.display = 'none';
 
                             });
@@ -154,6 +167,7 @@
                     } else if (value.length === 0) {
 
                         tableBody.innerHTML = originalTableHTML;
+
                         document.getElementById('paginationContainer').innerHTML =
                             originalPaginationHTML;
 
@@ -166,20 +180,35 @@
         });
 
         function confirmDelete(visitorId) {
+
             Swal.fire({
+
                 title: '¿Estás seguro?',
+
                 text: "Esta acción eliminará el registro del visitante.",
+
                 icon: 'warning',
+
                 showCancelButton: true,
+
                 confirmButtonColor: '#d33',
+
                 cancelButtonColor: '#3085d6',
+
                 confirmButtonText: 'Sí, eliminar',
+
                 cancelButtonText: 'Cancelar'
+
             }).then((result) => {
+
                 if (result.isConfirmed) {
+
                     document.getElementById('delete-form-' + visitorId).submit();
+
                 }
+
             });
+
         }
     </script>
 @endsection

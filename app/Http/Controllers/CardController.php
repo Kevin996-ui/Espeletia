@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class CardController extends Controller
-
 {
     public function index()
     {
