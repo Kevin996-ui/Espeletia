@@ -37,7 +37,7 @@ Route::get('/dashboard-user', function () {
     $user_guest_type = session('user_guest_type');
 
     if ($user_guest_type !== 'User') {
-        return redirect('/'); // Evita acceso sin sesión
+        return redirect('/');
     }
 
     // VISITAS

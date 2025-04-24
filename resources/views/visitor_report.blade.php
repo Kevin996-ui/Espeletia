@@ -1,4 +1,4 @@
-@extends('dashboard')
+@extends(session('user_guest_type') === 'User' ? 'user_dashboard' : 'dashboard')
 
 @section('content')
     <h2 class="mt-3">Reporte de Visitantes</h2>
