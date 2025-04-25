@@ -89,14 +89,6 @@
                                         <a class="nav-link {{ Request::is('dashboard') ? 'active' : '' }}"
                                             href="/dashboard">Dashboard</a>
                                     </li>
-                                    <li class="nav-item {{ Request::is('profile') ? 'active-item' : '' }}">
-                                        <a class="nav-link {{ Request::is('profile') ? 'active' : '' }}"
-                                            href="/profile">Perfil</a>
-                                    </li>
-                                    <li class="nav-item {{ Request::is('sub_user') ? 'active-item' : '' }}">
-                                        <a class="nav-link {{ Request::is('sub_user') ? 'active' : '' }}"
-                                            href="/sub_user">Sub Usuario</a>
-                                    </li>
                                     <li class="nav-item {{ Request::is('department') ? 'active-item' : '' }}">
                                         <a class="nav-link {{ Request::is('department') ? 'active' : '' }}"
                                             href="/department">Departamento</a>
