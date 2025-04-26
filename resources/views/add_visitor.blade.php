@@ -2,13 +2,15 @@
 
 @section('content')
     <h2 class="mt-3">Agregar Nuevo Visitante</h2>
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('visitor.index') }}">Administración de Visitantes</a></li>
-            <li class="breadcrumb-item active">Agregar Visitante</li>
-        </ol>
-    </nav>
+    @if (!(session('user_guest_type') === 'User'))
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('visitor.index') }}">Administración de Visitantes</a></li>
+                <li class="breadcrumb-item active">Agregar Visitante</li>
+            </ol>
+        </nav>
+    @endif
 
     <div class="row mt-4">
         <div class="col-md-8 offset-md-2">

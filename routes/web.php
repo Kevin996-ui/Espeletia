@@ -33,58 +33,13 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
-Route::get('/dashboard-user', function () {
-    $user_guest_type = session('user_guest_type');
-
-    if ($user_guest_type !== 'User') {
-        return redirect('/');
-    }
-
-    // VISITAS
-    $chart_labels = DB::table('new_visitors')
-        ->selectRaw("DATE(visitor_enter_time) as date")
-        ->groupByRaw("DATE(visitor_enter_time)")
-        ->orderByRaw("DATE(visitor_enter_time)")
-        ->pluck('date')
-        ->map(function ($date) {
-            return \Carbon\Carbon::parse($date)->format('d/m/Y');
-        });
-
-    $chart_data = DB::table('new_visitors')
-        ->selectRaw("COUNT(*) as total")
-        ->groupByRaw("DATE(visitor_enter_time)")
-        ->orderByRaw("DATE(visitor_enter_time)")
-        ->pluck('total');
-
-    // LLAVES
-    $key_chart_labels = DB::table('key_logs')
-        ->selectRaw("DATE(key_taken_at) as date")
-        ->groupByRaw("DATE(key_taken_at)")
-        ->orderByRaw("DATE(key_taken_at)")
-        ->pluck('date')
-        ->map(function ($date) {
-            return \Carbon\Carbon::parse($date)->format('d/m/Y');
-        });
-
-    $key_chart_data = DB::table('key_logs')
-        ->selectRaw("COUNT(*) as total")
-        ->groupByRaw("DATE(key_taken_at)")
-        ->orderByRaw("DATE(key_taken_at)")
-        ->pluck('total');
-
-    return view('user_dashboard', compact(
-        'chart_labels',
-        'chart_data',
-        'key_chart_labels',
-        'key_chart_data',
-        'user_guest_type'
-    ));
+Route::get('/acceso-visitante', function () {
+    session(['user_guest_type' => 'User']); // Marcamos que es User visitante
+    return redirect()->route('visitor.index'); // Redirige a /visitor
 });
 
-Route::get('/acceso-user', function () {
-    session(['user_guest_type' => 'User']);
-    return redirect('/dashboard-user');
-});
+// Esta es la vista de visitantes, controlada
+Route::get('/visitor', [VisitorController::class, 'index'])->name('visitor.index');
 
 //Rutas de autenticación
 
