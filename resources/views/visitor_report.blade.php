@@ -1,15 +1,15 @@
-@extends('dashboard')
+@extends(session('user_guest_type') === 'User' ? 'user_dashboard' : 'dashboard')
 
 @section('content')
     <h2 class="mt-3">Reporte de Visitantes</h2>
-
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
-            <li class="breadcrumb-item active">Reporte de Visitantes</li>
-        </ol>
-    </nav>
-
+    @if (!(session('user_guest_type') === 'User'))
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                <li class="breadcrumb-item active">Reporte de Visitantes</li>
+            </ol>
+        </nav>
+    @endif
     <div class="mt-4 mb-4">
 
         @if (session()->has('success'))

@@ -41,7 +41,6 @@
 
     <script src="{{ asset('js/bootstrap.js') }}"></script>
 
-    <!-- POPUP PERMANENTE PARA ROL USER (NO LOGUEADO) -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
 

@@ -2,13 +2,14 @@
 
 @section('content')
     <h2 class="mt-3">Listado de Visitas</h2>
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
-            <li class="breadcrumb-item active">Listado de Visitas</li>
-        </ol>
-    </nav>
-
+    @if (!(session('user_guest_type') === 'User'))
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                <li class="breadcrumb-item active">Listado de Visitas</li>
+            </ol>
+        </nav>
+    @endif
     <div class="mt-4 mb-4">
 
         @if (session()->has('success'))

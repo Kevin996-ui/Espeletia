@@ -77,10 +77,8 @@
                                 </div>
                             </form>
 
-                            <br />
                             <div class="text-center">
-                                <a href="http://tccpass/acceso-user" class="btn btn-warning mt-3"
-                                    style="font-weight: bold; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: 0.3s;">
+                                <a href="{{ url('/acceso-visitante') }}" class="btn btn-warning mt-3">
                                     Acceso Visitantes
                                 </a>
                             </div>
