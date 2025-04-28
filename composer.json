@@ -12,6 +12,7 @@
         "doctrine/dbal": "3.6",
         "dompdf/dompdf": "^2.0",
         "fruitcake/laravel-cors": "^2.0",
+        "google/cloud-vision": "1.4",
         "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^8.75",
         "laravel/sanctum": "^2.11",

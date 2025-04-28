@@ -38,6 +38,8 @@ Route::get('/acceso-visitante', function () {
     return redirect()->route('visitor.index'); // Redirige a /visitor
 });
 
+Route::post('/vision/analyze', [VisitorController::class, 'analyze'])->name('vision.analyze');
+
 // Esta es la vista de visitantes, controlada
 Route::get('/visitor', [VisitorController::class, 'index'])->name('visitor.index');
 
