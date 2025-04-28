@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Mail;
 use App\Exports\VisitorExport;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
+use Google\Cloud\Vision\V1\ImageAnnotatorClient;
+
 
 class VisitorController extends Controller
 {
@@ -248,5 +250,110 @@ class VisitorController extends Controller
         }
 
         return redirect()->route('visitor.report')->with('error', 'Formato no válido');
+    }
+
+    public function analyze(Request $request)
+    {
+
+        $request->validate([
+
+            'photo' => 'required|string',
+
+        ]);
+
+        $base64Image = $request->input('photo');
+
+        list($type, $imageData) = explode(';', $base64Image);
+
+        list(, $imageData) = explode(',', $imageData);
+
+        $imageBinary = base64_decode($imageData);
+
+        $imageAnnotator = new ImageAnnotatorClient();
+
+        $response = $imageAnnotator->textDetection($imageBinary);
+
+        $texts = $response->getTextAnnotations();
+
+        $fullText = '';
+
+        if ($texts) {
+
+            $fullText = $texts[0]->getDescription();
+
+        }
+
+        $imageAnnotator->close();
+
+        $lines = preg_split('/\r\n|\r|\n/', trim($fullText));
+
+        $lines = array_map('trim', $lines);
+
+        $apellidos = '';
+
+        $nombres = '';
+
+        $numeroDocumento = '';
+
+        $capturandoApellidos = false;
+
+        foreach ($lines as $index => $line) {
+
+            $lineUpper = strtoupper($line);
+
+            if (stripos($lineUpper, 'APELLIDOS') !== false) {
+
+                $capturandoApellidos = true;
+
+                continue;
+
+            }
+
+            if ($capturandoApellidos) {
+
+                if (isset($lines[$index]) && isset($lines[$index + 1])) {
+
+                    $apellidos = $lines[$index] . ' ' . $lines[$index + 1];
+
+                    $capturandoApellidos = false;
+
+                }
+
+            }
+
+            if (stripos($lineUpper, 'NOMBRES') !== false || stripos($lineUpper, 'HOMBRES') !== false) {
+
+                if (isset($lines[$index + 1])) {
+
+                    $nombres = $lines[$index + 1];
+
+                }
+
+            }
+
+        }
+
+        foreach ($lines as $line) {
+
+            if (preg_match('/(NUL|NUI)\s*\.?\s*(\d{6,})/', strtoupper($line), $matches)) {
+
+                $numeroDocumento = $matches[2];
+
+                break;
+
+            }
+
+        }
+
+        return response()->json([
+
+            'fullText' => $fullText,
+
+            'name' => trim($apellidos . ' ' . $nombres),
+
+            'document' => $numeroDocumento,
+
+        ]);
+
     }
 }
