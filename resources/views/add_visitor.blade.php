@@ -14,6 +14,10 @@
     <div class="visitor-photo-container mb-4"> <video id="video" autoplay playsinline
             style="border:1px solid #ccc;"></video> <img id="preview" src=""
             style="display:none; border:1px solid #ccc;"> </div>
+    <div class="alert alert-info text-center" role="alert" id="captureNotice">
+        📸 Por favor, ubique su cédula frente a la cámara y presione "Capturar Cédula" para extraer los datos
+        automáticamente.
+    </div>
     <div class="text-center mb-5"> <button id="captureButton" class="btn btn-success btn-lg">Capturar Cédula</button>
     </div>
     <div id="visitorFormContainer" style="display:none; opacity:0; transform:translateY(-20px); transition:all 0.5s ease;">
