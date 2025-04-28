@@ -13,6 +13,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 use Google\Cloud\Vision\V1\ImageAnnotatorClient;
 
+
 class VisitorController extends Controller
 {
     public function index(Request $request)

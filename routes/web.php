@@ -31,19 +31,26 @@ Route::get('/', function () {
     //return view('welcome');
     //return view('auth.registration');
     return view('auth.login');
+
 });
 
 Route::get('/acceso-visitante', function () {
-    session(['user_guest_type' => 'User']); // Marcamos que es User visitante
-    return redirect()->route('visitor.index'); // Redirige a /visitor
+    session(['user_guest_type' => 'User']);
+    return redirect()->route('visitor.index');
 });
 
 Route::post('/vision/analyze', [VisitorController::class, 'analyze'])->name('vision.analyze');
 
-// Esta es la vista de visitantes, controlada
+});
+
+Route::get('/acceso-visitante', function () {
+    session(['user_guest_type' => 'User']);
+    return redirect()->route('visitor.index');
+});
+
+
 Route::get('/visitor', [VisitorController::class, 'index'])->name('visitor.index');
 
-//Rutas de autenticación
 
 Route::get('registration', [CustomAuthController::class, 'registration'])->name('register');
 Route::post('custom-registration', [CustomAuthController::class, 'custom_registration'])->name('register.custom');
