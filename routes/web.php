@@ -41,7 +41,6 @@ Route::get('/acceso-visitante', function () {
 
 Route::post('/vision/analyze', [VisitorController::class, 'analyze'])->name('vision.analyze');
 
-});
 
 Route::get('/acceso-visitante', function () {
     session(['user_guest_type' => 'User']);
