@@ -31,7 +31,7 @@
             </a>
             <div class="navbar-nav">
                 <div class="nav-item text-nowrap">
-                    <a class="nav-link px-3" href="#">Bienvenido, {{ Auth::user()->email }}</a>
+                    <a class="nav-link px-3" href="#">Bienvenido, {{ Auth::user()->name }}</a>
                 </div>
             </div>
         </header>
@@ -53,11 +53,11 @@
                                     </li>
                                     <li class="nav-item {{ Request::is('profile') ? 'active-item' : '' }}">
                                         <a class="nav-link {{ Request::is('profile') ? 'active' : '' }}"
-                                            href="/profile">Perfil</a>
+                                            href="/profile">Perfiles Administrativos</a>
                                     </li>
                                     <li class="nav-item {{ Request::is('sub_user') ? 'active-item' : '' }}">
                                         <a class="nav-link {{ Request::is('sub_user') ? 'active' : '' }}"
-                                            href="/sub_user">Sub Usuario</a>
+                                            href="/sub_user">Sub Usuarios</a>
                                     </li>
                                     <li class="nav-item {{ Request::is('department') ? 'active-item' : '' }}">
                                         <a class="nav-link {{ Request::is('department') ? 'active' : '' }}"
@@ -123,7 +123,7 @@
 
                     @if (isset($chart_labels) && isset($chart_data))
                         <div class="mt-4 mb-4">
-                            <h4>📈 Visitas por Día</h4>
+                            <h4>📈 Visitas por Mes</h4>
                             <div class="card mb-4">
                                 <div class="card-body">
                                     <canvas id="visitorLineChart" height="90"></canvas>
@@ -190,7 +190,7 @@
 
                     @if (isset($key_chart_labels) && isset($key_chart_data))
                         <div class="mt-4 mb-4">
-                            <h4>🔐 Llaves Retiradas por Día</h4>
+                            <h4>🔐 Llaves Retiradas por Mes</h4>
                             <div class="card mb-4">
                                 <div class="card-body">
                                     <canvas id="keyLineChart" height="90"></canvas>

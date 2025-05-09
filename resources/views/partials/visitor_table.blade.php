@@ -25,24 +25,21 @@
 
         <td>
             <div>
-                <a href="{{ $visitor->visitor_out_time ? 'javascript:void(0);' : route('visitor.edit', $visitor->id) }}"
-                    class="btn btn-warning btn-sm" @if ($visitor->visitor_out_time) disabled @endif>
-
+                <a href="{{ (auth()->check() && auth()->user()->type === 'Admin') || !$visitor->visitor_out_time ? route('visitor.edit', $visitor->id) : 'javascript:void(0);' }}"
+                    class="btn btn-warning btn-sm"
+                    @if (!auth()->check() || auth()->user()->type !== 'Admin') @if ($visitor->visitor_out_time) disabled @endif @endif>
                     Editar
                 </a>
             </div>
 
             <div style="margin-top: 5px;">
-
-                @if (!$visitor->visitor_out_time)
+                @if ((auth()->check() && auth()->user()->type === 'Admin') || !$visitor->visitor_out_time)
                     <a href="javascript:void(0);" class="btn btn-danger btn-sm"
                         onclick="confirmDelete({{ $visitor->id }})">
-
                         Eliminar
                     </a>
                     <form id="delete-form-{{ $visitor->id }}" action="{{ route('visitor.delete', $visitor->id) }}"
                         method="POST" style="display: none;">
-
                         @csrf
                         @method('DELETE')
                     </form>

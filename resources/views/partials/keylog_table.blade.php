@@ -30,18 +30,23 @@
                     @endif
                 </td>
                 <td>
-                    <a href="{{ $keyLog->key_returned_at ? 'javascript:void(0);' : route('keylog.edit', $keyLog->id) }}"
-                        class="btn btn-warning btn-sm" @if ($keyLog->key_returned_at) disabled @endif>
-
+                    <a href="{{ (auth()->check() && auth()->user()->type === 'Admin') || !$keyLog->key_returned_at ? route('keylog.edit', $keyLog->id) : 'javascript:void(0);' }}"
+                        class="btn btn-warning btn-sm"
+                        @if (!auth()->check() || auth()->user()->type !== 'Admin') @if ($keyLog->key_returned_at) disabled @endif
+                        @endif>
                         Editar
                     </a>
-                    <form action="{{ route('keylog.destroy', $keyLog->id) }}" method="POST" style="display:inline;"
-                        class="delete-form">
-                        @csrf
-                        @method('DELETE')
-                        <button class="btn btn-danger btn-sm mt-1"
-                            @if ($keyLog->key_returned_at) disabled @endif>Eliminar</button>
-                    </form>
+
+                    @if ((auth()->check() && auth()->user()->type === 'Admin') || !$keyLog->key_returned_at)
+                        <form action="{{ route('keylog.destroy', $keyLog->id) }}" method="POST" style="display:inline;"
+                            class="delete-form">
+                            @csrf
+                            @method('DELETE')
+                            <button class="btn btn-danger btn-sm mt-1">Eliminar</button>
+                        </form>
+                    @else
+                        <button class="btn btn-danger btn-sm mt-1" disabled>Eliminar</button>
+                    @endif
                 </td>
             </tr>
         @endforeach

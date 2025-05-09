@@ -41,13 +41,6 @@ Route::get('/acceso-visitante', function () {
 
 Route::post('/vision/analyze', [VisitorController::class, 'analyze'])->name('vision.analyze');
 
-
-Route::get('/acceso-visitante', function () {
-    session(['user_guest_type' => 'User']);
-    return redirect()->route('visitor.index');
-});
-
-
 Route::get('/visitor', [VisitorController::class, 'index'])->name('visitor.index');
 
 
@@ -65,6 +58,19 @@ Route::get('/register', function () {
 
 Route::get('profile', [ProfileController::class, 'index'])->name('profile');
 Route::post('profile/edit_validation', [ProfileController::class, 'edit_validation'])->name('profile.edit_validation');
+
+Route::get('profile', [ProfileController::class, 'index'])->name('profile');
+Route::get('admin_profile/list', [ProfileController::class, 'list'])->name('admin_profile.index');
+Route::get('admin_profile/fetchAll', [ProfileController::class, 'fetchAll'])->name('admin_profile.fetchall');
+Route::get('/admin/profile/{id}/edit', [ProfileController::class, 'edit'])->name('admin_profile.edit');
+Route::put('/admin/profile/update', [ProfileController::class, 'edit_validation'])->name('admin_profile.edit_validation');
+Route::post('/admin/profile/update', [ProfileController::class, 'edit_validation'])->name('admin_profile.edit_validation');
+Route::get('admin_profile/create', [ProfileController::class, 'create'])->name('admin_profile.create');
+
+Route::post('admin_profile/store', [ProfileController::class, 'store'])->name('admin_profile.store');
+
+Route::post('profile/edit_validation', [ProfileController::class, 'edit_validation'])->name('profile.edit_validation');
+Route::get('/admin/profile/{id}/delete', [ProfileController::class, 'delete'])->name('admin_profile.delete');
 
 // Rutas de sub-usuarios
 

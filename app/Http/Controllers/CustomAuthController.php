@@ -68,45 +68,44 @@ class CustomAuthController extends Controller
             Carbon::setLocale('es');
             setlocale(LC_TIME, 'es_ES.UTF-8');
 
-            $visitsPerDay = NewVisitor::select(
-                DB::raw('DATE(visitor_enter_time) as date'),
+            $visitsPerMonth = NewVisitor::select(
+                DB::raw("DATE_FORMAT(visitor_enter_time, '%Y-%m') as month"),
                 DB::raw('count(*) as total')
             )
-
-                ->where('visitor_enter_time', '>=', Carbon::now()->subDays(30))
-                ->groupBy('date')
-                ->orderBy('date', 'asc')
+                ->where('visitor_enter_time', '>=', Carbon::now()->subMonths(12))
+                ->groupBy('month')
+                ->orderBy('month', 'asc')
                 ->get();
 
-            $labels = $visitsPerDay->pluck('date')->map(function ($d) {
-                return Carbon::parse($d)->translatedFormat('d M');
+            $labels = $visitsPerMonth->pluck('month')->map(function ($m) {
+                return Carbon::createFromFormat('Y-m', $m)->translatedFormat('F Y');
             });
 
-            $data = $visitsPerDay->pluck('total');
-            $keysPerDay = KeyLog::select(
+            $data = $visitsPerMonth->pluck('total');
 
-                DB::raw('DATE(key_taken_at) as date'),
+            $keysPerMonth = KeyLog::select(
+                DB::raw("DATE_FORMAT(key_taken_at, '%Y-%m') as month"),
                 DB::raw('count(*) as total')
             )
-
-                ->where('key_taken_at', '>=', Carbon::now()->subDays(30))
-                ->groupBy('date')
-                ->orderBy('date', 'asc')
+                ->where('key_taken_at', '>=', Carbon::now()->subMonths(12))
+                ->groupBy('month')
+                ->orderBy('month', 'asc')
                 ->get();
 
-            $key_chart_labels = $keysPerDay->pluck('date')->map(function ($d) {
-                return Carbon::parse($d)->translatedFormat('d M');
+            $key_chart_labels = $keysPerMonth->pluck('month')->map(function ($m) {
+                return Carbon::createFromFormat('Y-m', $m)->translatedFormat('F Y');
             });
 
-            $key_chart_data = $keysPerDay->pluck('total');
+            $key_chart_data = $keysPerMonth->pluck('total');
+
             return view('dashboard', [
-
                 'chart_labels' => $labels,
                 'chart_data' => $data,
                 'key_chart_labels' => $key_chart_labels,
                 'key_chart_data' => $key_chart_data
             ]);
         }
+
         return redirect('login');
     }
 

@@ -26,7 +26,9 @@
                     <div class="col col-md-6">
                         <a href="{{ route('visitor.add') }}" class="btn btn-success btn-sm float-end">Registrar Visita</a>
 
-                        @if ((auth()->check() && in_array(auth()->user()->type, ['Admin', 'User'])) || session('user_guest_type') === 'User')
+                        @if (
+                            (auth()->check() && in_array(auth()->user()->type, ['Admin', 'User', 'Supervisor'])) ||
+                                session('user_guest_type') === 'User')
                             <a href="{{ route('visitor.report') }}"
                                 class="btn btn-secondary btn-sm float-end ms-2">Reporte</a>
                         @endif

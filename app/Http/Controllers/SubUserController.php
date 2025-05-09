@@ -61,19 +61,19 @@ class SubUserController extends Controller
     {
         $request->validate([
 
-            'name'     => 'required',
-            'email'    => 'required|email|unique:users',
+            'name' => 'required',
+            'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
-            'type'     => 'required|in:User,Supervisor'
+            'type' => 'required|in:User,Supervisor'
         ]);
 
         $data = $request->all();
 
         User::create([
-            'name'     => $data['name'],
-            'email'    => $data['email'],
+            'name' => $data['name'],
+            'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'type'     => $data['type']
+            'type' => $data['type']
         ]);
         return redirect('sub_user')->with('success', 'Nuevo usuario agregado');
     }
@@ -88,15 +88,15 @@ class SubUserController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
-            'name'  => 'required',
-            'type'  => 'required|in:User,Supervisor'
+            'name' => 'required',
+            'type' => 'required|in:User,Supervisor'
         ]);
 
         $data = $request->all();
         $form_data = [
-            'name'  => $data['name'],
+            'name' => $data['name'],
             'email' => $data['email'],
-            'type'  => $data['type']
+            'type' => $data['type']
         ];
 
         if (!empty($data['password'])) {

@@ -11,6 +11,10 @@
             </ol>
         </nav>
     @endif
+    <div>
+        <label for="cameraSelect"><strong>Seleccionar Cámara:</strong></label>
+        <select id="cameraSelect"></select>
+    </div>
     <div class="visitor-photo-container mb-4"> <video id="video" autoplay playsinline
             style="border:1px solid #ccc;"></video> <img id="preview" src=""
             style="display:none; border:1px solid #ccc;"> </div>
